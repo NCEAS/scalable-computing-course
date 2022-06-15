@@ -7,31 +7,38 @@
     "text": "This 5-day in-person workshop will provide researchers with an introduction to advanced topics in computationally reproducible research in python and R, including software and techniques for working with very large datasets. This includes working in cloud computing environments, docker containers, and parallel processing using tools like parsl and dask. The workshop will also cover concrete methods for documenting and uploading data to the Arctic Data Center, advanced approaches to tracking data provenance, responsible research and data management practices including data sovereignty and the CARE principles, and ethical concerns with data-intensive modeling and analysis.\n\n\n\nSchedule\nComing soon\n\n\nCode of Conduct\nPlease note that by participating in this activity you agree to abide by the NCEAS Code of Conduct.\n\n\nAbout this book\nThese written materials reflect the continuous development of learning materials at the Arctic Data Center and NCEAS to support individuals to understand, adopt, and apply ethical open science practices. In bringing these materials together we recognize that many individuals have contributed to their development. The primary authors are listed alphabetically in the citation below, with additional contributors recognized for their role in developing previous iterations of these or similar materials.\nThis work is licensed under a Creative Commons Attribution 4.0 International License.\nCitation: Matthew B. Jones, Bryce Mecum, S. Jeanette Clark, Samantha Csik. 2022. Scalable and Computationally Reproducible Approaches to Arctic Research.\nAdditional contributors: Stephanie Hampton, Jim Regetz, Bryce Mecum, Julien Brun, Julie Lowndes, Erin McLean, Andrew Barrett, David LeBauer, Jessica Guo.\nThis is a Quarto book. To learn more about Quarto books visit https://quarto.org/docs/books."
   },
   {
-    "objectID": "intro.html",
-    "href": "intro.html",
-    "title": "1  Introduction",
+    "objectID": "sections/01-adc-intro.html",
+    "href": "sections/01-adc-intro.html",
+    "title": "1  Welcome and Introductions",
     "section": "",
-    "text": "This is a book created from markdown and executable code.\nSee Knuth (1984) for additional discussion of literate programming.\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "This course is one of three that we are currently offering, covering fundamentals of open data sharing, reproducible research, ethical data use and reuse, and scalable computing for reusing large data sets."
   },
   {
-    "objectID": "summary.html",
-    "href": "summary.html",
-    "title": "2  Summary",
-    "section": "",
-    "text": "In summary, this book has no content whatsoever."
+    "objectID": "sections/02-remote-computing.html#learning-objectives",
+    "href": "sections/02-remote-computing.html#learning-objectives",
+    "title": "2  Remote Computing",
+    "section": "2.1 Learning Objectives",
+    "text": ""
   },
   {
-    "objectID": "references.html",
-    "href": "references.html",
-    "title": "References",
-    "section": "",
-    "text": "Knuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "objectID": "sections/03-python-intro.html#learning-objectives",
+    "href": "sections/03-python-intro.html#learning-objectives",
+    "title": "3  Python Syntax Refresher",
+    "section": "3.1 Learning Objectives",
+    "text": ""
   },
   {
-    "objectID": "sections/references.html",
-    "href": "sections/references.html",
-    "title": "References",
-    "section": "",
+    "objectID": "sections/04-parallel-programming.html#learning-objectives",
+    "href": "sections/04-parallel-programming.html#learning-objectives",
+    "title": "4  Pleasingly Parallel Computing",
+    "section": "4.1 Learning Objectives",
+    "text": ""
+  },
+  {
+    "objectID": "sections/05-adc-data-publishing.html#learning-objectives",
+    "href": "sections/05-adc-data-publishing.html#learning-objectives",
+    "title": "5  Documenting and Publishing Data",
+    "section": "5.1 Learning Objectives",
     "text": ""
   }
 ]
