@@ -1,0 +1,3 @@
+# Pleasingly Parallel Computing
+
+## Learning Objectives

@@ -1,0 +1,3 @@
+# Documenting and Publishing Data
+
+## Learning Objectives
