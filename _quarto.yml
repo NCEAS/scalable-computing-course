@@ -7,9 +7,12 @@ book:
   date: "September 19-23, 2022"
   chapters:
     - index.qmd
-    - intro.qmd
-    - summary.qmd
-    - references.qmd
+    - sections/01-adc-intro.qmd
+    - sections/02-remote-computing.qmd
+    - sections/03-python-intro.qmd
+    - sections/04-parallel-programming.qmd
+    - sections/05-adc-data-publishing.qmd
+    - sections/referenes.qmd
 
 bibliography: references.bib
 
