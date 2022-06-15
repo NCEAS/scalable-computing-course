@@ -4,8 +4,8 @@ project:
 book:
   title: "Scalable and Computationally Reproducible Approaches to Arctic Research"
   author: "Matt Jones, Bryce Mecum, Jeanette Clark, Sam Csik"
-  date: "September 19-23, 2022"
-  reader-mode: true
+  date: "September 19, 2022"
+  reader-mode: false
   sidebar:
     title: "Course Materials"
     style: "floating"
