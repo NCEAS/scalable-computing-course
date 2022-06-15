@@ -19,8 +19,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: "Install Quarto and render"
-      uses: pommevilla/quarto-render@main
+    - name: "Install Quarto"
+    - uses: quarto-dev/quarto-actions/install-quarto@v1
+
+    - name: "Render"
+    - run: quarto render
 
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@4.1.5
