@@ -2,9 +2,9 @@ project:
   type: book
 
 book:
-  title: "Scalable Computing Course"
+  title: "Scalable and Computationally Reproducible Approaches to Arctic Research"
   author: "Matt Jones, Bryce Mecum, Jeanette Clark, Sam Csik"
-  date: "6/15/2022"
+  date: "September 19-23, 2022"
   chapters:
     - index.qmd
     - intro.qmd
