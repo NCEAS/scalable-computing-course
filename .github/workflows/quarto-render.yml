@@ -20,10 +20,10 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: "Install Quarto"
-    - uses: quarto-dev/quarto-actions/install-quarto@v1
+      uses: quarto-dev/quarto-actions/install-quarto@v1
 
     - name: "Render"
-    - run: quarto render
+      run: quarto render
 
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@4.1.5
