@@ -1,0 +1,29 @@
+# .github/workflows/quarto-render.yml
+name: Render and deploy Quarto files
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  quarto-render-and-deploy:
+
+    env:
+    R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+    GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: "Install Quarto and render"
+      uses: pommevilla/quarto-render@main
+
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: _book/ # The folder the action should deploy.
