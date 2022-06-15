@@ -12,8 +12,8 @@ jobs:
   quarto-render-and-deploy:
 
     env:
-    R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-    GITHUB_PAT: ${{ secrets.TOKEN }}
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      GITHUB_PAT: ${{ secrets.TOKEN }}
 
     runs-on: ubuntu-latest
     steps:
