@@ -1,0 +1,15 @@
+# Webook to build course website
+
+name: webhook
+on: 
+  push:
+    branches: [ '**' ]
+
+jobs:
+  build-page:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Invoke workflow in another repo with inputs
+        run: |
+          curl -XPOST -u "${{ secrets.EMAIL}}:${{secrets.TOKEN}}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type: application/json" https://api.github.com/repos/nceas/repro-research-course/dispatches --data '{"event_type": "quarto"}'
