@@ -23,17 +23,17 @@ Please note that by participating in this activity you agree to abide by the [NC
 
 In this course, we will be using Python (> 3.0) as our primary language, and VS Code as our IDE. Below are instructions on how to get VS Code set up to work for the course. If you are already a regular Python user, you may already have another IDE set up. We strongly encourage you to set up VS Code with us, because we will use your local VS Code instance to write and execute code on one of the NCEAS servers.
 
-### Download VS Code and Python, if needed {-}
+### Download VS Code and Extensions
 
 First, [download VS Code](https://code.visualstudio.com/) if you do not already have it installed.
 
-Next, if you aren't sure, check to make sure you have Python installed. To do this, from the terminal run:
+Check to make sure you have Python installed if you aren't sure you do. To do this, from the terminal run:
 
 ```
 python3 --version
 ```
 
-If you get an error, it means you need to install Python. Here are instructions for getting installed, depending on your operating system.
+If you get an error, it means you need to install Python. Here are instructions for getting installed, depending on your operating system. Note: There are many ways to install and manage your Python installations, and advantages and drawbacks to each. If you are unsure about how to proceed, feel free to reach out to the instructor team for guidance.
 
 * Windows: Download and run an installer from [Python.org](https://www.python.org/downloads/).
 * Mac: Install using [homebrew](https://brew.sh/). If you don't have homebrew installed, follow the instructions from their webpage.
@@ -41,7 +41,7 @@ If you get an error, it means you need to install Python. Here are instructions 
 
 After you run your install, make sure you check that the install is on your system PATH by running `python3 --version` again.
 
-### Set up VS Code {-}
+### Set up VS Code
 
 This section summarizes the official VS Code tutorial. For more detailed instructions and screenshots, see the [source material](https://code.visualstudio.com/docs/python/python-tutorial)
 
@@ -57,7 +57,9 @@ code .
 
 Next, we will select the Python interpreter for the project. Open the **Command Palette** using Command + Shift + P (Control + Shift + P for windows). The Command Palette is a handy tool in VS Code that allows you to quickly find commands to VS Code, like editor commands, file edit and open commands, settings, etc. In the Command Palette, type "Python: Select Interpreter." Push return to select the command, and then select the interpreter you want to use (your Python 3.X installation).
 
-### Test your local setup {-}
+Finally, download the [Jupyter extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter). You can create a test Jupyter Notebook document from the command pallete by typing "Create: New Jupyter Notebook" and selecting the command. This will open up a code editor pane with a notebook that you can test.
+
+### Test your local setup (Optional)
 
 To make sure you can write and execute code in your project, [create a Hello World test file](https://code.visualstudio.com/docs/python/python-tutorial#_create-a-python-hello-world-source-code-file).
 
@@ -73,9 +75,7 @@ print(msg)
     - For more ways to run code in VS Code, see the [tutorial](https://code.visualstudio.com/docs/python/python-tutorial#_create-a-python-hello-world-source-code-file)
 
 
-### Set up Jupyter Notebooks Extension {-}
 
-Finally, download the [Jupyter extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter). You can create a test Jupyter Notebook document from the command pallete by typing "Create: New Jupyter Notebook" and selecting the command. This will open up a code editor pane with a notebook that you can test.
 
 ## About this book
 
