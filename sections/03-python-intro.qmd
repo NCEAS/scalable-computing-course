@@ -1,3 +1,43 @@
-# Python Syntax Refresher
+---
+title: "Python Programming on Clusters"
+author: "Jeanette Clark"
+---
 
 ## Learning Objectives
+
+- Basic Python review
+- Writing in Jupyter notebooks
+- Writing functions in Python
+
+## Introduction
+
+* VS Code + remote development on a cluster is easy and way faster than your local machine
+* Jupyter is a great way to do literate analysis
+* Functions provide ways to reuse your code across notebooks/projects
+
+## Python on the cluster
+
+* Connect to the server
+* Start a `training` project and pick interpreter (this could also go in Sam's session)
+* Create and execute `hello.py`
+    - from the IDE as a whole
+    - from IDE line by line
+    - from the terminal
+
+## Jupyter notebooks
+
+* Create a notebook
+* Load in some libraries (pandas, numpy, scipy, matplotlib)
+* Read in a csv
+* group and summarize by a variable
+* create a simple plot
+
+## Functions
+
+* create `myplot.py`
+* write `myplot()` function to create the same plot we did in section above
+* load myplot into jupyter notebook (`from myplot.py import myplot`)
+* replace old plot method with new function
+
+## Resources
+

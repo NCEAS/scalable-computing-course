@@ -1,4 +1,7 @@
-# Welcome and Introductions
+---
+title: "Welcome and Introductions"
+author: "Jeanette Clark"
+---
 
 ![](../images/adc-courses-banner.png)
 

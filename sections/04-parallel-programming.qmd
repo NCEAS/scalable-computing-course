@@ -1,3 +1,8 @@
-# Pleasingly Parallel Computing
+---
+title: "Pleasingly Parallel Programming"
+author: "Matt Jones"
+---
 
 ## Learning Objectives
+
+## Introduction

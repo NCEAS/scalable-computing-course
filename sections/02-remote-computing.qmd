@@ -1,3 +1,8 @@
-# Remote Computing
+---
+title: "Remote Computing"
+author: "Sam Csik"
+---
 
 ## Learning Objectives
+
+## Introduction
