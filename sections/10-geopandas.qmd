@@ -1,0 +1,27 @@
+---
+title: "Spatial and Image Data Using GeoPandas"
+author: Jeanette Clark"
+execute:
+  freeze: auto
+---
+
+```{python}
+import geopandas as gpd
+import rasterio as rio
+import requests
+import matplotlib.pyplot as plt
+```
+
+```{python}
+url = 'https://cn.dataone.org/cn/v2/resolve/urn:uuid:dd61089d-f50e-4d87-9b75-6b4e2bd24776'
+
+response = requests.get(url)
+open("Coastal_2020_12.tif", "wb").write(response.content)
+```
+
+```{python}
+with rio.open("Coastal_2020_12.tif") as dem_src:
+    dtm_pre_arr = dem_src.read(1)
+
+plt.imshow(dtm_pre_arr)
+```
