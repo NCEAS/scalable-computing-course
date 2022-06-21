@@ -34,6 +34,7 @@ parso==0.8.3
 pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==9.1.1
+pip==22.1.1
 prompt-toolkit==3.0.29
 psutil==5.9.1
 ptyprocess==0.7.0
@@ -46,11 +47,13 @@ pytz==2022.1
 pyzmq==23.0.0
 rasterio==1.2.10
 requests==2.28.0
+setuptools==49.2.1
 Shapely==1.8.2
-six @ file:///AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/python3/python3-103/six-1.15.0-py2.py3-none-any.whl
+six==1.15.0
 snuggs==1.4.7
 stack-data==0.2.0
 tornado==6.1
 traitlets==5.2.1.post0
 urllib3==1.26.9
 wcwidth==0.2.5
+wheel==0.33.1
