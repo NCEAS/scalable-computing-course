@@ -7,8 +7,8 @@ execute:
 
 ## Learning Objectives
 
-- Reading raster data with rasterio
-- Using geopandas and rasterio to process raster data
+- Reading raster data with rasterasterio
+- Using geopandas and rasterasterio to process raster data
 - Working with raster and vector data together
 
 ## Introduction
@@ -24,23 +24,30 @@ This is a test to make sure we can run some code in this notebook.
 
 ```{python}
 import geopandas as gpd
-import rasterio as rio
+import rasterio
+import rasterio.mask
+from rasterstats import zonal_stats
+from shapely.geometry import Polygon
 import requests
 import matplotlib.pyplot as plt
+import pandas as pd
+
 ```
 
 ```{python}
-url = 'https://cn.dataone.org/cn/v2/resolve/urn:uuid:dd61089d-f50e-4d87-9b75-6b4e2bd24776'
+url_sf = 'https://cn.dataone.org/cn/v2/resolve/urn:uuid:dd61089d-f50e-4d87-9b75-6b4e2bd24776'
 
-response = requests.get(url)
-open("Coastal_2020_12.tif", "wb").write(response.content)
+response_sf = requests.get(url_sf)
+open("Coastal_2020_12.tif", "wb").write(response_sf.content)
 ```
 
 ```{python}
-with rio.open("Coastal_2020_12.tif") as dem_src:
-    dtm_pre_arr = dem_src.read(1)
+with rasterio.open("Coastal_2020_12.tif") as dem_src:
+    ships = dem_src.read(1)
+    ships_meta = dem_src.profile
 
-plt.imshow(dtm_pre_arr)
+plt.imshow(ships)
+print(ships_meta)
 ```
 
 - read in the data
@@ -48,5 +55,78 @@ plt.imshow(dtm_pre_arr)
 
 ##  Distance per commercial area
 
-- read in fishery area vector file
-- take one of the two approaches described [here](https://eo-box.readthedocs.io/en/develop/examples/raster/extract_raster_values_with_vector_data.html)
+
+
+```{python}
+url = 'https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3A7c942c45-1539-4d47-b429-205499f0f3e4'
+
+response = requests.get(url)
+open("Alaska_Commercial_Salmon_Boundaries.gpkg", "wb").write(response.content)
+
+```
+
+### Read in fishing districts
+
+```{python}
+comm = gpd.read_file("Alaska_Commercial_Salmon_Boundaries.gpkg")
+```
+
+Reproject the data
+
+```{python}
+comm.crs
+comm_3338 = comm.to_crs("EPSG:3338")
+```
+
+Get the bounding box as it's own GeoDataFrame
+
+```{python}
+# function to return polygon
+def bbox(long0, lat0, lat1, long1):
+  return Polygon([[long0, lat0], [long1,lat0], [long1,lat1], [long0, lat1]])
+
+
+test = bbox(comm_3338.total_bounds[0], comm_3338.total_bounds[1], comm_3338.total_bounds[2], comm_3338.total_bounds[3])
+
+bbox_crop = gpd.GeoDataFrame(pd.DataFrame(['p1'], columns = ['geom']),
+    crs = {'init':'epsg:4326'},
+    geometry = [test])
+```
+
+Read in raster again cropped to bounding box
+  - bounding box doesn't quite match what I expected
+
+```{python}
+with rasterio.open("Coastal_2020_12.tif") as src:
+    out_image, out_transform = rasterio.mask.mask(src, bbox_crop["geometry"], crop=True)
+    out_meta = src.meta
+```
+
+
+```{python}
+plt.imshow(out_image[0])
+```
+
+## Calculate total distance per fishing area
+
+```{python}
+zs = zonal_stats(comm_3338, 'Coastal_2020_12.tif', stats = "sum")
+```
+
+Wrangle the data and reattach distances to the original polygons
+
+```{python}
+dist = [d['sum'] for d in zs]
+
+res = pd.DataFrame({'STAT_AREA' : comm_3338["STAT_AREA"],
+                    'distance' : dist})
+
+res_summary = res.dropna(thresh = 0).query("distance > 0")
+
+res_full = comm_3338.merge(res_summary, on = "STAT_AREA", how = 'left')
+
+```
+
+```{python}
+res_full.plot(column = "distance", legend = True)
+```
