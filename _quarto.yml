@@ -25,6 +25,7 @@ book:
     - sections/03-python-intro.qmd
     - sections/04-parallel-programming.qmd
     - sections/05-adc-data-publishing.qmd
+    - sections/10-geopandas.qmd
     - sections/references.qmd
 
 bibliography: references.bib

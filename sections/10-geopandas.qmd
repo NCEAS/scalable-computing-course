@@ -1,0 +1,52 @@
+---
+title: "Spatial and Image Data Using GeoPandas"
+author: Jeanette Clark
+execute:
+  freeze: auto
+---
+
+## Learning Objectives
+
+- Reading raster data with rasterio
+- Using geopandas and rasterio to process raster data
+- Working with raster and vector data together
+
+## Introduction
+
+- Raster vs vector data
+- What is a projection
+- Processing overview
+    - goal is to calculate vessel distance per [commercial fishing area](https://doi.org/10.5063/F1TD9VN9)
+
+## Pre-processing raster data
+
+This is a test to make sure we can run some code in this notebook.
+
+```{python}
+import geopandas as gpd
+import rasterio as rio
+import requests
+import matplotlib.pyplot as plt
+```
+
+```{python}
+url = 'https://cn.dataone.org/cn/v2/resolve/urn:uuid:dd61089d-f50e-4d87-9b75-6b4e2bd24776'
+
+response = requests.get(url)
+open("Coastal_2020_12.tif", "wb").write(response.content)
+```
+
+```{python}
+with rio.open("Coastal_2020_12.tif") as dem_src:
+    dtm_pre_arr = dem_src.read(1)
+
+plt.imshow(dtm_pre_arr)
+```
+
+- read in the data
+- clip to an extent that runs roughly from Bristol Bay to Prince William Sound
+
+##  Distance per commercial area
+
+- read in fishery area vector file
+- take one of the two approaches described [here](https://eo-box.readthedocs.io/en/develop/examples/raster/extract_raster_values_with_vector_data.html)
