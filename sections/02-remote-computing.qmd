@@ -3,6 +3,118 @@ title: "Remote Computing"
 author: "Sam Csik"
 ---
 
+**Notes from Google Sheet (DELETE LATER)**  
+- Servers & Networking  
+- IP addressing  
+- Bash shell programming  
+- SSH  
+- Remote session in VS Code  
+
 ## Learning Objectives
 
+- Understand the basic architecture of computer networks
+
+- Become familiarized with Bash Shell programming to navigate your computer's file system **(??)**
+
+- Learn how to connect to a remote computer via a shell
+
 ## Introduction
+
+- Scientific synthesis and our ability to effectively and efficiently work with big data depends on the use of computers & the internet
+
+- VS Code + remote development on a cluster is easy and way faster than your local machine
+
+## Servers & Networking
+
+- Host computers connect via networking equipment and can send messages to each other over communication protocols (aka internet protocols)
+
+    - **Client:** the host *initiating* the request
+
+    - **Server:** the host *responding* to a request
+
+## IP addressing
+
+- Hosts are assigned a **unique numerical address** used for all communication and routing called an [Internet Protocol Address (IP Address)](https://en.wikipedia.org/wiki/IP_address). They look something like this: 128.111.220.7
+
+- Each IP Address can be used to communicate over various "ports", which allows multiple applications to communicate with a host without mixing up traffic
+
+- IP addresses can be difficult to remember, so they are also assigned **hostnames**
+
+    - Hostnames are handled through the global [Domain Name System (DNS)](https://en.wikipedia.org/wiki/Domain_Name_System)
+
+    - Clients first look up a hostname in DNS to find the IP address, then they open a connection the the IP address
+    
+        - aurora.nceas.ucsb.edu == 128.111.220.46 **(UPDATE THIS WITH SERVER USED FOR COURSE?)**
+
+## Bash Shell Programming
+
+- *What is a shell?* From [Wikipedia](https://en.wikipedia.org/wiki/Shell_(computing)) 
+
+> "a computer program which exposes an operating system's services to a human user or other programs. In general, operating system shells use either a command-line interface (CLI) or graphical user interface (GUI), depending on a computer's role and particular operation."
+
+- *What is Bash Shell?* A command line tool (language) commonly used to manipulate files and directories 
+
+    - **Mac:** bash via the [Terminal](https://support.apple.com/guide/terminal/welcome/mac) **(QUESTION: Mac users may have to switch from zsh to bash? `exec bash`? or `exec zsh` to switch back)**
+
+    - **Windows:** bash via [Git Bash](https://gitforwindows.org/)
+
+## Some group exercise:
+
+ - Navigate file system (show that this is equivalent to using Finder/Windows version), create a file, edit file, etc.
+
+    - `pwd`
+    - `cd`
+    - `ls`
+    - `touch` 
+    - `mkdir`
+    - (**Queston:** Do we want/need to show all of these? Missing any important ones?)
+
+## Connecting to a remote computer via a shell
+
+- You can use a shell to gain accesss to and remotely control (manage/transfer files/etc) other computers. To do so, you'll need the following:
+
+    - remote computer (e.g. server) turned on
+
+    - IP address or name of remote computer
+
+    - necessary permissions to access the remote computer
+
+- Secure Shell, or SSH, is often used for securely connecting to and running shell commands on a remote host
+
+    - Tremendously simplifies remote computing
+
+    - Supported out-of-the-box on Linux and Macs 
+
+## Exercise:
+
+1. Launch your Terimal program:
+
+    - **MacOS:** navigate to `Applications | Utilities` and open `Terminal` 
+
+    - **Windows:** Navigate to `Windows Start | Git` and open `Git Bash`
+
+    - **ALTERNATIVELY, from VS Code:** Two options to open a terminal program
+
+         a) Click on `Terminal | New Terminal` in top menu bar
+
+         b) Click on the `+ (dropdown menu) | bash` in the bottom right corner **(QUESTION: Not sure that is always open/available depending on user configurations??)**
+
+2. Connect to a remote server **(UPDATE THIS SECTION)**
+
+```
+jones@powder:~$ ssh jones@aurora.nceas.ucsb.edu
+jones@aurora.nceas.ucsb.edu's password: 
+jones@aurora:~$ 
+```
+
+3. Change your password **(UPDATE THIS SECTION)**
+
+```
+jones@aurora:~$ passwd
+Changing password for jones.
+(current) UNIX password: 
+Enter new UNIX password: 
+Retype new UNIX password: 
+```
+
+4. **create python script on server | write/execute some code | etc**
