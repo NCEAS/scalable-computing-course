@@ -27,12 +27,52 @@ author: "Jeanette Clark"
 
 ## Virtual Environments
 
-* install virtualenvwrapper
-* modify .bash_profile to point to installs
-* check it was installed correctly
-* make virtual env `scomp`
-* install course requirements into that env
-* `deactivate` and `workon`
+Why virtual environments? We'll answer this.
+
+First install `virtualenvwrapper`
+
+```
+pip3 install virtualenvwrapper
+```
+
+Now we will create the `.bash_profile` file to create variables that point to the install locations of python and `virtualenvwrapper`.
+
+In VS Code, select "File > New Text File" then paste this into the file:
+
+```
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+export VIRTUALENVWRAPPER_VIRTUAWORKON_HOME=$HOME/.virtualenvs
+source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
+```
+
+Save the file in the top of your user directory as `.bash_profile`.
+
+Restart your terminal, then check to make sure it was installed and configured correctly
+
+```
+mkvirtualenv --version
+```
+
+Now we can create the virtual environment we will use for the course
+
+```
+mkvirtualenv scomp
+```
+
+You'll see the name of the env you are working in on the left side of your terminal prompt in parentheses.
+
+Now lets install the dependencies for this course into that environment. (Note: need to figure out how to get them this file)
+
+```
+python3 -m pip install -r requirements.txt
+```
+
+To deactivate your environment (like if you want to work on a different project), just run `deactivate`. To activate it again, run
+
+```
+workon scomp
+```
+
 
 ## Brief overview of python syntax
 
