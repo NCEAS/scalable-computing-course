@@ -34,12 +34,16 @@ import pandas as pd
 
 ```
 
+Download the ship traffic raster from [Kapsar et al.](https://doi.org/10.18739/A2SQ8QJ9S). We grab a one month slice from December, 2020 of a coastal subset of data with 1km resolution.
+
 ```{python}
 url_sf = 'https://cn.dataone.org/cn/v2/resolve/urn:uuid:dd61089d-f50e-4d87-9b75-6b4e2bd24776'
 
 response_sf = requests.get(url_sf)
 open("Coastal_2020_12.tif", "wb").write(response_sf.content)
 ```
+
+Open the raster file, plot it, and look at the metadata.
 
 ```{python}
 with rasterio.open("Coastal_2020_12.tif") as dem_src:
@@ -50,11 +54,10 @@ plt.imshow(ships)
 print(ships_meta)
 ```
 
-- read in the data
-- clip to an extent that runs roughly from Bristol Bay to Prince William Sound
 
 ##  Distance per commercial area
 
+Now download a vector shapefile of commercial fishing districts in Alaska.
 
 
 ```{python}
@@ -65,36 +68,38 @@ open("Alaska_Commercial_Salmon_Boundaries.gpkg", "wb").write(response.content)
 
 ```
 
-### Read in fishing districts
+Read in the data
 
 ```{python}
 comm = gpd.read_file("Alaska_Commercial_Salmon_Boundaries.gpkg")
 ```
 
-Reproject the data
+The raster data is in 3338, so we need to reproject this.
 
 ```{python}
 comm.crs
 comm_3338 = comm.to_crs("EPSG:3338")
+
+comm_3338.plot()
 ```
 
-Get the bounding box as it's own GeoDataFrame
+To (maybe) make things more efficient, we can extract the bounding box for the shapefile data and use that to clip the original raster data to just the extent we need. A simple function creates a list of 4 coordinate pairs from the 4 lower left/upper right points. This is then converted into a `geoDataFrame` to use with `rasterio`.
 
 ```{python}
 # function to return polygon
 def bbox(long0, lat0, lat1, long1):
   return Polygon([[long0, lat0], [long1,lat0], [long1,lat1], [long0, lat1]])
 
+sh_bounds = com3338.total_bounds
 
-coords = bbox(comm_3338.total_bounds[0], comm_3338.total_bounds[1], comm_3338.total_bounds[2], comm_3338.total_bounds[3])
+coords = bbox(sh_bounds[0], sh_bounds[1], sh_bounds[2], sh_bounds[3])
 
 bbox_crop = gpd.GeoDataFrame(pd.DataFrame(['p1'], columns = ['geom']),
     crs = 'EPSG:3338',
     geometry = [coords])
 ```
 
-Read in raster again cropped to bounding box
-  - bounding box doesn't quite match what I expected
+Read in raster again cropped to bounding box. 
 
 ```{python}
 with rasterio.open("Coastal_2020_12.tif") as src:
