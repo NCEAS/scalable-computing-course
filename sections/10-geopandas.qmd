@@ -26,7 +26,7 @@ This is a test to make sure we can run some code in this notebook.
 import geopandas as gpd
 import rasterio
 import rasterio.mask
-from rasterstats import zonal_stats
+# from rasterstats import zonal_stats
 from shapely.geometry import Polygon
 import requests
 import matplotlib.pyplot as plt
@@ -117,13 +117,13 @@ plt.imshow(out_image[0])
 
 ## Calculate total distance per fishing area
 
-```{python}
+```
 zs = zonal_stats(comm_3338, "Coastal_2020_12_masked.tif", stats = "sum")
 ```
 
 Wrangle the data and reattach distances to the original polygons
 
-```{python}
+```
 dist = [d['sum'] for d in zs]
 
 res = pd.DataFrame({'STAT_AREA' : comm_3338["STAT_AREA"],
@@ -132,11 +132,10 @@ res = pd.DataFrame({'STAT_AREA' : comm_3338["STAT_AREA"],
 res_summary = res.dropna(thresh = 0).query("distance > 0")
 
 res_full = comm_3338.merge(res_summary, on = "STAT_AREA", how = 'left')
-
 ```
 
 Group by/summarize across another variable
 
-```{python}
+```
 res_full.plot(column = "distance", legend = True)
 ```
