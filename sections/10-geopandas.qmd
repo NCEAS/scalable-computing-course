@@ -90,7 +90,7 @@ To (maybe) make things more efficient, we can extract the bounding box for the s
 def bbox(long0, lat0, lat1, long1):
   return Polygon([[long0, lat0], [long1,lat0], [long1,lat1], [long0, lat1]])
 
-sh_bounds = com3338.total_bounds
+sh_bounds = com_3338.total_bounds
 
 coords = bbox(sh_bounds[0], sh_bounds[1], sh_bounds[2], sh_bounds[3])
 
