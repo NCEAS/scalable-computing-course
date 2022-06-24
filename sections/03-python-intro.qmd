@@ -6,6 +6,7 @@ author: "Jeanette Clark"
 ## Learning Objectives
 
 - Basic Python review
+- Using virtual environments
 - Writing in Jupyter notebooks
 - Writing functions in Python
 
@@ -24,6 +25,19 @@ author: "Jeanette Clark"
     - from IDE line by line
     - from the terminal
 
+## Virtual Environments
+
+* install virtualenvwrapper
+* modify .bash_profile to point to installs
+* check it was installed correctly
+* make virtual env `scomp`
+* install course requirements into that env
+* `deactivate` and `workon`
+
+## Brief overview of python syntax
+
+* lists, arrays, dictionaries, associative arrays
+
 ## Jupyter notebooks
 
 * Create a notebook
@@ -38,6 +52,7 @@ author: "Jeanette Clark"
 * write `myplot()` function to create the same plot we did in section above
 * load myplot into jupyter notebook (`from myplot.py import myplot`)
 * replace old plot method with new function
+* more to come in Bryce's section
 
 ## Resources
 

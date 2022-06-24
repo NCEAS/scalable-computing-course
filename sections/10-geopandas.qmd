@@ -86,11 +86,11 @@ def bbox(long0, lat0, lat1, long1):
   return Polygon([[long0, lat0], [long1,lat0], [long1,lat1], [long0, lat1]])
 
 
-test = bbox(comm_3338.total_bounds[0], comm_3338.total_bounds[1], comm_3338.total_bounds[2], comm_3338.total_bounds[3])
+coords = bbox(comm_3338.total_bounds[0], comm_3338.total_bounds[1], comm_3338.total_bounds[2], comm_3338.total_bounds[3])
 
 bbox_crop = gpd.GeoDataFrame(pd.DataFrame(['p1'], columns = ['geom']),
-    crs = {'init':'epsg:4326'},
-    geometry = [test])
+    crs = 'EPSG:3338',
+    geometry = [coords])
 ```
 
 Read in raster again cropped to bounding box
@@ -100,6 +100,14 @@ Read in raster again cropped to bounding box
 with rasterio.open("Coastal_2020_12.tif") as src:
     out_image, out_transform = rasterio.mask.mask(src, bbox_crop["geometry"], crop=True)
     out_meta = src.meta
+
+out_meta.update({"driver": "GTiff",
+                 "height": out_image.shape[1],
+                 "width": out_image.shape[2],
+                 "transform": out_transform})
+
+with rasterio.open("Coastal_2020_12_masked.tif", "w", **out_meta) as dest:
+    dest.write(out_image)
 ```
 
 
@@ -110,7 +118,7 @@ plt.imshow(out_image[0])
 ## Calculate total distance per fishing area
 
 ```{python}
-zs = zonal_stats(comm_3338, 'Coastal_2020_12.tif', stats = "sum")
+zs = zonal_stats(comm_3338, "Coastal_2020_12_masked.tif", stats = "sum")
 ```
 
 Wrangle the data and reattach distances to the original polygons
@@ -126,6 +134,8 @@ res_summary = res.dropna(thresh = 0).query("distance > 0")
 res_full = comm_3338.merge(res_summary, on = "STAT_AREA", how = 'left')
 
 ```
+
+Group by/summarize across another variable
 
 ```{python}
 res_full.plot(column = "distance", legend = True)
