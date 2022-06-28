@@ -26,11 +26,15 @@ This is a test to make sure we can run some code in this notebook.
 import geopandas as gpd
 import rasterio
 import rasterio.mask
-# from rasterstats import zonal_stats
-from shapely.geometry import Polygon
+import rasterio.warp
+from rasterio import features
+from rasterstats import zonal_stats
+from shapely.geometry import box
 import requests
 import matplotlib.pyplot as plt
+from matplotlib import style
 import pandas as pd
+import numpy as np
 
 ```
 
@@ -83,20 +87,22 @@ comm_3338 = comm.to_crs("EPSG:3338")
 comm_3338.plot()
 ```
 
-To (maybe) make things more efficient, we can extract the bounding box for the shapefile data and use that to clip the original raster data to just the extent we need. A simple function creates a list of 4 coordinate pairs from the 4 lower left/upper right points. This is then converted into a `geoDataFrame` to use with `rasterio`.
+We can extract the bounding box for the area of interest, and use that to clip the original raster data to just the extent we need. We use the `box` function from `shapely` to create the bounding box, then create a `geoDataFrame` from them and convert the WGS84 coordinates to the Alaska Albers projection.
 
 ```{python}
-# function to return polygon
-def bbox(long0, lat0, lat1, long1):
-  return Polygon([[long0, lat0], [long1,lat0], [long1,lat1], [long0, lat1]])
+coords = rasterio.warp.transform_bounds('EPSG:4326',
+                                        'EPSG:3338',
+                                         -153.5,
+                                         56,
+                                         -142.5,
+                                         62)
+coord_list = list(coords)
 
-sh_bounds = comm_3338.total_bounds
+coord_box = box(coord_list[0],coord_list[1], coord_list[2], coord_list[3])
 
-coords = bbox(sh_bounds[0], sh_bounds[1], sh_bounds[2], sh_bounds[3])
-
-bbox_crop = gpd.GeoDataFrame(pd.DataFrame(['p1'], columns = ['geom']),
-    crs = 'EPSG:3338',
-    geometry = [coords])
+bbox_crop = gpd.GeoDataFrame(
+    crs = 'EPSG:4326',
+    geometry = [coord_box])
 ```
 
 Read in raster again cropped to bounding box. 
@@ -109,7 +115,8 @@ with rasterio.open("Coastal_2020_12.tif") as src:
 out_meta.update({"driver": "GTiff",
                  "height": out_image.shape[1],
                  "width": out_image.shape[2],
-                 "transform": out_transform})
+                 "transform": out_transform,
+                 "compress": "lzw"})
 
 with rasterio.open("Coastal_2020_12_masked.tif", "w", **out_meta) as dest:
     dest.write(out_image)
@@ -122,25 +129,69 @@ plt.imshow(out_image[0])
 
 ## Calculate total distance per fishing area
 
+Rasterize each polygon in the shapefile that falls within the bounds of the raster data we are calculating statistics for.
+
+We return a dictionary of indexed arrays, where each item corresponds to one polygon (fishing area). The array contains the indices of the original raster that fall within that fishing area.
+
+```{python}
+with rasterio.open('Coastal_2020_12_masked.tif') as src:
+  comm_3338['id'] = range(0,len(comm_3338))
+
+  crosswalk_dict = {}
+  for geom, idx in zip(comm_3338.geometry, comm_3338['id']):
+
+    rasterized = features.rasterize(geom,
+                                   out_shape=src.shape,
+                                   transform=src.transform,
+                                   all_touched=True,
+                                   fill=0,
+                                   dtype='uint8')
+    # only save polygons that have a non-zero value
+    if any(np.unique(rasterized)) == 1:
+        crosswalk_dict[idx] = np.where(rasterized == 1)
+
 ```
-zs = zonal_stats(comm_3338, "Coastal_2020_12_masked.tif", stats = "sum")
+
+Now we use the dictionary to calculate the sum of all of the pixels in the original raster that fall within each fishing area.
+
+```{python}
+ with rasterio.open('Coastal_2020_12_masked.tif') as src:
+     # read in the cropped raster
+     r_array = src.read(1)
+     # turn no data values into actual NaNs
+     r_array[r_array == src.nodata] = np.nan
+
+     mean_dict = {}
+     # for each item in the dictionary
+     for key, value in crosswalk_dict.items():
+      # save the sum of the indices of the raster to a new dictionary
+      mean_dict[key] = np.nansum(r_array[value])
+     # create a data frame from the result
+     df = pd.DataFrame.from_dict(mean_dict,
+        orient='index',
+        columns=['distance'])
+# extract the index of the data frame as a column to use in a join
+df['id'] = df.index
 ```
 
-Wrangle the data and reattach distances to the original polygons
+Now we join the result to the original geodataframe.
 
-```
-dist = [d['sum'] for d in zs]
-
-res = pd.DataFrame({'STAT_AREA' : comm_3338["STAT_AREA"],
-                    'distance' : dist})
-
-res_summary = res.dropna(thresh = 0).query("distance > 0")
-
-res_full = comm_3338.merge(res_summary, on = "STAT_AREA", how = 'left')
+```{python}
+# join the sums to the original data frame
+res_full = comm_3338.merge(df, on = "id", how = 'inner')
 ```
 
-Group by/summarize across another variable
 
-```
-res_full.plot(column = "distance", legend = True)
+todo: Group by/summarize across another variable
+
+```{python}
+fig, ax = plt.subplots(figsize=(7, 7))
+plt.style.use("seaborn-talk")
+ax = res_full.plot(column = "distance", legend = True, ax = ax)
+fig = ax.figure
+cb_ax = fig.axes[1]
+cb_ax.set_yticklabels(["0", "2,000", "4,000", "6,000", "8,000", "10,000", "12,000", "14,000", "16,000"])
+ax.set_axis_off()
+ax.set_title("Distance Traveled by Ships in Kilometers")
+plt.show()
 ```
