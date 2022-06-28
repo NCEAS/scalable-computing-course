@@ -28,7 +28,6 @@ import rasterio
 import rasterio.mask
 import rasterio.warp
 from rasterio import features
-from rasterstats import zonal_stats
 from shapely.geometry import box
 import requests
 import matplotlib.pyplot as plt
