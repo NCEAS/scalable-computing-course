@@ -27,13 +27,19 @@ import geopandas as gpd
 import rasterio
 import rasterio.mask
 import rasterio.warp
+import rasterio.plot
 from rasterio import features
 from shapely.geometry import box
+from shapely.geometry import Polygon
 import requests
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import style
 import pandas as pd
 import numpy as np
+
+
+
 
 ```
 
@@ -88,6 +94,8 @@ comm_3338.plot()
 
 We can extract the bounding box for the area of interest, and use that to clip the original raster data to just the extent we need. We use the `box` function from `shapely` to create the bounding box, then create a `geoDataFrame` from them and convert the WGS84 coordinates to the Alaska Albers projection.
 
+todo: explain the warp transform thing here
+
 ```{python}
 coords = rasterio.warp.transform_bounds('EPSG:4326',
                                         'EPSG:3338',
@@ -100,7 +108,7 @@ coord_list = list(coords)
 coord_box = box(coord_list[0],coord_list[1], coord_list[2], coord_list[3])
 
 bbox_crop = gpd.GeoDataFrame(
-    crs = 'EPSG:4326',
+    crs = 'EPSG:3338',
     geometry = [coord_box])
 ```
 
@@ -121,10 +129,23 @@ with rasterio.open("Coastal_2020_12_masked.tif", "w", **out_meta) as dest:
     dest.write(out_image)
 ```
 
+We can also clip the shapefile data to the same bounding box
 
 ```{python}
-plt.imshow(out_image[0])
+comm_clip = comm_3338.clip(bbox_crop['geometry'])
 ```
+
+Quick plot to ensure they are in the same extent, and look as expected.
+
+```{python}
+r = rasterio.open('Coastal_2020_12_masked.tif')
+fig, ax = plt.subplots(figsize=(15, 15))
+rasterio.plot.show(r, ax=ax)
+comm_clip.plot(ax=ax, facecolor='none', edgecolor='red')
+src.close() 
+```
+
+
 
 ## Calculate total distance per fishing area
 
@@ -134,17 +155,26 @@ We return a dictionary of indexed arrays, where each item corresponds to one pol
 
 ```{python}
 with rasterio.open('Coastal_2020_12_masked.tif') as src:
-  comm_3338['id'] = range(0,len(comm_3338))
+    shape = src.shape
+    transform = src.transform
+    # read in the cropped raster
+    r_array = src.read(1)
+    # turn no data values into actual NaNs
+    r_array[r_array == src.nodata] = np.nan
+```
 
-  crosswalk_dict = {}
-  for geom, idx in zip(comm_3338.geometry, comm_3338['id']):
 
+```{python}
+comm_3338['id'] = range(0,len(comm_3338))
+
+crosswalk_dict = {}
+for geom, idx in zip(comm_3338.geometry, comm_3338['id']):
     rasterized = features.rasterize(geom,
-                                   out_shape=src.shape,
-                                   transform=src.transform,
-                                   all_touched=True,
-                                   fill=0,
-                                   dtype='uint8')
+                                    out_shape=shape,
+                                    transform=transform,
+                                    all_touched=True,
+                                    fill=0,
+                                    dtype='uint8')
     # only save polygons that have a non-zero value
     if any(np.unique(rasterized)) == 1:
         crosswalk_dict[idx] = np.where(rasterized == 1)
@@ -154,21 +184,15 @@ with rasterio.open('Coastal_2020_12_masked.tif') as src:
 Now we use the dictionary to calculate the sum of all of the pixels in the original raster that fall within each fishing area.
 
 ```{python}
- with rasterio.open('Coastal_2020_12_masked.tif') as src:
-     # read in the cropped raster
-     r_array = src.read(1)
-     # turn no data values into actual NaNs
-     r_array[r_array == src.nodata] = np.nan
-
-     mean_dict = {}
-     # for each item in the dictionary
-     for key, value in crosswalk_dict.items():
-      # save the sum of the indices of the raster to a new dictionary
-      mean_dict[key] = np.nansum(r_array[value])
-     # create a data frame from the result
-     df = pd.DataFrame.from_dict(mean_dict,
-        orient='index',
-        columns=['distance'])
+mean_dict = {}
+# for each item in the dictionary
+for key, value in crosswalk_dict.items():
+    # save the sum of the indices of the raster to a new dictionary
+    mean_dict[key] = np.nansum(r_array[value])
+# create a data frame from the result
+df = pd.DataFrame.from_dict(mean_dict,
+    orient='index',
+    columns=['distance'])
 # extract the index of the data frame as a column to use in a join
 df['id'] = df.index
 ```
