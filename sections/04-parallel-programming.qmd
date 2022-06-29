@@ -1,8 +1,226 @@
 ---
 title: "Pleasingly Parallel Programming"
-author: "Matt Jones"
 ---
 
 ## Learning Objectives
 
+- Understand what parallel computing is and when it may be useful
+- Understand how parallelism can work
+- Review sequential loops and map functions
+- Build a parallel program using `concurrent.futures`
+- Build a parallel program using `parsl`
+- Understand Thread Pools and Process pools
+
 ## Introduction
+
+Processing large amounts of data with complex models can be time consuming.  New types of sensing means the scale of data collection today is massive. And modeled outputs can be large as well. For example, here's a 2 TB (that's Terabyte) set of modeled output data from [Ofir Levy et al. 2016](https://doi.org/10.5063/F1Z899CZ) that models 15 environmental variables at hourly time scales for hundreds of years across a regular grid spanning a good chunk of North America:
+
+![Levy et al. 2016. doi:10.5063/F1Z899CZ](../images/levy-map.png)
+
+There are over 400,000 individual netCDF files in the [Levy et al. microclimate data set](https://doi.org/10.5063/F1Z899CZ).  Processing them would benefit massively from parallelization.
+
+Alternatively, think of remote sensing data.  Processing airborne hyperspectral data can involve processing each of hundreds of bands of data for each image in a flight path that is repeated many times over months and years.  
+
+![NEON Data Cube](../images/DataCube.png)
+
+
+## Why parallelism?
+
+Much R code runs fast and fine on a single processor.  But at times, computations
+can be:
+
+- **cpu-bound**: Take too much cpu time
+- **memory-bound**: Take too much memory
+- **I/O-bound**: Take too much time to read/write from disk
+- **network-bound**: Take too much time to transfer
+
+To help with **cpu-bound** computations, one can take advantage of modern processor architectures that provide multiple cores on a single processor, and thereby enable multiple computations to take place at the same time. In addition, some machines ship with multiple processors, allowing large computations to occur across the entire cluster of those computers. Plus, these machines also have large amounts of memory to avoid **memory-bound** computing jobs.
+
+## Processors (CPUs) and Cores
+
+A modern CPU (Central Processing Unit) is at the heart of every computer.  While
+traditional computers had a single CPU, modern computers can ship with mutliple 
+processors, which in turn can each contain multiple cores.  These processors and 
+cores are available to perform computations.
+
+A computer with one processor may still have 4 cores (quad-core), allowing 4 computations
+to be executed at the same time.
+
+![](../images/processor.png) 
+
+A typical modern computer has multiple cores, ranging from one or two in laptops
+to thousands in high performance compute clusters.  Here we show four quad-core
+processors for a total of 16 cores in this machine.
+
+![](../images/processors.png)
+
+You can think of this as allowing 16 computations to happen at the same time. Theroetically, your computation would take 1/16 of the time (but only theoretically, more on that later).
+
+Historically, R has only utilized one processor, which makes it single-threaded.  Which is a shame, because the 2017 MacBook Pro that I am writing this on is much more powerful than that:
+
+```{bash eval=FALSE}
+jones@powder:~$ sysctl hw.ncpu hw.physicalcpu
+hw.ncpu: 8
+hw.physicalcpu: 4
+```
+
+To interpret that output, this machine `powder` has 4 physical CPUs, each of which has
+two processing cores, for a total of 8 cores for computation.  I'd sure like my R computations to use all of that processing power.  Because its all on one machine, we can easily use *multicore* processing tools to make use of those cores. Now let's look at
+the computational server `aurora` at NCEAS:
+
+```{bash eval=FALSE}
+jones@included-crab:~$ lscpu | egrep 'CPU\(s\)|per core|per socket'
+CPU(s):                88
+On-line CPU(s) list:   0-87
+Thread(s) per core:    2
+Core(s) per socket:    22
+NUMA node0 CPU(s):     0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86
+NUMA node1 CPU(s):     1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87
+```
+
+Now that's more compute power!  `included-crab` has 384 GB of RAM, and ample storage. All still under the control of a single operating system.
+
+However, maybe one of these NSF-sponsored high performance computing clusters (HPC) is looking attractive about now:
+
+- [JetStream](https://jetstream-cloud.org/)
+    - 640 nodes, 15,360 cores, 80TB RAM
+- [Stampede2]() at TACC is coming online in 2017
+    - 4200 nodes, 285,600 cores
+
+- TODO: update with modern cluster sizes
+
+Note that these clusters have multiple nodes (hosts), and each host has multiple cores. So this is really multiple computers clustered together to act in a coordinated fashion, but each node runs its own copy of the operating system, and is in many ways independent of the other nodes in the cluster.  One way to use such a cluster would be to use just one of the nodes, and use a multi-core approach to parallelization to use all of the cores on that single machine.  But to truly make use of the whole cluster, one must use parallelization tools that let us spread out our computations across multiple host nodes in the cluster.
+
+## Modes of parallelization
+
+- TODO: develop diagram(s) showing
+  - Single memory image task parallelization
+
+Serial
+  ```
+  Launch tasks --> Task 1 --> Task 2 --> Task 3 --> Task 4 --> Task 5 --> Finish
+  ```
+
+Parallel
+  ``` 
+  Launch tasks --> 
+                   Task 1 --\
+                   Task 2 ---\
+                   Task 3 -----> Finish  
+                   Task 4 ---/ 
+                   Task 5 --/
+  ```
+
+  - Cluster task parallelization
+
+Cluster parallel
+  ``` Show dispatch to cluster nodes and reassembly of data
+  Launch tasks --> 
+                   Marshal --> Task 1 --> Unmarshal --\
+                   Marshal --> Task 2 --> Unmarshal ---\
+                   Marshal --> Task 3 --> Unmarshal -----> Finish  
+                   Marshal --> Task 4 --> Unmarshal ---/ 
+                   Marshal --> Task 5 --> Unmarshal --/
+  ```
+
+- TODO: Should we also include figure with data or functional dependencies?
+
+
+## Task parallelism with `concurrent.futures`
+
+When you have a list of repetitive tasks, you may be able to speed it up by adding more computing power.  If each task is completely independent of the others, then it is a prime candidate for executing those tasks in parallel, each on its own core.  For example, let's build a simple loop that downloads the data files that we need for an analysis. First, we start with the serial implementation. 
+
+```{python}
+# Use loop for serial execution of tasks
+
+# Tasks are to download data from a dataset
+```
+
+The issue with this loop is that we execute each trial sequentially, which means that only one of our 8 processors on this machine are in use.  In order to exploit parallelism, we need to be able to dispatch our tasks as functions, with one task
+going to each processor.  To do that, we need to convert our task to a function, and then use the `map()` function to apply that function to all of the members of a set.  Here's the same code rewritten to use `map()`, which applies a function to each of the members of a list (in this case the files we want to download):
+
+```{python}
+# Use `map` for serial execution of tasks
+
+# Tasks are to download data from a dataset
+```
+
+## Approaches to parallelization
+When parallelizing jobs, one can:
+
+- Use the multiple cores on a local computer through `mclapply`
+- Use multiple processors on local (and remote) machines using `makeCluster` and `clusterApply`
+
+    - In this approach, one has to manually copy data and code to each cluster member using `clusterExport`
+    - This is extra work, but sometimes gaining access to a large cluster is worth it
+
+## concurrent.futures
+
+```{python}
+# Loop versus map for parallel execution of tasks
+
+# Using concurrent.futures and ThreadPool
+
+# Tasks are to download data from a dataset
+```
+
+## parsl
+
+- Overview of parsl and it's use of python decorators.
+
+```{python}
+# Loop versus map for parallel execution of tasks
+
+# Using parsl decorators and ThreadPool
+
+# Tasks are to download data from a dataset
+```
+
+- Configurable Executors in parsl
+  - HightThroughputExecutor for cluster jobs
+
+```{python}
+# Loop versus map for parallel execution of tasks
+
+# Using parsl decorators and ThreadPool
+
+# Tasks are to download data from a dataset
+```
+
+## When to parallelize
+
+It's not as simple as it may seem. While in theory each added processor would linearly increase the throughput of a computation, there is overhead that reduces that efficiency.  For example, the code and, importantly, the data need to be copied to each additional CPU, and this takes time and bandwidth.  Plus, new processes and/or threads need to be created by the operating system, which also takes time.  This overhead reduces the efficiency enough that realistic performance gains are much less than theoretical, and usually do not scale linearly as a function of processing power. For example, if the time that a computation takes is short, then the overhead of setting up these additional resources may actually overwhelm any advantages of the additional processing power, and the computation could potentially take longer!
+
+In addition, not all of a task can be parallelized. Depending on the proportion, the expected speedup can be significantly reduced.  Some propose that this may follow [Amdahl's Law](https://en.wikipedia.org/wiki/Amdahl%27s_law), where the speedup of the computation (y-axis) is a function of both the number of cores (x-axis) and the proportion of the computation that can be parallelized (see colored lines):
+
+```{r label="amdahl", echo=FALSE}
+library(ggplot2)
+library(tidyr)
+amdahl <- function(p, s) {
+  return(1 / ( (1-p) + p/s  ))
+}
+doubles <- 2^(seq(0,16))
+cpu_perf <- cbind(cpus = doubles, p50 = amdahl(.5, doubles))
+cpu_perf <- cbind(cpu_perf, p75 = amdahl(.75, doubles))
+cpu_perf <- cbind(cpu_perf, p85 = amdahl(.85, doubles))
+cpu_perf <- cbind(cpu_perf, p90 = amdahl(.90, doubles))
+cpu_perf <- cbind(cpu_perf, p95 = amdahl(.95, doubles))
+#cpu_perf <- cbind(cpu_perf, p99 = amdahl(.99, doubles))
+cpu_perf <- as.data.frame(cpu_perf)
+cpu_perf <- cpu_perf %>% gather(prop, speedup, -cpus)
+ggplot(cpu_perf, aes(cpus, speedup, color=prop)) + 
+  geom_line() +
+  scale_x_continuous(trans='log2') +
+  theme_bw() +
+  labs(title = "Amdahl's Law")
+```
+
+
+So, its important to evaluate the computational efficiency of requests, and work to ensure that additional compute resources brought to bear will pay off in terms of increased work being done.  With that, let's do some parallel computing...
+
+## Summary
+
+In this lesson, we showed examples of computing tasks that are likely limited by the number of CPU cores that can be applied, and we reviewed the architecture of computers to understand the relationship between CPU processors and cores.  Next, we reviewed the way in which traditional `for` loops in R can be rewritten as functions that are applied to a list serially using `lapply`, and then how the `parallel` package `mclapply` function can be substituted in order to utilize multiple cores on the local computer to speed up computations. Finally, we installed and reviewed the use of the `foreach` package with the `%dopar` operator to accomplish a similar parallelization using multiple cores.
+
+## Further Reading
+
