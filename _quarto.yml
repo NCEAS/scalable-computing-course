@@ -26,6 +26,7 @@ book:
     - sections/04-parallel-programming.qmd
     - sections/05-adc-data-publishing.qmd
     - sections/10-geopandas.qmd
+    - sections/11-parquet-arrow.qmd
     - sections/references.qmd
 
 bibliography: references.bib
