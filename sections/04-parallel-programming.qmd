@@ -199,7 +199,7 @@ It's not as simple as it may seem. While in theory each added processor would li
 
 In addition, not all of a task can be parallelized. Depending on the proportion, the expected speedup can be significantly reduced.  Some propose that this may follow [Amdahl's Law](https://en.wikipedia.org/wiki/Amdahl%27s_law), where the speedup of the computation (y-axis) is a function of both the number of cores (x-axis) and the proportion of the computation that can be parallelized (see colored lines):
 
-```{r label="amdahl", echo=FALSE}
+```
 #| eval: false
 library(ggplot2)
 library(tidyr)
