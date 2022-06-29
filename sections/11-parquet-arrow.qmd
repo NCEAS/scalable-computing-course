@@ -1,0 +1,21 @@
+---
+title: "Data Futures: Parquet and Arrow"
+author: Jeanette Clark
+---
+
+## Learning Objectives
+
+- The difference between column and row wise data
+- Speed advantages to columnnar data storage
+- How `arrow` enables faster processing
+
+## Introduction
+
+- column (parquet) vs row (csv) data example
+- why column can give faster read speeds
+- how arrow interacts with columnar data formats (like parquet)
+
+
+## Example
+
+- show a read write example and benchmark maybe
