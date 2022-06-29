@@ -32,15 +32,10 @@ from rasterio import features
 from shapely.geometry import box
 from shapely.geometry import Polygon
 import requests
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import style
 import pandas as pd
 import numpy as np
-
-
-
-
 ```
 
 Download the ship traffic raster from [Kapsar et al.](https://doi.org/10.18739/A2SQ8QJ9S). We grab a one month slice from December, 2020 of a coastal subset of data with 1km resolution.
@@ -99,9 +94,9 @@ todo: explain the warp transform thing here
 ```{python}
 coords = rasterio.warp.transform_bounds('EPSG:4326',
                                         'EPSG:3338',
-                                         -153.5,
-                                         56,
-                                         -142.5,
+                                         -159.5,
+                                         55,
+                                         -144.5,
                                          62)
 coord_list = list(coords)
 
@@ -138,13 +133,21 @@ comm_clip = comm_3338.clip(bbox_crop['geometry'])
 Quick plot to ensure they are in the same extent, and look as expected.
 
 ```{python}
-r = rasterio.open('Coastal_2020_12_masked.tif')
-fig, ax = plt.subplots(figsize=(15, 15))
-rasterio.plot.show(r, ax=ax)
-comm_clip.plot(ax=ax, facecolor='none', edgecolor='red')
-src.close() 
-```
+with rasterio.open('Coastal_2020_12_masked.tif') as src:
+    r = src.read(1)
 
+r[r == src.nodata] = np.nan
+
+fig, ax = plt.subplots(figsize=(15, 15))
+
+rasterio.plot.show(r,
+                   ax=ax,
+                   vmin = 0,
+                   vmax = 6000,
+                   transform = src.transform)
+
+comm_clip.plot(ax=ax, facecolor='none', edgecolor='red')
+```
 
 
 ## Calculate total distance per fishing area
