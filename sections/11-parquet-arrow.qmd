@@ -1,16 +1,19 @@
 ---
 title: "Data Futures: Parquet and Arrow"
-author: Jeanette Clark
 ---
 
 ## Learning Objectives
 
-- The difference between column and row wise data
+- The difference between column major and row major data
 - Speed advantages to columnnar data storage
 - How `arrow` enables faster processing
 
 ## Introduction
 
+- open, seek, read, write, close - ways to access data
+- difference between parquet and arrow
+    - how paging and memory management works, blocks are organized by pages
+    - on disk and in memory representation are the same 
 - column (parquet) vs row (csv) data example
 - why column can give faster read speeds
 - how arrow interacts with columnar data formats (like parquet)

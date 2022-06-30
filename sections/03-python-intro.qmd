@@ -1,6 +1,5 @@
 ---
 title: "Python Programming on Clusters"
-author: "Jeanette Clark"
 ---
 
 ## Learning Objectives
@@ -29,15 +28,14 @@ author: "Jeanette Clark"
 
 Why virtual environments? We'll answer this.
 
-First install `virtualenvwrapper`
+First we will create `.bash_profile` file to create variables that point to the install locations
+of python and `virtualenvwrapper`. `.bash_profile` is just a text file that contains bash commands
+that are run every time you start up a new terminal. Although setting up this file is not required
+to use `virtualenvwrapper`, it is convenient because it allows you to set up some reasonable defaults
+to the commands (meaning less typing, overall), and it makes sure that the package is available every
+time you start a new terminal.
 
-```
-pip3 install virtualenvwrapper
-```
-
-Now we will create the `.bash_profile` file to create variables that point to the install locations of python and `virtualenvwrapper`.
-
-In VS Code, select "File > New Text File" then paste this into the file:
+To set up the `.bash_profile`. In VS Code, select "File > New Text File" then paste this into the file:
 
 ```
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
@@ -45,11 +43,17 @@ export VIRTUALENVWRAPPER_VIRTUAWORKON_HOME=$HOME/.virtualenvs
 source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 ```
 
-Save the file in the top of your user directory as `.bash_profile`.
+The first line points `virtualenvwrapper` to the default python installation to use. In this case, we
+point it to the system wide install of python on the server. The next line sets the directory where
+your virtual environments will be stored. We point it to a hidden directory (`.virtualenvs`) in your home directory.
+Finally, the last line sources a bash script that ships with `virtualenvwrapper`, which makes all of `virtualenvwrapper`
+commands available in your terminal session.
+
+Save the file in the top of your home directory as `.bash_profile`.
 
 Restart your terminal, then check to make sure it was installed and configured correctly
 
-```
+```{bash, eval = FALSE}
 mkvirtualenv --version
 ```
 
@@ -59,20 +63,45 @@ Now we can create the virtual environment we will use for the course
 mkvirtualenv scomp
 ```
 
-You'll see the name of the env you are working in on the left side of your terminal prompt in parentheses.
-
-Now lets install the dependencies for this course into that environment. (Note: need to figure out how to get them this file)
+By default, this will point to our Python 3.9 installation on the server, because of the settings in
+`.bash_profile`. If you want to point to a different version of python, or be more explicit about the
+version, you can use the `-p` flag and pass a path to the python install, like so:
 
 ```
-python3 -m pip install -r requirements.txt
+ mkvirtualenv -p /usr/bin/python3 test
 ```
 
-To deactivate your environment (like if you want to work on a different project), just run `deactivate`. To activate it again, run
+After making a virtual environment, it will automatically be activated. You'll see the name of the env
+you are working in on the left side of your terminal prompt in parentheses. To deactivate your environment
+(like if you want to work on a different project), just run `deactivate`. To activate it again, run
 
 ```
 workon scomp
 ```
 
+You can get a list of all available environments by just running:
+
+```
+workon
+```
+
+Now let's install the dependencies for this course into that environment. (Note: need to figure out how to get them this file)
+
+```
+python3 -m pip install -r requirements.txt
+```
+
+#### Installing locally (optional)
+
+`virtualenvwrapper` was already installed on the server we are working on. To install on your local computer,
+run:
+
+```
+pip3 install virtualenvwrapper
+```
+
+And then follow the instructions as described above, making sure that you have the correct paths set
+when you edit your `.bash_profile`.
 
 ## Brief overview of python syntax
 
