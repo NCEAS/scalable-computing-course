@@ -253,6 +253,14 @@ Create a new code chunk that will download the csv that we are going to use for 
 Create a variable called URL and assign it the link copied to your clipboard. Then use `requests.get` to download the file, and `open` to write it to disk, to a directory called `data/`
 
 ```{python}
+#| echo: false
+import os
+
+os.mkdir('data/')
+```
+
+
+```{python}
 if not exists('data/discharge_timeseries.csv'):
 
         url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Ae248467d-e1f9-4a32-9e38-a9b4fb17cefb'
