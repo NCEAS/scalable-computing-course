@@ -255,8 +255,8 @@ Create a variable called URL and assign it the link copied to your clipboard. Th
 ```{python}
 #| echo: false
 import os
-
-os.mkdir('data/')
+if not exists ('data/'):
+        os.mkdir('data/')
 ```
 
 
