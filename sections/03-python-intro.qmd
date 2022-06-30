@@ -1,5 +1,5 @@
 ---
-title: "Python Programming on Clusters"
+title: 'Python Programming on Clusters'
 ---
 
 ## Learning Objectives
@@ -31,7 +31,7 @@ to use `virtualenvwrapper`, it is convenient because it allows you to set up som
 to the commands (meaning less typing, overall), and it makes sure that the package is available every
 time you start a new terminal.
 
-To set up the `.bash_profile`. In VS Code, select "File > New Text File" then paste this into the file:
+To set up the `.bash_profile`. In VS Code, select 'File > New Text File' then paste this into the file:
 
 ```
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
@@ -101,6 +101,12 @@ when you edit your `.bash_profile`.
 
 ## Brief overview of python syntax
 
+```{python}
+#| echo: false
+from IPython.core.interactiveshell import InteractiveShell
+InteractiveShell.ast_node_interactivity = 'all'
+```
+
 Assign values to variables using `=`
 
 ```{python}
@@ -119,14 +125,14 @@ There are 5 standard data types in python
 We already saw a number type, here is a string:
 
 ```{python}
-str = "Hello World!"
+str = 'Hello World!'
 print(str)
 ```
 
 Lists in python are very versatile, and are created using square brackets `[]`. Items in a list can be of different data types.
 
 ```{python}
-list = [100, 50, -20, "text"]
+list = [100, 50, -20, 'text']
 print(list)
 ```
 
@@ -142,10 +148,10 @@ list[2:] # print last elements from 3rd
 The `+` and `*` operators work on lists by creating a new list using either concatenation (`+`) or repetition (`*`).
 
 ```{python}
-list2 = ["more", "things"]
+list2 = ['more', 'things']
 
 list + list2
-list * 2
+list * 3
 ```
 
 Tuples are similar to lists, except the values cannot be changed in place. They are constructred with parentheses.
@@ -157,16 +163,18 @@ tuple * 3
 tuple + tuple
 ```
 
-Observe the difference when we try to change the first value.
+Observe the difference when we try to change the first value. It works for a list:
 
 ```{python}
-list[0] = "new value"
+list[0] = 'new value'
 list
 ```
 
+...and errors for a tuple.
+
 ```{python}
 #| eval: false
-tuple[0] = "new value"
+tuple[0] = 'new value'
 ```
 
 ```
@@ -176,27 +184,172 @@ TypeError: 'tuple' object does not support item assignment
 Dictionaries consist of key-value pairs, and are created using the syntax `{key: value}`. Keys are usually numbers or strings, and values can be any data type.
 
 ```{python}
-dict = {"name": ["Jeanette", "Matt"],
-        "location": ["Tucson", "Juneau"]}
+dict = {'name': ['Jeanette', 'Matt'],
+        'location': ['Tucson', 'Juneau']}
 
-dict["name"]
+dict['name']
 dict.keys()
+```
+
+To determine the type of an object, you can use the `type()` method.
+
+```{python}
+type(list)
+type(tuple)
+type(dict)
 ```
 
 ## Jupyter notebooks
 
-* Create a notebook
-* Load in some libraries (pandas, numpy, scipy, matplotlib)
-* Read in a csv
-* group and summarize by a variable
+To create a new notebook, from the file menu select File > New File > Jupyter Notebook
+
+At the top of your notebook, add a first level header using a single hash. Practice some markdown text by creating:
+
+- a list
+- **bold** text
+- a link
+
+Use the [Markdown cheat sheet](https://www.markdownguide.org/cheat-sheet/) if needed.
+
+To open a chunk of code, type three backticks (`), curly braces, and then the word python. Close
+the code chunk using three more backticks.
+
+### Load libraries
+
+In your first code chunk, lets load in some modules. We'll use `pandas`, `numpy`, `matplotlib.pyplot`, `requests`, `skimpy`, and `exists` from `os.path`.
+
+```{python}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import requests
+import skimpy
+from os.path import exists
+```
+
+A note on style: There are a few ways to construct import statements. The above code uses three of the most common:
+
+```
+import module
+import module as m
+from module import function
+```
+
+The first way of importing will make the module a function comes from more explicitly clear, and is the simplest. However for very long module names, or ones that are used very frequently (like `pandas`, `numpy`, and `matplotlib.plot`), the code in the notebook will be more cluttered with constant calls to longer module names. So `module.function()` instead is written as `m.function()`
+
+The second way of importing a module is a good style to use in cases where modules are used frequently, or have extremely long names. If you import every single module with a short name, however, you might have a hard time remembering which modules are named what, and it might be more confusing for others trying to read your code. Many of the most commonly used libraries for python data science have community driven styling for how they are abbreviated in import statements, and these community norms are generally best followed.
+
+Finally, the last way to import a single object from a module can be helpful if you only need that one piece from a larger module, but again, like the first case, results in less explicit code and therefore runs the risk of your or someone else misremembering the usage and source.
+
+
+### Read in a csv
+
+Create a new code chunk that will download the csv that we are going to use for this tutorial.
+
+- Navigate to [Rohi Muthyala, Åsa Rennermalm, Sasha Leidman, Matthew Cooper, Sarah Cooley, et al. 2022. 62 days of Supraglacial streamflow from June-August, 2016 over southwest Greenland. Arctic Data Center. doi:10.18739/A2XW47X5F.](https://doi.org/10.18739/A2XW47X5F)
+- Right click the download button for 'Discharge_timeseries.csv'
+- Click 'copy link address'
+
+Create a variable called URL and assign it the link copied to your clipboard. Then use `requests.get` to download the file, and `open` to write it to disk, to a directory called `data/`
+
+```{python}
+if not exists('data/discharge_timeseries.csv'):
+
+        url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Ae248467d-e1f9-4a32-9e38-a9b4fb17cefb'
+
+        data = requests.get(url)
+        a = open('data/discharge_timeseries.csv', 'wb').write(data.content)
+```
+
+Now we can read in the data from the file.
+
+```{python}
+df = pd.read_csv('data/discharge_timeseries.csv')
+df.head()
+```
+
+The column names are a bit messy so we can use `clean_columns` from `skimpy` to make them more accessible very quickly. We can also use the `skim` function to get a quick summary of the data.
+
+```{python}
+clean_df = skimpy.clean_columns(df)
+skimpy.skim(clean_df)
+```
+
+We can see that the `date` column is classed as a string, and not a date, so let's fix that.
+
+```{python}
+clean_df['date'] = pd.to_datetime(clean_df['date'])
+skimpy.skim(clean_df)
+```
+
+If we wanted to calculate the daily mean flow (as opposed to the flow every 5 minutes), we need to:
+
+- create a new column with only the date
+- group by that variable
+- summarize over it by taking the mean of the discharge variable
+
+First we should probably rename our existing date/time column to prevent from getting confused.
+
+```{python}
+clean_df = clean_df.rename(columns = {'date': 'datetime'})
+```
+
+Now create the new date column
+
+```{python}
+clean_df['date'] = clean_df['datetime'].dt.date
+```
+
+Finally, we use group by to split the data into groups according to the date, apply a function (`mean`) to each group, and then combine the results in a single data table.
+
+```{python}
+daily_flow = clean_df.groupby('date', as_index = False).mean()
+```
+
 * create a simple plot
+
+```{python}
+var = 'discharge_m_3_s'
+var_labs = {'discharge_m_3_s': 'Total Discharge'}
+
+fig, ax = plt.subplots(figsize=(7, 7))
+plt.style.use("seaborn-talk")
+plt.plot(daily_flow['date'], daily_flow[var]);
+plt.xticks(rotation = 45);
+ax.set_ylabel(var_labs.get('discharge_m_3_s'));
+```
 
 ## Functions
 
+The plot we made above is great, but what if we wanted to make it for each variable? We could copy paste it and replace some things, but this violates a core tenet of programming: Don't Repeat Yourself! Instead, we'll create a function called `myplot` that accepts the data frame and variable as arguments.
+
 * create `myplot.py`
-* write `myplot()` function to create the same plot we did in section above
+
+```{python}
+def myplot(df, var):
+
+        var_labs = {'discharge_m_3_s': 'Total Discharge (m^3/s)',
+                    'total_pressure_m': 'Total Pressure (m)',
+                    'air_pressure_m': 'Air Pressure (m)',
+                    'stage_m': 'Stage (m)',
+                    'temperature_degrees_c': 'Temperature (C)'}
+
+        fig, ax = plt.subplots(figsize=(7, 7))
+        plt.style.use("seaborn-talk")
+        plt.plot(df['date'], df[var]);
+        plt.xticks(rotation = 45);
+        ax.set_ylabel(var_labs.get(var));
+```
+
+
 * load myplot into jupyter notebook (`from myplot.py import myplot`)
 * replace old plot method with new function
+
+```{python}
+myplot(daily_flow, 'temperature_degrees_c')
+
+```
+
 * more to come in Bryce's section
 
 ## Resources
