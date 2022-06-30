@@ -1,6 +1,5 @@
 ---
 title: "Remote Computing"
-author: "Sam Csik"
 ---
 
 **Notes from Google Sheet (DELETE LATER)**  

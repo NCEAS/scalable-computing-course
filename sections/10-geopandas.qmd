@@ -1,6 +1,5 @@
 ---
 title: "Spatial and Image Data Using GeoPandas"
-author: Jeanette Clark
 execute:
   freeze: auto
 ---
