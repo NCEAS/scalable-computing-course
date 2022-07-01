@@ -154,7 +154,7 @@ list + list2
 list * 3
 ```
 
-Tuples are similar to lists, except the values cannot be changed in place. They are constructred with parentheses.
+Tuples are similar to lists, except the values cannot be changed in place. They are constructed with parentheses.
 
 ```{python}
 tuple = ('a', 'b', 'c', 'd')
@@ -237,7 +237,7 @@ from module import function
 
 The first way of importing will make the module a function comes from more explicitly clear, and is the simplest. However for very long module names, or ones that are used very frequently (like `pandas`, `numpy`, and `matplotlib.plot`), the code in the notebook will be more cluttered with constant calls to longer module names. So `module.function()` instead is written as `m.function()`
 
-The second way of importing a module is a good style to use in cases where modules are used frequently, or have extremely long names. If you import every single module with a short name, however, you might have a hard time remembering which modules are named what, and it might be more confusing for others trying to read your code. Many of the most commonly used libraries for python data science have community driven styling for how they are abbreviated in import statements, and these community norms are generally best followed.
+The second way of importing a module is a good style to use in cases where modules are used frequently, or have extremely long names. If you import every single module with a short name, however, you might have a hard time remembering which modules are named what, and it might be more confusing for others trying to read your code. Many of the most commonly used libraries for python data science have community-driven styling for how they are abbreviated in import statements, and these community norms are generally best followed.
 
 Finally, the last way to import a single object from a module can be helpful if you only need that one piece from a larger module, but again, like the first case, results in less explicit code and therefore runs the risk of your or someone else misremembering the usage and source.
 
@@ -250,7 +250,7 @@ Create a new code chunk that will download the csv that we are going to use for 
 - Right click the download button for 'Discharge_timeseries.csv'
 - Click 'copy link address'
 
-Create a variable called URL and assign it the link copied to your clipboard. Then use `requests.get` to download the file, and `open` to write it to disk, to a directory called `data/`
+Create a variable called URL and assign it the link copied to your clipboard. Then use `requests.get` to download the file, and `open` to write it to disk, to a directory called `data/`. We'll write this bundled in an `if` statement so that we only download the file if it doesn't yet exist.
 
 ```{python}
 #| echo: false
@@ -276,19 +276,22 @@ df = pd.read_csv('data/discharge_timeseries.csv')
 df.head()
 ```
 
-The column names are a bit messy so we can use `clean_columns` from `skimpy` to make them more accessible very quickly. We can also use the `skim` function to get a quick summary of the data.
-
+The column names are a bit messy so we can use `clean_columns` from `skimpy` to make them cleaner for programming very quickly. We can also use the `skim` function to get a quick summary of the data.
+:::{.column-page}
 ```{python}
 clean_df = skimpy.clean_columns(df)
 skimpy.skim(clean_df)
 ```
+:::
 
 We can see that the `date` column is classed as a string, and not a date, so let's fix that.
 
+:::{.column-page}
 ```{python}
 clean_df['date'] = pd.to_datetime(clean_df['date'])
 skimpy.skim(clean_df)
 ```
+:::
 
 If we wanted to calculate the daily mean flow (as opposed to the flow every 5 minutes), we need to:
 
