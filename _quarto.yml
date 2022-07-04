@@ -27,6 +27,7 @@ book:
     - sections/05-adc-data-publishing.qmd
     - sections/10-geopandas.qmd
     - sections/11-parquet-arrow.qmd
+    - sections/18-arctic-data-staging.qmd
     - sections/references.qmd
 
 bibliography: references.bib
