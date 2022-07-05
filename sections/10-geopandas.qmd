@@ -1,6 +1,5 @@
 ---
 title: "Spatial and Image Data Using GeoPandas"
-author: Jeanette Clark
 execute:
   freeze: auto
 ---
@@ -57,9 +56,6 @@ with rasterio.open("Coastal_2020_12.tif") as dem_src:
 plt.imshow(ships)
 print(ships_meta)
 ```
-
-
-##  Distance per commercial area
 
 Now download a vector shapefile of commercial fishing districts in Alaska.
 
@@ -129,6 +125,8 @@ We can also clip the shapefile data to the same bounding box
 ```{python}
 comm_clip = comm_3338.clip(bbox_crop['geometry'])
 ```
+
+### Check extents
 
 Quick plot to ensure they are in the same extent, and look as expected.
 

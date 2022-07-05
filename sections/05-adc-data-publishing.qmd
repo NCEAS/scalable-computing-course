@@ -1,6 +1,5 @@
 ---
 title: "Documenting and Publishing Data"
-author: "Daphne Virlar-Knight, Natasha Haycock-Chavez, Amber Budden, Matt Jones"
 ---
 
 ## Learning Objectives

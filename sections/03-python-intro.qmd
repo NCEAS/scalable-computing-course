@@ -1,6 +1,5 @@
 ---
-title: "Python Programming on Clusters"
-author: "Jeanette Clark"
+title: 'Python Programming on Clusters'
 ---
 
 ## Learning Objectives
@@ -16,28 +15,23 @@ author: "Jeanette Clark"
 * Jupyter is a great way to do literate analysis
 * Functions provide ways to reuse your code across notebooks/projects
 
-## Python on the cluster
+## Starting a project
 
 * Connect to the server
-* Start a `training` project and pick interpreter (this could also go in Sam's session)
-* Create and execute `hello.py`
-    - from the IDE as a whole
-    - from IDE line by line
-    - from the terminal
+* Start a `training` workspace
 
 ## Virtual Environments
 
 Why virtual environments? We'll answer this.
 
-First install `virtualenvwrapper`
+First we will create `.bash_profile` file to create variables that point to the install locations
+of python and `virtualenvwrapper`. `.bash_profile` is just a text file that contains bash commands
+that are run every time you start up a new terminal. Although setting up this file is not required
+to use `virtualenvwrapper`, it is convenient because it allows you to set up some reasonable defaults
+to the commands (meaning less typing, overall), and it makes sure that the package is available every
+time you start a new terminal.
 
-```
-pip3 install virtualenvwrapper
-```
-
-Now we will create the `.bash_profile` file to create variables that point to the install locations of python and `virtualenvwrapper`.
-
-In VS Code, select "File > New Text File" then paste this into the file:
+To set up the `.bash_profile`. In VS Code, select 'File > New Text File' then paste this into the file:
 
 ```
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
@@ -45,7 +39,13 @@ export VIRTUALENVWRAPPER_VIRTUAWORKON_HOME=$HOME/.virtualenvs
 source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 ```
 
-Save the file in the top of your user directory as `.bash_profile`.
+The first line points `virtualenvwrapper` to the default python installation to use. In this case, we
+point it to the system wide install of python on the server. The next line sets the directory where
+your virtual environments will be stored. We point it to a hidden directory (`.virtualenvs`) in your home directory.
+Finally, the last line sources a bash script that ships with `virtualenvwrapper`, which makes all of `virtualenvwrapper`
+commands available in your terminal session.
+
+Save the file in the top of your home directory as `.bash_profile`.
 
 Restart your terminal, then check to make sure it was installed and configured correctly
 
@@ -59,39 +59,308 @@ Now we can create the virtual environment we will use for the course
 mkvirtualenv scomp
 ```
 
-You'll see the name of the env you are working in on the left side of your terminal prompt in parentheses.
-
-Now lets install the dependencies for this course into that environment. (Note: need to figure out how to get them this file)
+By default, this will point to our Python 3.9 installation on the server, because of the settings in
+`.bash_profile`. If you want to point to a different version of python, or be more explicit about the
+version, you can use the `-p` flag and pass a path to the python install, like so:
 
 ```
-python3 -m pip install -r requirements.txt
+ mkvirtualenv -p /usr/bin/python3 test
 ```
 
-To deactivate your environment (like if you want to work on a different project), just run `deactivate`. To activate it again, run
+After making a virtual environment, it will automatically be activated. You'll see the name of the env
+you are working in on the left side of your terminal prompt in parentheses. To deactivate your environment
+(like if you want to work on a different project), just run `deactivate`. To activate it again, run
 
 ```
 workon scomp
 ```
 
+You can get a list of all available environments by just running:
+
+```
+workon
+```
+
+Now let's install the dependencies for this course into that environment. (Note: need to figure out how to get them this file)
+
+```
+python3 -m pip install -r requirements.txt
+```
+
+#### Installing locally (optional)
+
+`virtualenvwrapper` was already installed on the server we are working on. To install on your local computer,
+run:
+
+```
+pip3 install virtualenvwrapper
+```
+
+And then follow the instructions as described above, making sure that you have the correct paths set
+when you edit your `.bash_profile`.
 
 ## Brief overview of python syntax
 
-* lists, arrays, dictionaries, associative arrays
+```{python}
+#| echo: false
+from IPython.core.interactiveshell import InteractiveShell
+InteractiveShell.ast_node_interactivity = 'all'
+```
+
+Assign values to variables using `=`
+
+```{python}
+x = 4
+print(x)
+```
+
+There are 5 standard data types in python
+
+- Number (int, long, float, complex)
+- String
+- List
+- Tuple
+- Dictionary
+
+We already saw a number type, here is a string:
+
+```{python}
+str = 'Hello World!'
+print(str)
+```
+
+Lists in python are very versatile, and are created using square brackets `[]`. Items in a list can be of different data types.
+
+```{python}
+list = [100, 50, -20, 'text']
+print(list)
+```
+
+You can access items in a list by index using the square brackets. Note indexing starts with 0 in python. The slice operator enables you to easily access a portion of the list without needing to specify every index.
+
+```{python}
+list[0] # print first element
+list[1:3] # print 2nd until 4th elements
+list[:2] # print first until the 3rd
+list[2:] # print last elements from 3rd
+```
+
+The `+` and `*` operators work on lists by creating a new list using either concatenation (`+`) or repetition (`*`).
+
+```{python}
+list2 = ['more', 'things']
+
+list + list2
+list * 3
+```
+
+Tuples are similar to lists, except the values cannot be changed in place. They are constructed with parentheses.
+
+```{python}
+tuple = ('a', 'b', 'c', 'd')
+tuple[0]
+tuple * 3
+tuple + tuple
+```
+
+Observe the difference when we try to change the first value. It works for a list:
+
+```{python}
+list[0] = 'new value'
+list
+```
+
+...and errors for a tuple.
+
+```{python}
+#| eval: false
+tuple[0] = 'new value'
+```
+
+```
+TypeError: 'tuple' object does not support item assignment
+```
+
+Dictionaries consist of key-value pairs, and are created using the syntax `{key: value}`. Keys are usually numbers or strings, and values can be any data type.
+
+```{python}
+dict = {'name': ['Jeanette', 'Matt'],
+        'location': ['Tucson', 'Juneau']}
+
+dict['name']
+dict.keys()
+```
+
+To determine the type of an object, you can use the `type()` method.
+
+```{python}
+type(list)
+type(tuple)
+type(dict)
+```
 
 ## Jupyter notebooks
 
-* Create a notebook
-* Load in some libraries (pandas, numpy, scipy, matplotlib)
-* Read in a csv
-* group and summarize by a variable
+To create a new notebook, from the file menu select File > New File > Jupyter Notebook
+
+At the top of your notebook, add a first level header using a single hash. Practice some markdown text by creating:
+
+- a list
+- **bold** text
+- a link
+
+Use the [Markdown cheat sheet](https://www.markdownguide.org/cheat-sheet/) if needed.
+
+To open a chunk of code, type three backticks (`), curly braces, and then the word python. Close
+the code chunk using three more backticks.
+
+### Load libraries
+
+In your first code chunk, lets load in some modules. We'll use `pandas`, `numpy`, `matplotlib.pyplot`, `requests`, `skimpy`, and `exists` from `os.path`.
+
+```{python}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import requests
+import skimpy
+from os.path import exists
+```
+
+A note on style: There are a few ways to construct import statements. The above code uses three of the most common:
+
+```
+import module
+import module as m
+from module import function
+```
+
+The first way of importing will make the module a function comes from more explicitly clear, and is the simplest. However for very long module names, or ones that are used very frequently (like `pandas`, `numpy`, and `matplotlib.plot`), the code in the notebook will be more cluttered with constant calls to longer module names. So `module.function()` instead is written as `m.function()`
+
+The second way of importing a module is a good style to use in cases where modules are used frequently, or have extremely long names. If you import every single module with a short name, however, you might have a hard time remembering which modules are named what, and it might be more confusing for others trying to read your code. Many of the most commonly used libraries for python data science have community-driven styling for how they are abbreviated in import statements, and these community norms are generally best followed.
+
+Finally, the last way to import a single object from a module can be helpful if you only need that one piece from a larger module, but again, like the first case, results in less explicit code and therefore runs the risk of your or someone else misremembering the usage and source.
+
+
+### Read in a csv
+
+Create a new code chunk that will download the csv that we are going to use for this tutorial.
+
+- Navigate to [Rohi Muthyala, Åsa Rennermalm, Sasha Leidman, Matthew Cooper, Sarah Cooley, et al. 2022. 62 days of Supraglacial streamflow from June-August, 2016 over southwest Greenland. Arctic Data Center. doi:10.18739/A2XW47X5F.](https://doi.org/10.18739/A2XW47X5F)
+- Right click the download button for 'Discharge_timeseries.csv'
+- Click 'copy link address'
+
+Create a variable called URL and assign it the link copied to your clipboard. Then use `requests.get` to download the file, and `open` to write it to disk, to a directory called `data/`. We'll write this bundled in an `if` statement so that we only download the file if it doesn't yet exist.
+
+```{python}
+#| echo: false
+import os
+if not exists ('data/'):
+        os.mkdir('data/')
+```
+
+
+```{python}
+if not exists('data/discharge_timeseries.csv'):
+
+        url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Ae248467d-e1f9-4a32-9e38-a9b4fb17cefb'
+
+        data = requests.get(url)
+        a = open('data/discharge_timeseries.csv', 'wb').write(data.content)
+```
+
+Now we can read in the data from the file.
+
+```{python}
+df = pd.read_csv('data/discharge_timeseries.csv')
+df.head()
+```
+
+The column names are a bit messy so we can use `clean_columns` from `skimpy` to make them cleaner for programming very quickly. We can also use the `skim` function to get a quick summary of the data.
+:::{.column-page}
+```{python}
+clean_df = skimpy.clean_columns(df)
+skimpy.skim(clean_df)
+```
+:::
+
+We can see that the `date` column is classed as a string, and not a date, so let's fix that.
+
+:::{.column-page}
+```{python}
+clean_df['date'] = pd.to_datetime(clean_df['date'])
+skimpy.skim(clean_df)
+```
+:::
+
+If we wanted to calculate the daily mean flow (as opposed to the flow every 5 minutes), we need to:
+
+- create a new column with only the date
+- group by that variable
+- summarize over it by taking the mean of the discharge variable
+
+First we should probably rename our existing date/time column to prevent from getting confused.
+
+```{python}
+clean_df = clean_df.rename(columns = {'date': 'datetime'})
+```
+
+Now create the new date column
+
+```{python}
+clean_df['date'] = clean_df['datetime'].dt.date
+```
+
+Finally, we use group by to split the data into groups according to the date, apply a function (`mean`) to each group, and then combine the results in a single data table.
+
+```{python}
+daily_flow = clean_df.groupby('date', as_index = False).mean()
+```
+
 * create a simple plot
+
+```{python}
+var = 'discharge_m_3_s'
+var_labs = {'discharge_m_3_s': 'Total Discharge'}
+
+fig, ax = plt.subplots(figsize=(7, 7))
+plt.style.use("seaborn-talk")
+plt.plot(daily_flow['date'], daily_flow[var]);
+plt.xticks(rotation = 45);
+ax.set_ylabel(var_labs.get('discharge_m_3_s'));
+```
 
 ## Functions
 
+The plot we made above is great, but what if we wanted to make it for each variable? We could copy paste it and replace some things, but this violates a core tenet of programming: Don't Repeat Yourself! Instead, we'll create a function called `myplot` that accepts the data frame and variable as arguments.
+
 * create `myplot.py`
-* write `myplot()` function to create the same plot we did in section above
+
+```{python}
+def myplot(df, var):
+
+        var_labs = {'discharge_m_3_s': 'Total Discharge (m^3/s)',
+                    'total_pressure_m': 'Total Pressure (m)',
+                    'air_pressure_m': 'Air Pressure (m)',
+                    'stage_m': 'Stage (m)',
+                    'temperature_degrees_c': 'Temperature (C)'}
+
+        fig, ax = plt.subplots(figsize=(7, 7))
+        plt.style.use("seaborn-talk")
+        plt.plot(df['date'], df[var]);
+        plt.xticks(rotation = 45);
+        ax.set_ylabel(var_labs.get(var));
+```
+
+
 * load myplot into jupyter notebook (`from myplot.py import myplot`)
 * replace old plot method with new function
+
+```{python}
+myplot(daily_flow, 'temperature_degrees_c')
+
+```
+
 * more to come in Bryce's section
 
 ## Resources

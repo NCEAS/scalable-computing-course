@@ -140,6 +140,9 @@ dmypy.json
 sections/*tif
 sections/*gpkg
 
+# data files that are downloaded
+sections/data
+
 # R environment
 .RProj.user
 .Rhistory

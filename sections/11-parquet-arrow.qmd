@@ -1,0 +1,46 @@
+---
+title: "Data Futures: Parquet and Arrow"
+---
+
+## Learning Objectives
+
+- The difference between column major and row major data
+- Speed advantages to columnnar data storage
+- How `arrow` enables faster processing
+
+## Introduction
+
+- open, seek, read, write, close - ways to access data
+- difference between parquet and arrow
+    - how paging and memory management works, blocks are organized by pages
+    - on disk and in memory representation are the same 
+- column (parquet) vs row (csv) data example
+- why column can give faster read speeds
+- how arrow interacts with columnar data formats (like parquet)
+
+## Row major vs column major
+
+The difference between row major and column major is the ordering of the objects. 
+
+Take the array:
+```
+a11 a12 a13
+
+a21 a22 a23
+```
+
+This array in a row-major order would be read in as:
+
+`a11, a12, a13, a21, a22, a23`
+
+You could also read it in column-major order as:
+
+`a11, a21, a12, a22, a13, a33`
+
+By default, C and SAS use row major order for arrays, and column major is used by Fortran, MATLAB, R, and Julia.
+
+Python uses neither, instead representing arrays as lists of lists, though `numpy` uses row-major order.
+
+## Example
+
+- show a read write example and benchmark maybe

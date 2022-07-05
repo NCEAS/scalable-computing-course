@@ -114,7 +114,8 @@ Parallel
   - Cluster task parallelization
 
 Cluster parallel
-  ``` Show dispatch to cluster nodes and reassembly of data
+  ``` 
+  Show dispatch to cluster nodes and reassembly of data
   Launch tasks --> 
                    Marshal --> Task 1 --> Unmarshal --\
                    Marshal --> Task 2 --> Unmarshal ---\
@@ -131,6 +132,7 @@ Cluster parallel
 When you have a list of repetitive tasks, you may be able to speed it up by adding more computing power.  If each task is completely independent of the others, then it is a prime candidate for executing those tasks in parallel, each on its own core.  For example, let's build a simple loop that downloads the data files that we need for an analysis. First, we start with the serial implementation. 
 
 ```{python}
+#| eval: false
 # Use loop for serial execution of tasks
 
 # Tasks are to download data from a dataset
@@ -140,6 +142,7 @@ The issue with this loop is that we execute each trial sequentially, which means
 going to each processor.  To do that, we need to convert our task to a function, and then use the `map()` function to apply that function to all of the members of a set.  Here's the same code rewritten to use `map()`, which applies a function to each of the members of a list (in this case the files we want to download):
 
 ```{python}
+#| eval: false
 # Use `map` for serial execution of tasks
 
 # Tasks are to download data from a dataset
@@ -157,6 +160,7 @@ When parallelizing jobs, one can:
 ## concurrent.futures
 
 ```{python}
+#| eval: false
 # Loop versus map for parallel execution of tasks
 
 # Using concurrent.futures and ThreadPool
@@ -169,6 +173,7 @@ When parallelizing jobs, one can:
 - Overview of parsl and it's use of python decorators.
 
 ```{python}
+#| eval: false
 # Loop versus map for parallel execution of tasks
 
 # Using parsl decorators and ThreadPool
@@ -180,6 +185,7 @@ When parallelizing jobs, one can:
   - HightThroughputExecutor for cluster jobs
 
 ```{python}
+#| eval: false
 # Loop versus map for parallel execution of tasks
 
 # Using parsl decorators and ThreadPool
@@ -193,7 +199,8 @@ It's not as simple as it may seem. While in theory each added processor would li
 
 In addition, not all of a task can be parallelized. Depending on the proportion, the expected speedup can be significantly reduced.  Some propose that this may follow [Amdahl's Law](https://en.wikipedia.org/wiki/Amdahl%27s_law), where the speedup of the computation (y-axis) is a function of both the number of cores (x-axis) and the proportion of the computation that can be parallelized (see colored lines):
 
-```{r label="amdahl", echo=FALSE}
+```
+#| eval: false
 library(ggplot2)
 library(tidyr)
 amdahl <- function(p, s) {
@@ -218,9 +225,16 @@ ggplot(cpu_perf, aes(cpus, speedup, color=prop)) +
 
 So, its important to evaluate the computational efficiency of requests, and work to ensure that additional compute resources brought to bear will pay off in terms of increased work being done.  With that, let's do some parallel computing...
 
+# Parallel Pitfalls and their solutions
+
+- Race conditions
+- Deadlocks
+
+
 ## Summary
 
 In this lesson, we showed examples of computing tasks that are likely limited by the number of CPU cores that can be applied, and we reviewed the architecture of computers to understand the relationship between CPU processors and cores.  Next, we reviewed the way in which traditional `for` loops in R can be rewritten as functions that are applied to a list serially using `lapply`, and then how the `parallel` package `mclapply` function can be substituted in order to utilize multiple cores on the local computer to speed up computations. Finally, we installed and reviewed the use of the `foreach` package with the `%dopar` operator to accomplish a similar parallelization using multiple cores.
 
 ## Further Reading
 
+Ryan Abernathey & Joe Hamman. 2020. [Closed Platforms vs. Open Architectures for Cloud-Native Earth System Analytics.](https://medium.com/pangeo/closed-platforms-vs-open-architectures-for-cloud-native-earth-system-analytics-1ad88708ebb6) Medium.
