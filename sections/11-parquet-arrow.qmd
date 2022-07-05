@@ -75,7 +75,7 @@ Parquet is an open-source file format that stores data in a column-major format.
 - page
 - footer
 
-![](images/parquet-schematic.png)
+![](../images/parquet-schematic.png)
 
 Row groups are blocks of data over a set number of rows that contain data from the same columns. Within each row group, data are organized in column-major format, and within each column are pages that are typically 1MB. The footer of the file contains metaata like the schema, encodings, unique values in each column, etc.
 
