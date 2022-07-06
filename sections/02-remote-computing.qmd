@@ -27,9 +27,15 @@ title: "Remote Computing"
 
 - Host computers connect via networking equipment and can send messages to each other over communication protocols (aka internet protocols)
 
+- UPDATE: these are roles (not inherent properties of a host; same machine can play both roles); hosts typically have one network address but can have many different ones; sometimes on big servers we give them multiple network cards so that they have more bandwidth (to send more data); differentiate VM (guests operating systems on a host server) vs. host 
+
+- UPDATE: add visuals
+
     - **Client:** the host *initiating* the request
 
     - **Server:** the host *responding* to a request
+
+- UPDATE with different configurations: show 1 laptop sshing into server; show 1 laptop to a cluster w/ multiple nodes but a gateway node (still in the physical world); show same thing, but instead of being physical server, they're VM; show kubernetes 
 
 ## IP addressing
 
@@ -44,6 +50,8 @@ title: "Remote Computing"
     - Clients first look up a hostname in DNS to find the IP address, then they open a connection the the IP address
     
         - aurora.nceas.ucsb.edu == 128.111.220.46 **(UPDATE THIS WITH SERVER USED FOR COURSE?)**
+
+        - UPDATE NOTE: e.g. aurora has multiple network cards
 
 ## Bash Shell Programming
 
@@ -64,8 +72,12 @@ title: "Remote Computing"
     - `pwd`
     - `cd`
     - `ls`
+    - `tree` visualize directory structures
     - `touch` 
     - `mkdir`
+    - `grep`
+    - `auk`, `sed`, `cut`, `join` useful for manipuating files
+    - `top`, `htop`
     - (**Queston:** Do we want/need to show all of these? Missing any important ones?)
 
 ## Connecting to a remote computer via a shell
@@ -90,7 +102,7 @@ title: "Remote Computing"
 
     - **MacOS:** navigate to `Applications | Utilities` and open `Terminal` 
 
-    - **Windows:** Navigate to `Windows Start | Git` and open `Git Bash`
+    - **Windows:** Navigate to `Windows Start | Git` and open `Git Bash` UPDATE: see if this still stands
 
     - **ALTERNATIVELY, from VS Code:** Two options to open a terminal program
 
@@ -117,3 +129,8 @@ Retype new UNIX password:
 ```
 
 4. **create python script on server | write/execute some code | etc**
+
+
+UPDATE: write a simple shell script that does something -- e.g. renaming files with bash loop (e.g. change extension, add date, move them around)
+
+UPDATE: `nohup`, `screen`, `tmux` for starting remote job that you can come back to later; look for tmux lesson in oss training
