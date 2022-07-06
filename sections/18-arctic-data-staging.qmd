@@ -6,12 +6,14 @@ title: 'Workflows for data staging and publishing'
 
 - NSF archival policies for large datasets
 - Data transfer tools
+- How to manage co-locating data and code
+    - eg: where model runs only has 1 TB of storage but model outputs 10 TB of data
+    - workflow tools (pegasus, condor, slurm, snakemake)
 - Uploading large datasets to the Arctic Data Center
 
-## Introduction
+## NSF policy for large datasets
 
-- there are many different data collection mechanisms that can generate large volumes of data
-    - two major types: imagery and model output
+- there are many different research methods that can generate large volumes of data. Numerical modeling (such as climate or ocean models) and anything generating high resolution imagery are two examples we see very commonly.
 
 > The Office of Polar Programs policy requires that metadata files, full data sets, and derived data products, must be deposited in a long-lived and publicly accessible archive.
 
@@ -25,6 +27,8 @@ title: 'Workflows for data staging and publishing'
 - for some numerical models, if the model results can be faithfully reproduced from code, the code that generates the models can be a sufficient archival product, as opposed to the code and the model output
     - if the model is difficult to set up, or takes a very long time to run, we would probably reccommend publishing the output as well as code
 
+- the Arctic Data Center is committed to archiving data of any volume
+
 ## Data transfer tools
 
 - scenario: you need to send a bunch of data to the Arctic Data Center. after getting the credentials, you use `scp` to start the transfer. You know this typically takes around 12 hours so you start it at 5pm right when you leave the office expecting it to be done when you get back. When you arrive, you see there was a short network outage in the middle of the night. The whole job failed so you have to start it again...
@@ -32,6 +36,7 @@ title: 'Workflows for data staging and publishing'
 There is a better way!
 
 Three key elements to data transfer
+
     - endpoints
     - network
     - transfer tool
@@ -46,6 +51,9 @@ The from and to locations of the transfer, an endpoint is a remote computing dev
 #### Network speed
 
 Determines how quickly information can be sent between endpoints, largely dependent on what you pay for. Wired networks get significantly more speed than wireless.
+
+- not all networks are created equal
+- server to server (north hall to san diego) versus server to your house
 
 #### Transfer tools
 
@@ -66,7 +74,7 @@ Determines how quickly information can be sent between endpoints, largely depend
 
 - easy to use, as long as your data are accessible via an endpoint configured as a Globus node
 - leverage your institutions computing resources! they may be able to help get you access to a data transfer node already configured correctly
-- there are paid options to set up a node from your own workstation (Globus Connect Personal)
+- there are paid options to set up a node from your own workstation (Globus Connect Personal - check the naming here, and feature list)
     - remember the other factors though! Globus won't help you overcome a 1 Gb/s laptop connection speed, or a 50 Mb/s network speed
 
 ## Documenting large datasets
@@ -74,6 +82,6 @@ Determines how quickly information can be sent between endpoints, largely depend
 - the Arctic Data Center is working to support large datasets, but we have performance considerations as well
 - self documenting file formats are preferred, to prevent us from needing to document thousands-millions of files in a single metadata document
     - netcdf
-    - others?
+    - geotiff, geopackage
 - regular, parseable filenames and consistent file formatting is key
 - communicate early and often with the Arctic Data Center staff

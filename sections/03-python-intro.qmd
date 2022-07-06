@@ -277,6 +277,7 @@ df.head()
 ```
 
 The column names are a bit messy so we can use `clean_columns` from `skimpy` to make them cleaner for programming very quickly. We can also use the `skim` function to get a quick summary of the data.
+
 :::{.column-page}
 ```{python}
 clean_df = skimpy.clean_columns(df)
