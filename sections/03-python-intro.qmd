@@ -18,7 +18,18 @@ title: 'Python Programming on Clusters'
 ## Starting a project
 
 * Connect to the server
-* Start a `training` workspace
+        - open the command pallette (Cmd + Shift + P)
+        - enter "Remote SSH: Connect to Host"
+        - select "Add New SSH Host"
+        - enter the ssh command to connect to the host as if in a terminal (`ssh username@included-crab.nceas.ucsb.edu`)
+        - select the SSH config file to update with the name of the host (if prompted)
+        - click "Connect" in the popup in the lower right hand corner
+        - enter your password in the dialog box that pops up
+
+* Clone your fork of the `scalable-computing-examples` repo
+* Open the folder into your workspace
+        - File > Open Folder
+        - Enter password again if prompted
 
 ## Virtual Environments
 

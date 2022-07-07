@@ -41,9 +41,11 @@ If you get an error, it means you need to install Python. Here are instructions 
 
 After you run your install, make sure you check that the install is on your system PATH by running `python3 --version` again.
 
+You'll also need to download the [Remote - SSH extension](https://code.visualstudio.com/docs/remote/ssh) to use later.
+
 ### Set up VS Code
 
-This section summarizes the official VS Code tutorial. For more detailed instructions and screenshots, see the [source material](https://code.visualstudio.com/docs/python/python-tutorial)
+This section summarizes the official VS Code tutorial. For more detailed instructions and screenshots, see the [source material.](https://code.visualstudio.com/docs/python/python-tutorial) If you already use VS Code for Python you can skip this.
 
 First, install the [Python extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python). 
 
