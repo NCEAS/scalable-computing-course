@@ -1,0 +1,59 @@
+---
+title: "Data Structures and Formats for Large Data"
+---
+
+## Learning Objectives
+
+- Become familiar with the NetCDF format
+- Understand the advantages of random-access formats such as NetCDF
+- Become familiar with the `xarray` package for working with N-Dimensional datasets
+
+## Introduction
+
+TODO
+
+[Insert amazing image representing "large scale" and "multidimensional"]
+
+## Working with Large Data
+
+TODO
+
+- Size & Dimension, "N-D"
+- Data Organization / File Naming?
+    - Using hierarchical folder structures
+    - Encoding hierarchy into filenames
+    - File naming for natural ordering
+    - Setting things up for Dask multi-file support
+
+### Exercise
+
+[Short (5-10min) exercise identifying well-structured data storage]
+
+## NetCDF/HDF Overview
+
+TODO
+
+Overview major functionality of NetCDF:
+
+- Multidimensional / N-Dimensional
+- Self-describing
+- Random access
+- Remote access
+
+Other topics:
+
+- Describe available tooling (python packages, Panoply, others?)
+- Talk about CF conventions?
+- Talk about NetCDF and data archival
+
+## Introduction to Xarray
+
+TODO: Base on https://docs.xarray.dev/en/stable/getting-started-guide/quick-overview.html but with a course-appropriate dataset.
+
+I want students to both be able to create a NetCDF and work with them.
+
+## Exercise
+
+(30-45min)
+
+TODO: Students work on their own or in pairs to write a script to analyze a NetCDF dataset

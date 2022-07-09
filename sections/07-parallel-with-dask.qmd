@@ -1,0 +1,44 @@
+---
+title: "Parallelization with Dask"
+---
+
+## Learning Objectives
+
+- Learn about the split-apply-combine strategy
+- Learn how to use Dask
+
+## Introduction
+
+TODO
+
+### Notes
+
+- https://www.dask.org/
+- https://docs.xarray.dev/en/stable/user-guide/dask.html#dask
+- https://stephanhoyer.com/2015/06/11/xray-dask-out-of-core-labeled-arrays/
+- https://examples.dask.org/xarray.html
+- Good example to base exercise on: https://examples.dask.org/applications/image-processing.html
+
+- Split-apply-combine
+- Dask stuff
+    - Lazy eval (compute())
+        - Grouping compute() calls versus calling compute() multiple times
+    - Dask Array
+    - Dask DataFrame
+    - Skip or just mention Bag, Delayed, Futures? Not sure yet.
+    - visualize()
+    - Choosing how many chunks to divide work into
+    - Task overhead
+    - Distributed dask?
+        - Persist
+> Dask is convenient on a laptop. It installs trivially with conda or pip and extends the size of convenient datasets from “fits in memory” to “fits on disk”.
+
+-- From https://docs.dask.org/en/stable/
+
+## Dask Tutorial
+
+TODO
+## Exercise
+
+TODO
+(50min)
