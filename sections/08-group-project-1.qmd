@@ -1,0 +1,21 @@
+---
+title: 'Group Project: Staging and Preprocessing'
+---
+
+
+## Objectives
+
+-Start with a subset of PDG vector data that is untiled
+-Data will need to be preprocessed by dividing original shapefiles into regular tiles
+
+Groups need to:
+
+- design a high level workflow for the steps
+    - workflow should include where inputs, outputs, and scripts will be stored/run
+- write a script that runs the tiling function 
+- run the script (in parallel?)
+
+We will give them:
+
+- the data subset (stored on one of the servers in a shared dir)
+- a function that will tile the data

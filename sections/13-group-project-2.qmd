@@ -1,0 +1,13 @@
+---
+title: 'Group Project: Data Processing'
+---
+
+## Objectives
+
+Groups will start with the tiled output that they made from last session. The main objective in this lesson is to have them rasterize the tiled shapfiles, which we need to do for visualization (and would also be a useful thing to know how to do in an analysis workflow as well).
+
+The groups will need to:
+
+- write a rasterization function
+    - we can also give them one (and we should have something on backup)
+- write a script to run the function over all of the data in parallel

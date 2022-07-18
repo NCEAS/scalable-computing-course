@@ -27,9 +27,12 @@ book:
     - sections/05-adc-data-publishing.qmd
     - sections/06-data-structures-netcdf.qmd
     - sections/07-parallel-with-dask.qmd
+    - sections/08-group-project-1.qmd
     - sections/10-geopandas.qmd
     - sections/11-parquet-arrow.qmd
+    - sections/13-group-project-2.qmd
     - sections/15-google-earth-engine.qmd
+    - sections/17-group-project-3.qmd
     - sections/18-arctic-data-staging.qmd
     - sections/20-reproducibility-containers.qmd
     - sections/references.qmd
