@@ -8,6 +8,5 @@ Groups will start with the tiled output that they made from last session. The ma
 
 The groups will need to:
 
-- write a rasterization function
-    - we can also give them one (and we should have something on backup)
-- write a script to run the function over all of the data in parallel
+- run the rasterizer method on one file
+- write a parsl app that will run it on all of the files

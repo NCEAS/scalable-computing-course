@@ -7,6 +7,6 @@ title: 'Group Project: Visualization'
 
 Groups will start with razertized tiles from the second group project lesson.
 
-- write and run a script that makes composite tiles at lower resolutions
+- again, implement the PDG method
 - display using either leaflet (folium) or cesium?
 - not sure where cesium will be deployed
