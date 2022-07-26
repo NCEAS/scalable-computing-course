@@ -45,15 +45,13 @@ time you start a new terminal.
 To set up the `.bash_profile`. In VS Code, select 'File > New Text File' then paste this into the file:
 
 ```
-export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 export VIRTUALENVWRAPPER_VIRTUAWORKON_HOME=$HOME/.virtualenvs
 source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 ```
 
-The first line points `virtualenvwrapper` to the default python installation to use. In this case, we
-point it to the system wide install of python on the server. The next line sets the directory where
+The first line points `virtualenvwrapper` to the directory where
 your virtual environments will be stored. We point it to a hidden directory (`.virtualenvs`) in your home directory.
-Finally, the last line sources a bash script that ships with `virtualenvwrapper`, which makes all of `virtualenvwrapper`
+The last line sources a bash script that ships with `virtualenvwrapper`, which makes all of `virtualenvwrapper`
 commands available in your terminal session.
 
 Save the file in the top of your home directory as `.bash_profile`.
@@ -64,21 +62,19 @@ Restart your terminal, then check to make sure it was installed and configured c
 mkvirtualenv --version
 ```
 
+It should return something like this:
+
+```
+virtualenv 20.13.0+ds from /usr/lib/python3/dist-packages/virtualenv/__init__.py
+```
+
 Now we can create the virtual environment we will use for the course
 
 ```
-mkvirtualenv scomp
+mkvirtualenv -p /usr/bin/python3.9 scomp
 ```
 
-By default, this will point to our Python 3.9 installation on the server, because of the settings in
-`.bash_profile`. If you want to point to a different version of python, or be more explicit about the
-version, you can use the `-p` flag and pass a path to the python install, like so:
-
-```
- mkvirtualenv -p /usr/bin/python3 test
-```
-
-After making a virtual environment, it will automatically be activated. You'll see the name of the env
+Here, we've specified explicitly which python version to use by using the `-p` flag, and the path to the python 3.9 installation on the server. After making a virtual environment, it will automatically be activated. You'll see the name of the env
 you are working in on the left side of your terminal prompt in parentheses. To deactivate your environment
 (like if you want to work on a different project), just run `deactivate`. To activate it again, run
 

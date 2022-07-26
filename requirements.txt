@@ -4,6 +4,7 @@ argon2-cffi-bindings==21.2.0
 asttokens==2.0.5
 attrs==21.4.0
 backcall==0.2.0
+bcrypt==3.2.2
 beautifulsoup4==4.11.1
 black==22.6.0
 bleach==5.0.1
@@ -13,17 +14,22 @@ charset-normalizer==2.1.0
 click==8.1.3
 click-plugins==1.1.1
 cligj==0.7.2
+coloraide==0.18.1
 commonmark==0.9.1
+cryptography==37.0.4
 cycler==0.11.0
 debugpy==1.6.2
 decorator==5.1.1
 defusedxml==0.7.1
+dill==0.3.5.1
 entrypoints==0.4
-executing==0.8.3
+executing==0.9.1
 fastjsonschema==2.16.1
+filelock==3.7.1
 Fiona==1.8.21
 fonttools==4.34.4
-geopandas==0.11.0
+geopandas==0.11.1
+globus-sdk==3.10.1
 idna==3.3
 ipykernel==6.15.1
 ipython==8.4.0
@@ -43,6 +49,7 @@ MarkupSafe==2.1.1
 matplotlib==3.5.2
 matplotlib-inline==0.1.3
 mistune==0.8.4
+morecantile==3.1.2
 munch==2.5.0
 mypy-extensions==0.4.3
 nbclient==0.6.6
@@ -54,8 +61,12 @@ numpy==1.23.1
 packaging==21.3
 pandas==1.4.3
 pandocfilters==1.5.0
+paramiko==2.11.0
+parsl==1.2.0
 parso==0.8.3
 pathspec==0.9.0
+pdgraster @ git+https://github.com/PermafrostDiscoveryGateway/viz-raster.git@e54aebf05ed8133e799efa46f45d4ec3e97f27a2
+pdgstaging @ git+https://github.com/PermafrostDiscoveryGateway/viz-staging.git@e44c88bfaf21da6077c9cd7444eb0b39c49e9f4b
 pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==9.2.0
@@ -66,7 +77,10 @@ psutil==5.9.1
 ptyprocess==0.7.0
 pure-eval==0.2.2
 pycparser==2.21
+pydantic==1.9.1
 Pygments==2.12.0
+PyJWT==2.4.0
+PyNaCl==1.5.0
 pyparsing==3.0.9
 pyproj==3.3.1
 pyrsistent==0.18.1
@@ -78,7 +92,7 @@ QtPy==2.1.0
 rasterio==1.3.0
 requests==2.28.1
 rich==12.5.1
-Rtree==1.0.0
+Rtree==0.9.7
 Send2Trash==1.8.0
 Shapely==1.8.2
 six==1.16.0
@@ -86,13 +100,15 @@ skimpy==0.0.6
 snuggs==1.4.7
 soupsieve==2.3.2.post1
 stack-data==0.3.0
+tblib==1.7.0
 terminado==0.15.0
 tinycss2==1.1.1
 tomli==2.0.1
 tornado==6.2
 traitlets==5.3.0
 typeguard==2.13.3
-urllib3==1.26.10
+typing_extensions==4.3.0
+urllib3==1.26.11
 wcwidth==0.2.5
 webencodings==0.5.1
 widgetsnbextension==3.6.1
