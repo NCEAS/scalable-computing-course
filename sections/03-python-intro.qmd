@@ -71,7 +71,7 @@ virtualenv 20.13.0+ds from /usr/lib/python3/dist-packages/virtualenv/__init__.py
 Now we can create the virtual environment we will use for the course
 
 ```
-mkvirtualenv -p /usr/bin/python3.9 scomp
+mkvirtualenv -p python3.9 scomp
 ```
 
 Here, we've specified explicitly which python version to use by using the `-p` flag, and the path to the python 3.9 installation on the server. After making a virtual environment, it will automatically be activated. You'll see the name of the env
