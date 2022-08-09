@@ -2,11 +2,13 @@
 title: "Reproducibility and Containers"
 ---
 
-TODO: Decide about if/how to talk about WholeTale
+- TODO: Decide about if/how to talk about WholeTale
+- TODO: This lesson should be have a wow-factor and emphasize why we're focusing all of this
+- TODO: This lesson should be more about wrapping up and tying everything together than showing off new tech
 
 ## Learning Objectives
 
-- Learn about software versioning
+- ~~Learn about software versioning~~
 - Become familiar with Docker as a tool to improve computational reproducibility
 
 ## Outline

@@ -2,10 +2,15 @@
 title: "Data Structures and Formats for Large Data"
 ---
 
+TODOS
+
+- Look into parallel access and NetCDF and whether all wheels can take advtange of the built-in parallel access
+
 ## Learning Objectives
 
-- Become familiar with the NetCDF format
-- Understand the advantages of random-access formats such as NetCDF
+- Become familiar with the self-describing ability NetCDF format
+- Become familiar with the data model of NetCDF
+- Understand the advantages of random and parallel formats such as NetCDF
 - Become familiar with the `xarray` package for working with N-Dimensional datasets
 
 ## Introduction
@@ -22,7 +27,7 @@ TODO
 - Data Organization / File Naming?
     - Using hierarchical folder structures
     - Encoding hierarchy into filenames
-    - File naming for natural ordering
+    - File naming for natural ordering (principle of most sig. fist)
     - Setting things up for Dask multi-file support
 
 ### Exercise
@@ -43,12 +48,17 @@ Overview major functionality of NetCDF:
 Other topics:
 
 - Describe available tooling (python packages, Panoply, others?)
+    - Command line
 - Talk about CF conventions?
 - Talk about NetCDF and data archival
 
 ## Introduction to Xarray
 
 TODO: Base on https://docs.xarray.dev/en/stable/getting-started-guide/quick-overview.html but with a course-appropriate dataset.
+
+Course appropriate datasets:
+- Probably a space<->time one
+- One in var/data on ADC
 
 I want students to both be able to create a NetCDF and work with them.
 

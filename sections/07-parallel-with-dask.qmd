@@ -4,7 +4,7 @@ title: "Parallelization with Dask"
 
 ## Learning Objectives
 
-- Learn about the split-apply-combine strategy
+- Learn about the map-reduce
 - Learn how to use Dask
 
 ## Introduction
@@ -42,3 +42,9 @@ TODO
 
 TODO
 (50min)
+
+
+## Conclusion
+
+- Comparison with other libraries
+    Thread pools, process pools, distributed dask clusters
