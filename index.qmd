@@ -31,17 +31,17 @@ You'll also need to download the [Remote - SSH extension](https://code.visualstu
 
 ### Log in to the server
 
-To connect to the server follow these steps:
+To connect to the server using VS Code follow these steps:
 
-    - open the command pallette (Cmd + Shift + P)
-    - enter "Remote SSH: Connect to Host"
-    - select "Add New SSH Host"
-    - enter the ssh command to connect to the host as if in a terminal (`ssh username@included-crab.nceas.ucsb.edu`)
-        + Note: you will only need to do this step once
-    - select the SSH config file to update with the name of the host (if prompted)
-    - click "Connect" in the popup in the lower right hand corner
-        + Note: If the dialog box does not appear, reopen the command palette (Cmd + Shift + P), type in "Remote-SSH: Connect to Host…", choose included-crab.nceas.ucsb.edu from the options of configured SSH hosts, then enter your password into the dialog box that appears
-    - enter your password in the dialog box that pops up
+- open the command pallette (Cmd + Shift + P)
+- enter "Remote SSH: Connect to Host"
+- select "Add New SSH Host"
+- enter the ssh command to connect to the host as if in a terminal (`ssh username@included-crab.nceas.ucsb.edu`)
+    + Note: you will only need to do this step once
+- select the SSH config file to update with the name of the host (if prompted)
+- click "Connect" in the popup in the lower right hand corner
+    + Note: If the dialog box does not appear, reopen the command palette (Cmd + Shift + P), type in "Remote-SSH: Connect to Host…", choose included-crab.nceas.ucsb.edu from the options of configured SSH hosts, then enter your password into the dialog box that appears
+- enter your password in the dialog box that pops up
 
 ### Install extensions on the server
 
