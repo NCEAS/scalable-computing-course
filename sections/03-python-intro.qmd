@@ -17,25 +17,27 @@ title: 'Python Programming on Clusters'
 
 ## Starting a project
 
-* Connect to the server
-        - open the command pallette (Cmd + Shift + P)
-        - enter "Remote SSH: Connect to Host"
-        - select "Add New SSH Host"
-        - enter the ssh command to connect to the host as if in a terminal (`ssh username@included-crab.nceas.ucsb.edu`)
-        - select the SSH config file to update with the name of the host (if prompted)
-        - click "Connect" in the popup in the lower right hand corner
-        - enter your password in the dialog box that pops up
+First, let's connect to the server again. If you were able to work through the setup for the lesson without difficulty, follow these steps to connect:
 
-* Clone your fork of the `scalable-computing-examples` repo
-* Open the folder into your workspace
-        - File > Open Folder
-        - Enter password again if prompted
+- open the command pallette (Cmd + Shift + P)
+- enter "Remote SSH: Connect to Host"
+- select `included-crab`
+- enter your password in the dialog box that pops up
+
+Now we can get set up with a project to work in for the course. Head over to the `scalable-computing-examples` [github repository](http://github.com/NCEAS/scalable-computing-examples) and fork it to your account.
+
+Back in VS Code, in the terminal clone your fork of the `scalable-computing-examples` repo (`git clone <url-to-forked-repo-here>`)
+
+To open the project, open the folder into your workspace
+
+- File > Open Folder
+- Enter password again if prompted
 
 ## Virtual Environments
 
 Why virtual environments? We'll answer this.
 
-First we will create `.bash_profile` file to create variables that point to the install locations
+First we will create a `.bash_profile` file to create variables that point to the install locations
 of python and `virtualenvwrapper`. `.bash_profile` is just a text file that contains bash commands
 that are run every time you start up a new terminal. Although setting up this file is not required
 to use `virtualenvwrapper`, it is convenient because it allows you to set up some reasonable defaults
@@ -49,9 +51,7 @@ export VIRTUALENVWRAPPER_VIRTUAWORKON_HOME=$HOME/.virtualenvs
 source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 ```
 
-The first line points `virtualenvwrapper` to the directory where
-your virtual environments will be stored. We point it to a hidden directory (`.virtualenvs`) in your home directory.
-The last line sources a bash script that ships with `virtualenvwrapper`, which makes all of `virtualenvwrapper`
+The first line points `virtualenvwrapper` to the directory where your virtual environments will be stored. We point it to a hidden directory (`.virtualenvs`) in your home directory. The last line sources a bash script that ships with `virtualenvwrapper`, which makes all of `virtualenvwrapper`
 commands available in your terminal session.
 
 Save the file in the top of your home directory as `.bash_profile`.
@@ -74,9 +74,7 @@ Now we can create the virtual environment we will use for the course
 mkvirtualenv -p python3.9 scomp
 ```
 
-Here, we've specified explicitly which python version to use by using the `-p` flag, and the path to the python 3.9 installation on the server. After making a virtual environment, it will automatically be activated. You'll see the name of the env
-you are working in on the left side of your terminal prompt in parentheses. To deactivate your environment
-(like if you want to work on a different project), just run `deactivate`. To activate it again, run
+Here, we've specified explicitly which python version to use by using the `-p` flag, and the path to the python 3.9 installation on the server. After making a virtual environment, it will automatically be activated. You'll see the name of the env you are working in on the left side of your terminal prompt in parentheses. To deactivate your environment (like if you want to work on a different project), just run `deactivate`. To activate it again, run
 
 ```
 workon scomp
