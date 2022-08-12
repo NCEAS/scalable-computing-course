@@ -2,13 +2,6 @@
 title: "Remote Computing"
 ---
 
-**Notes from Google Sheet (DELETE LATER)**  
-- Servers & Networking  
-- IP addressing  
-- Bash shell programming  
-- SSH  
-- Remote session in VS Code  
-
 ## Learning Objectives
 
 - Understand the basic architecture of computer networks
@@ -27,15 +20,13 @@ title: "Remote Computing"
 
 - Host computers connect via networking equipment and can send messages to each other over communication protocols (aka internet protocols)
 
-- UPDATE: these are roles (not inherent properties of a host; same machine can play both roles); hosts typically have one network address but can have many different ones; sometimes on big servers we give them multiple network cards so that they have more bandwidth (to send more data); differentiate VM (guests operating systems on a host server) vs. host 
+:::callout-note 
+Host computers can take the role of **client** (the host *initiating* the request) or **server** (the host *responding* to a request), though these are not inherent properies of a host (i.e. the same machine can play both roles). Hosts typically have one network address but can have many different ones (for example, adding multiple network cards to a single server increases bandwith).
+:::
 
-- UPDATE: add visuals
-
-    - **Client:** the host *initiating* the request
-
-    - **Server:** the host *responding* to a request
-
-- UPDATE with different configurations: show 1 laptop sshing into server; show 1 laptop to a cluster w/ multiple nodes but a gateway node (still in the physical world); show same thing, but instead of being physical server, they're VM; show kubernetes 
+:::callout-important GET FEEDBACK ON VISUAL + ADD KUBERNETES CONFIGURATION VISUAL
+![](../images/remote-computing-configs.png)
+:::
 
 ## IP addressing
 
@@ -65,6 +56,10 @@ title: "Remote Computing"
 
     - **Windows:** bash via [Git Bash](https://gitforwindows.org/)
 
+:::callout-note
+Mac users may have to switch from zsh to bash. Use the command `exec bash` to switch your default shell to bash (or `exec zsh` to switch switch back)
+:::
+
 ## Some group exercise:
 
  - Navigate file system (show that this is equivalent to using Finder/Windows version), create a file, edit file, etc.
@@ -78,11 +73,10 @@ title: "Remote Computing"
     - `grep`
     - `auk`, `sed`, `cut`, `join` useful for manipuating files
     - `top`, `htop`
-    - (**Queston:** Do we want/need to show all of these? Missing any important ones?)
 
 ## Connecting to a remote computer via a shell
 
-- You can use a shell to gain accesss to and remotely control (manage/transfer files/etc) other computers. To do so, you'll need the following:
+- You can use a shell to gain accesss to and remotely control other computers (manage/transfer files/etc). To do so, you'll need the following:
 
     - remote computer (e.g. server) turned on
 
@@ -90,15 +84,15 @@ title: "Remote Computing"
 
     - necessary permissions to access the remote computer
 
-- Secure Shell, or SSH, is often used for securely connecting to and running shell commands on a remote host
+- Secure Shell, or SSH, is often used for securely connecting to and running shell commands on a remote host.
 
-    - Tremendously simplifies remote computing
+    - SSH tremendously simplifies remote computing
 
     - Supported out-of-the-box on Linux and Macs 
 
 ## Exercise:
 
-1. Launch your Terimal program:
+1. Launch your Terminal program:
 
     - **MacOS:** navigate to `Applications | Utilities` and open `Terminal` 
 
@@ -108,25 +102,27 @@ title: "Remote Computing"
 
          a) Click on `Terminal | New Terminal` in top menu bar
 
-         b) Click on the `+ (dropdown menu) | bash` in the bottom right corner **(QUESTION: Not sure that is always open/available depending on user configurations??)**
+         b) Click on the `+ (dropdown menu) | bash` in the bottom right corner
 
 2. Connect to a remote server **(UPDATE THIS SECTION)**
 
 ```
-jones@powder:~$ ssh jones@aurora.nceas.ucsb.edu
-jones@aurora.nceas.ucsb.edu's password: 
-jones@aurora:~$ 
+samanthacsik:~$ ssh scsik@included-crab.nceas.ucsb.edu
+scsik@included-crab.nceas.ucsb.edu's password: 
+scsik@included-crab:~$ 
 ```
 
+:::callout-warning KEEP THIS? 
 3. Change your password **(UPDATE THIS SECTION)**
 
 ```
-jones@aurora:~$ passwd
-Changing password for jones.
+scsik@included-crab:~$ passwd
+Changing password for scsik.
 (current) UNIX password: 
 Enter new UNIX password: 
 Retype new UNIX password: 
 ```
+:::
 
 4. **create python script on server | write/execute some code | etc**
 
