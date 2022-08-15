@@ -10,17 +10,15 @@ title: "Data Futures: Parquet and Arrow"
 
 ## Introduction
 
-- open, seek, read, write, close - ways to access data
-- difference between parquet and arrow
-    - how paging and memory management works, blocks are organized by pages
-    - on disk and in memory representation are the same 
-- column (parquet) vs row (csv) data example
-- why column can give faster read speeds
-- how arrow interacts with columnar data formats (like parquet)
+System calls are calls that are run by the operating system within their own process. There are several that are relevant to reading and writing data: open, read, write, seek, and close. Open establishes a connection with a file for reading, writing, or both. On open, a file offset points to the beginning of the file. After reading or writing `n` bytes, the offset will move `n` bytes forward to prepare for the next opration. Close closes the connection to the file. Read will read data from the file into a memory buffer, and write will write data from a memory buffer to a file. Seek is used to change the location of the offset pointer, for either reading or writing purposes.
+
+If you've worked with even moderately sized datasets, you may have encounted an "out of memory" error. Memory is where a computer stores the information needed immediately for processes. This is in contrast to storage, which is typically slower to access than memory, but has a much larger capacity. When you `open` a file, you are establishing a connection between your processor and the information in storage. On `read`, the data is read into memory that is then available to your python process, for example.
+
+So what happens if the data you need to read in are larger than your memory? 32GB is a common memory size, but this would be considered a modestly sized dataset by this courses's standards. There are a number of solutions to this problem, which don't involve just buying a computer with more memory. In this lesson we'll discuss the difference between row major and column major file formats, and how leveraging column major formats can increase memory efficiency. We'll also learn about another python library called `pyarrow`, which has a memory format that allows for "zero copy" read.
 
 ## Row major vs column major
 
-The difference between row major and column major is the ordering of the objects. 
+The difference between row major and column major is in the ordering of items in the array.
 
 Take the array:
 ```
@@ -41,7 +39,7 @@ By default, C and SAS use row major order for arrays, and column major is used b
 
 Python uses neither, instead representing arrays as lists of lists, though `numpy` uses row-major order.
 
-### File formats
+### Row major versus column major files
 
 The same concept can be applied to file formats as the example with arrays above. In row-major file formats, the values (bytes) of each record are read sequentially.
 
@@ -54,7 +52,7 @@ Allison | Oregon | 57
 In the above row major example, data are read in the order:
 `John, Washingon, 40, [new line], Mariah, Texas, 21`.
 
-This means that getting a subset of all columns would be easy; you can specify to read in only the first X rows. However, if we are only interested in Name and Location, we would still have to read in all of the rows before discarding the Age column.
+This means that getting a subset of all columns would be easy; you can specify to read in only the first X rows. However, if we are only interested in `Name` and `Location`, we would still have to read in all of the rows before discarding the Age column.
 
 If these data were organized in a column major format, they might look like this:
 
@@ -85,7 +83,7 @@ The parquet format has many tricks to to increase storage efficiency, and is inc
 
 So far, we have discussed the difference between organizing information in row-major and column-major format, how that applies to arrays, and how it applies to data storage on disk using Parquet.
 
-Arrow is a language-agnostic specification that enables representation of column-major information **in memory**. The Arrow project provides implementation of this specification in a number of languages, including Python.
+Arrow is a language-agnostic specification that enables representation of column-major information in memory without having to serialize data from disk. The Arrow project provides implementation of this specification in a number of languages, including Python.
 
 Let's say that you have utilized the Parquet data format for more efficient storage of your data on disk. At some point, you'll need to read that data into memory in order to do analysis on it. Arrow enables data transfer between the on disk Parquet files and in-memory Python computations, via the `PyArrow` library.
 
@@ -93,5 +91,87 @@ Let's say that you have utilized the Parquet data format for more efficient stor
 
 ## Example
 
-- show a read write example and benchmark maybe
+In this example, we'll read in a dataset of fish abundance in the San Francisco Estuary, which is published in csv format on the [Environmental Data Initiative](https://portal.edirepository.org/nis/mapbrowse?scope=edi&identifier=1075&revision=1). This dataset isn't huge, but it is big enough (3 GB) that working with it locally can be fairly taxing on memory. Motivated by user difficulties in actually working with the data, the [`deltafish` R](https://github.com/Delta-Stewardship-Council/deltafish) package was written using the R implementation of `arrow`. It works by downloading the EDI repository data, writing it to a local cache in parquet format, and using `arrow` to query it. In this example, I've put the Parquet files in a sharable location so we can explore it using `pyarrow`.
 
+First, we'll load the modules we need.
+
+```{python}
+#| eval: false
+import pyarrow.dataset as ds
+import numpy as np
+import pandas as pd
+```
+
+Next we can read in the data using `ds.dataset()`, passing it the path to the parquet directory and how the data are partitioned.
+
+```{python}
+#| eval: false
+deltafish = ds.dataset("/home/jclark/deltafish/fish", format="parquet", partitioning=["Species"])
+```
+
+You can check out a file listing using the `files` method. Another great feature of parquet files is that they allow you to partition the data accross variables of the dataset. These partitiions mean that, in this case, data from each species of fish is written to it's own file. This allows for even faster operations down the road, since we know that users will commonly need to filter on the species variable. Even though the data are partitioned into different files, `pyarrow` knows that this is a single dataset, and you still work with it by referencing just the directory in which all of the partitioned files live.
+
+```{python}
+#| eval: false
+deltafish.files
+```
+
+```
+['/home/jclark/deltafish/fish/Taxa=Acanthogobius flavimanus/part-0.parquet',
+ '/home/jclark/deltafish/fish/Taxa=Acipenser medirostris/part-0.parquet',
+ '/home/jclark/deltafish/fish/Taxa=Acipenser transmontanus/part-0.parquet',
+ '/home/jclark/deltafish/fish/Taxa=Acipenser/part-0.parquet'...
+ ```
+
+ You can view the columns of a dataset using `schema.to_string()`
+
+```{python}
+#| eval: false
+print(deltafish.schema.to_string())
+```
+
+```
+SampleID: string
+Length: double
+Count: double
+Notes_catch: string
+Species: string
+```
+
+If we are only interested in a few species, we can do a filter:
+
+```{python}
+#| eval: false
+expr = ((ds.field("Species")=="Dorosoma petenense")| 
+        (ds.field("Species")=="Morone saxatilis") |
+        (ds.field("Species")== "Spirinchus thaleichthys"))
+
+fishf = deltafish.to_table(filter = expr)
+```
+
+
+There is another dataset included, the survey information. To do a join, we can just use the `join` method on the `arrow` dataset.
+
+First read in the survey dataset.
+
+```{python}
+#| eval: false
+survey = ds.dataset("/home/jclark/deltafish/survey", format="parquet", partitioning=["Source"])
+```
+
+```{python}
+#| eval: false
+print(survey.schema.to_string())
+```
+
+Then do the join, and convert to a pandas `data.frame`. 
+
+```{python}
+#| eval: false
+fish_j = fishf.join(survey, "SampleID").to_pandas()
+```
+
+
+Note that when we did our first manipulation of this dataset, we went from working with a `FileSystemDataset`, which is a representation of a dataset on disk without reading it into memory, to a `Table`, which is read into memory. `pyarrow` has a [number of functions](https://arrow.apache.org/docs/python/compute.html) that do computations on datasets without reading them into memory. However these are evaluated "eagerly," as opposed to "lazily." These are useful in some cases, like above, where we want to take a larger than memory dataset and generate a smaller dataset (via filter, or group by/summarize), but are not as useful if we need to do a join before our summarization/filter.
+
+More functionality for lazy evaluation is on the horizon for `pyarrow` though, by leveraging [Ibis](https://ibis-project.org/docs/3.0.2/tutorial/01-Introduction-to-Ibis/).
