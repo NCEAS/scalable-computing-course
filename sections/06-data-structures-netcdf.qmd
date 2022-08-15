@@ -2,65 +2,73 @@
 title: "Data Structures and Formats for Large Data"
 ---
 
-TODOS
+## TODO
 
-- Look into parallel access and NetCDF and whether all wheels can take advtange of the built-in parallel access
+- Look into parallel access and NetCDF and whether all wheels can take advantage of the built-in parallel access. Looking at [NetCDF's Parallel I/O page](https://docs.unidata.ucar.edu/netcdf-c/current/parallel_io.html) you can see the low-level libraries support it.
+- Find dataset(s) to use in the xarray hands on. Jeanette says there on on the Arctic Data Center we store in /var/data. Ask her for more info.
 
 ## Learning Objectives
 
-- Become familiar with the self-describing ability NetCDF format
-- Become familiar with the data model of NetCDF
-- Understand the advantages of random and parallel formats such as NetCDF
-- Become familiar with the `xarray` package for working with N-Dimensional datasets
+- Learn about the NetCDF data format
+- Understand how formats such as NetCDF differ from formats like CSV in terms of random/arbitrary access and how that applies to parallel computing
+- Learn how to use the `xarray` package to work with N-Dimensional datasets in NetCDF files
 
 ## Introduction
 
 TODO
 
-[Insert amazing image representing "large scale" and "multidimensional"]
+- [Insert amazing image representing "large scale" and "multidimensional"]
+- Talk about how the choice of our data formats is at least as important as how we parallelize our code
+- Maybe talk about how it's very common to convert our data from a less efficient format (e.g., CSV) into a more efficient one (NetCDF, Parquet) _before_ we parallelize
 
 ## Working with Large Data
 
 TODO
 
-- Size & Dimension, "N-D"
+- Size & Dimension, "N-D": Talk about common dimensions (ie space-time, where space is xy, or xyz). _This is a great time to ask students about their N-Dimensional experience_
 - Data Organization / File Naming?
     - Using hierarchical folder structures
     - Encoding hierarchy into filenames
-    - File naming for natural ordering (principle of most sig. fist)
-    - Setting things up for Dask multi-file support
-
-### Exercise
-
-[Short (5-10min) exercise identifying well-structured data storage]
+    - File naming for natural ordering (principle of most sig. fist, ie YMD vs DMY)
+    - Setting things up for multi-file support in tools like Dask, XArray, Arrow
 
 ## NetCDF/HDF Overview
 
 TODO
 
-Overview major functionality of NetCDF:
+Overview major functionality of NetCDF.
+Students who aren't already familiar with NetCDF should come away feeling more able to engage with it and maybe even excited about it.
 
-- Multidimensional / N-Dimensional
-- Self-describing
-- Random access
-- Remote access
+- NetCDF is for Multidimensional / N-Dimensional data: Storing multidimensional data in common taular formats such as CSV can get cumbersome, though there are ways to do it by adding columns full of redundant data or splitting data into multiple files. But once you get into 4+ dimensions (e.g., x, y, z, time) formats like NetCDF start looking a lot better.
+- NetCDF is "self-describing", meaning we can encode metadata about every variable such as its units, definitions, and lots of other information
+- Cover the [NetCDF data model](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html) so students have the lingo
+- Random access: While CSVs are ubiquitous and easy to work with, they can get really slow to read into our scripts and programs and can take up a lot of RAM because we have to read and parse the entire CSV into RAM before we can do anything with it. With NetCDF, on the other hand, we don't need to read the entire file into RAM before we query it. Instead of reading the entire dataset into RAM, we only need to read the first part of a NetCDF to get enough information about the data in the rest of the file in order to query it. We call this random or arbitrary access meaning the file describes itself well enough for us to know where the subset of the file we care about is within the whole file. Random access file formats such as NetCDF are fantastic in scalable computing contexts because our parallel workers don't need to read our data files completely into RAM before running our queries or other transformation.
+- Remote access: See https://rabernat.github.io/research_computing_2018/xarray-tips-and-tricks.html. Because NetCDF supports random access (we don't have to read the entire file to know where the subset of the dataa we want is), servers can host more NetCDF files on disk than they could store in RAM, throw something like a THREDDS server in front of them, and we can just query the files without making the server read each file into memory an the server can return just the data we asked for.
 
 Other topics:
 
-- Describe available tooling (python packages, Panoply, others?)
+- Describe available tooling (python packages, Panoply, others?). This doesn't necessarily need to be hands on:
     - Command line
-- Talk about CF conventions?
-- Talk about NetCDF and data archival
+    - Python packages: xarray
+    - GUI applications: Panoply, others?
+    - Some students might have experience with this, what do they use and like/hate?
+- ? Talk about CF conventions (climate forecast conventions for metadata). This could be cut for time.
+- Talk about NetCDF and its role in data archival
+    - Is it a good archival format: Yes! Better than CSV in many (not all) ways. The format is open and well-documented, support for the reading the format is ubiquitous, it's efficient w/ disk space (compared to CSV), it supports remote querying (unlike CSV).
 
 ## Introduction to Xarray
+
+[Time estimate ~20-30min, link to the dataset and work through dataset with students bit-by-bit]
 
 TODO: Base on https://docs.xarray.dev/en/stable/getting-started-guide/quick-overview.html but with a course-appropriate dataset.
 
 Course appropriate datasets:
-- Probably a space<->time one
-- One in var/data on ADC
 
-I want students to both be able to create a NetCDF and work with them.
+- Probably a space<->time one, maybe one with x, y, z and time
+- Jeanette says there's a nice one One in /var/data on ADC, may have to ask her for more information
+
+The focus here is for students to learn how to open up a NetCDF file, get info on it, read in the data and do some basic map-reduce type operations using xarray.
+Being able to write out a NetCDF file might be outside the scope here.
 
 ## Exercise
 
