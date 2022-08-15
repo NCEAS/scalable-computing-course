@@ -26,7 +26,7 @@ First, let's connect to the server again. If you were able to work through the s
 
 Now we can get set up with a project to work in for the course. Head over to the `scalable-computing-examples` [github repository](http://github.com/NCEAS/scalable-computing-examples) and fork it to your account.
 
-Back in VS Code, in the terminal clone your fork of the `scalable-computing-examples` repo (`git clone <url-to-forked-repo-here>`)
+Back in VS Code, in the terminal clone your fork of the `scalable-computing-examples` repo (`git clone <url-to-forked-repo-here>`) into the top level of your user directory. Run `cd ~/` if you are in some other directory.
 
 To open the project, open the folder into your workspace
 
@@ -62,7 +62,7 @@ Restart your terminal, then check to make sure it was installed and configured c
 mkvirtualenv --version
 ```
 
-It should return something like this:
+It should return some content that looks like this (with more output, potentially).
 
 ```
 virtualenv 20.13.0+ds from /usr/lib/python3/dist-packages/virtualenv/__init__.py

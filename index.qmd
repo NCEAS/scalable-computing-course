@@ -27,21 +27,31 @@ In this course, we will be using Python (> 3.0) as our primary language, and VS 
 
 First, [download VS Code](https://code.visualstudio.com/) if you do not already have it installed.
 
-You'll also need to download the [Remote - SSH extension](https://code.visualstudio.com/docs/remote/ssh) .
+You'll also need to download the [Remote - SSH extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack).
 
 ### Log in to the server
 
-To connect to the server using VS Code follow these steps:
+To connect to the server using VS Code follow these steps, from the VS Code window:
 
 - open the command pallette (Cmd + Shift + P)
 - enter "Remote SSH: Connect to Host"
+
+![](images/connect-1.png)
+
 - select "Add New SSH Host"
 - enter the ssh command to connect to the host as if in a terminal (`ssh username@included-crab.nceas.ucsb.edu`)
     + Note: you will only need to do this step once
-- select the SSH config file to update with the name of the host (if prompted)
+
+![](images/connect-2.png)
+
+- select the SSH config file to update with the name of the host. You should select the one in your user directory (eg: `/Users/jclark/.ssh/config`)
 - click "Connect" in the popup in the lower right hand corner
     + Note: If the dialog box does not appear, reopen the command palette (Cmd + Shift + P), type in "Remote-SSH: Connect to Host…", choose included-crab.nceas.ucsb.edu from the options of configured SSH hosts, then enter your password into the dialog box that appears
 - enter your password in the dialog box that pops up
+
+When you are connected, you will see in the lower left hand corner of the window a green bar that says "SSH: included-crab.nceas.ucsb.edu."
+
+![](images/connect-3.png)
 
 ### Install extensions on the server
 
@@ -55,7 +65,11 @@ Note that these extensions will be installed on the server, and not locally.
 
 ### Test your local setup (Optional)
 
-Locally (not connected to the server), check to make sure you have Python installed if you aren't sure you do. To do this, from the terminal run:
+We are going to be working on the server exclusively, but if you are interested in setting up VS Code to work for you locally with Python, you can follow these instructions. This local setup section summarizes the official VS Code tutorial. For more detailed instructions and screenshots, see the [source material.](https://code.visualstudio.com/docs/python/python-tutorial) If you already use VS Code for Python you can skip this.
+
+Locally (not connected to the server), check to make sure you have Python installed if you aren't sure you do. File > New Window will open up a new VS Code window locally. 
+
+To check your python, from the terminal run:
 
 ```
 python3 --version
@@ -69,9 +83,7 @@ If you get an error, it means you need to install Python. Here are instructions 
 
 After you run your install, make sure you check that the install is on your system PATH by running `python3 --version` again.
 
-This section summarizes the official VS Code tutorial. For more detailed instructions and screenshots, see the [source material.](https://code.visualstudio.com/docs/python/python-tutorial) If you already use VS Code for Python you can skip this.
-
-First, install the [Python extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python). 
+Next, install the [Python extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python). 
 
 Open a terminal window in VS Code from the Terminal drop down in the main window. Run the following commands to initialize a project workspace in a directory called `training`. This example will show you how to do this locally. Later, we will show you how to set it up on the remote server with only one additional step.
 
@@ -82,8 +94,6 @@ code .
 ```
 
 Next, select the Python interpreter for the project. Open the **Command Palette** using Command + Shift + P (Control + Shift + P for windows). The Command Palette is a handy tool in VS Code that allows you to quickly find commands to VS Code, like editor commands, file edit and open commands, settings, etc. In the Command Palette, type "Python: Select Interpreter." Push return to select the command, and then select the interpreter you want to use (your Python 3.X installation).
-
-Finally, download the [Jupyter extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter). You can create a test Jupyter Notebook document from the command pallete by typing "Create: New Jupyter Notebook" and selecting the command. This will open up a code editor pane with a notebook that you can test.
 
 To make sure you can write and execute code in your project, [create a Hello World test file](https://code.visualstudio.com/docs/python/python-tutorial#_create-a-python-hello-world-source-code-file).
 
@@ -99,6 +109,9 @@ print(msg)
     - For more ways to run code in VS Code, see the [tutorial](https://code.visualstudio.com/docs/python/python-tutorial#_create-a-python-hello-world-source-code-file)
 
 
+Finally, to test Jupyter, download the [Jupyter extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter). You'll also need to install `ipykernel`. From the terminal, run `pip install ipykernel`. 
+
+You can create a test Jupyter Notebook document from the command pallete by typing "Create: New Jupyter Notebook" and selecting the command. This will open up a code editor pane with a notebook that you can test.
 
 
 ## About this book
