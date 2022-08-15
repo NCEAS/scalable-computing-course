@@ -18,77 +18,73 @@ title: "Remote Computing"
 
 ## Servers & Networking
 
-- Host computers connect via networking equipment and can send messages to each other over communication protocols (aka internet protocols)
+Host computers connect via networking equipment and can send messages to each other over communication protocols (aka an [Internet Protocol](https://en.wikipedia.org/wiki/Internet_Protocol), or IP). Host computers can take the role of **client** or **server**, though these are not inherent properties of a host (i.e. the same machine can play either role). 
 
-:::callout-note 
-Host computers can take the role of **client** (the host *initiating* the request) or **server** (the host *responding* to a request), though these are not inherent properies of a host (i.e. the same machine can play both roles). Hosts typically have one network address but can have many different ones (for example, adding multiple network cards to a single server increases bandwith).
+- **Client**: the host *intiating* a request
+- **Server**: the host **responding* to a request
+
+::: {.callout-note}
+ Hosts typically have one network address but can have many different ones (for example, adding multiple network cards to a single server increases bandwith).
 :::
 
-:::callout-important GET FEEDBACK ON VISUAL + ADD KUBERNETES CONFIGURATION VISUAL
+::: {.callout-important} GET FEEDBACK ON VISUAL + ADD KUBERNETES CONFIGURATION VISUAL
 ![](../images/remote-computing-configs.png)
 :::
 
 ## IP addressing
 
-- Hosts are assigned a **unique numerical address** used for all communication and routing called an [Internet Protocol Address (IP Address)](https://en.wikipedia.org/wiki/IP_address). They look something like this: 128.111.220.7
+Hosts are assigned a **unique numerical address** used for all communication and routing called an [Internet Protocol Address (IP Address)](https://en.wikipedia.org/wiki/IP_address). They look something like this: **128.111.220.7**. Each IP Address can be used to communicate over various "ports", which allows multiple applications to communicate with a host without mixing up traffic. 
 
-- Each IP Address can be used to communicate over various "ports", which allows multiple applications to communicate with a host without mixing up traffic
-
-- IP addresses can be difficult to remember, so they are also assigned **hostnames**
-
-    - Hostnames are handled through the global [Domain Name System (DNS)](https://en.wikipedia.org/wiki/Domain_Name_System)
-
-    - Clients first look up a hostname in DNS to find the IP address, then they open a connection the the IP address
+Because IP addresses can be difficult to remember, they are also assigned **hostnames**, which are handled through the global [Domain Name System (DNS)](https://en.wikipedia.org/wiki/Domain_Name_System). Clients first look up a hostname in the DNS to find the IP address, then open a connection to the IP address.
     
-        - aurora.nceas.ucsb.edu == 128.111.220.46 **(UPDATE THIS WITH SERVER USED FOR COURSE?)**
-
-        - UPDATE NOTE: e.g. aurora has multiple network cards
+::: {.callout-note} 
+The IP address for included-crab.nceas.ucsb.edu is _______. 
+:::
 
 ## Bash Shell Programming
 
-- *What is a shell?* From [Wikipedia](https://en.wikipedia.org/wiki/Shell_(computing)) 
+*What is a shell?* From [Wikipedia](https://en.wikipedia.org/wiki/Shell_(computing)) 
 
 > "a computer program which exposes an operating system's services to a human user or other programs. In general, operating system shells use either a command-line interface (CLI) or graphical user interface (GUI), depending on a computer's role and particular operation."
 
-- *What is Bash Shell?* A command line tool (language) commonly used to manipulate files and directories 
+*What is Bash?* Bash, or **B**ourne-**a**gain **Sh**ell, is a command line tool (language) commonly used to manipulate files and directories. Accessing and using bash is slightly different depending on what type of machine you work on:
 
-    - **Mac:** bash via the [Terminal](https://support.apple.com/guide/terminal/welcome/mac) **(QUESTION: Mac users may have to switch from zsh to bash? `exec bash`? or `exec zsh` to switch back)**
+    - **Mac:** bash via the [Terminal](https://support.apple.com/guide/terminal/welcome/mac), which comes ready-to-use with all Macs
 
-    - **Windows:** bash via [Git Bash](https://gitforwindows.org/)
+    - **Windows:** bash via [Git Bash](https://gitforwindows.org/), which needs to be installed
 
-:::callout-note
-Mac users may have to switch from zsh to bash. Use the command `exec bash` to switch your default shell to bash (or `exec zsh` to switch switch back)
+::: {.callout-note}
+Mac users may have to switch from [Z Shell](https://www.zsh.org/), or zsh, to bash. Use the command `exec bash` to switch your default shell to bash (or `exec zsh` to switch switch back)
 :::
 
-## Some group exercise:
+Some commonly used (and very helpful) bash commands:
 
- - Navigate file system (show that this is equivalent to using Finder/Windows version), create a file, edit file, etc.
-
-    - `pwd`
-    - `cd`
-    - `ls`
-    - `tree` visualize directory structures
-    - `touch` 
-    - `mkdir`
-    - `grep`
-    - `auk`, `sed`, `cut`, `join` useful for manipuating files
-    - `top`, `htop`
+| bash command     | what it does                                                                  |
+|------------------|-------------------------------------------------------------------------------|
+|      `pwd`       | print your current working directory                                          | 
+|      `cd`        | change directory                                                              |
+|      `ls`        | list contents of a directory                                                  |
+|      `tree`      | display the contents of a directory in the form of a tree structure           |
+|      `touch`     | create a new empty file                                                       |
+|      `mkdir`     | create a new directory                                                        |
+|      `grep`      | searches a given file(s) for lines containing a match to a given pattern list |
+|      `auk`       |
+|      `sed`       | stands for **S**tream **Ed**itor; a versatile command for editing files       |
+|      `cut`       | extract a specific portion of text in a file                                  |
+|      `join`      | join two files based on a key field present in both                           |
+|   `top`, `htop`  | view running processes in a Linux system                                      |
 
 ## Connecting to a remote computer via a shell
 
-- You can use a shell to gain accesss to and remotely control other computers (manage/transfer files/etc). To do so, you'll need the following:
+You can use a shell to gain accesss to and remotely control other computers (manage/transfer files/etc). To do so, you'll need the following:
 
-    - remote computer (e.g. server) turned on
+    - a remote computer (e.g. server) turned on
 
-    - IP address or name of remote computer
+    - the IP address or name of remote computer
 
-    - necessary permissions to access the remote computer
+    - the necessary permissions to access the remote computer
 
-- Secure Shell, or SSH, is often used for securely connecting to and running shell commands on a remote host.
-
-    - SSH tremendously simplifies remote computing
-
-    - Supported out-of-the-box on Linux and Macs 
+Secure Shell, or SSH, is a network communication protocol that is often used for securely connecting to and running shell commands on a remote host. SSH temendously simplifies remote computing because ______, and it is supported out-of-the-box on Linux and Macs. If working on a Windows machine, you'll need ____.
 
 ## Exercise:
 
@@ -104,16 +100,22 @@ Mac users may have to switch from zsh to bash. Use the command `exec bash` to sw
 
          b) Click on the `+ (dropdown menu) | bash` in the bottom right corner
 
-2. Connect to a remote server **(UPDATE THIS SECTION)**
+2. Connect to a remote server 
 
-```
-samanthacsik:~$ ssh scsik@included-crab.nceas.ucsb.edu
+You can choose to SSH into the server (included-crab.nceas.ucsb.edu) through the command line by using the `ssh` command, or through VS Code's command palette. If you prefer the latter, please refer back to the [**Log in to the server** section](https://learning.nceas.ucsb.edu/2022-09-arctic/#log-in-to-the-server). Doing so via the command line should look something like this:
+
+```{bash}
+samanthacsik:~$ ssh scsik@included-crab.nceas.ucsb.edu 
 scsik@included-crab.nceas.ucsb.edu's password: 
 scsik@included-crab:~$ 
 ```
 
-:::callout-warning KEEP THIS? 
-3. Change your password **(UPDATE THIS SECTION)**
+::: {.callout-important}
+You won't see anything appear as you type your password!
+:::
+
+::: {.callout-warning} DO WE NEED THIS SECTION? 
+3. Change your password
 
 ```
 scsik@included-crab:~$ passwd
@@ -124,7 +126,7 @@ Retype new UNIX password:
 ```
 :::
 
-4. **create python script on server | write/execute some code | etc**
+4. **Write a bash shell script**
 
 
 UPDATE: write a simple shell script that does something -- e.g. renaming files with bash loop (e.g. change extension, add date, move them around)
