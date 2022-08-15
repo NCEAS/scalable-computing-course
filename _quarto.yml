@@ -20,22 +20,25 @@ book:
 
   chapters:
     - index.qmd
-    - sections/01-adc-intro.qmd
-    - sections/02-remote-computing.qmd
-    - sections/03-python-intro.qmd
-    - sections/04-parallel-programming.qmd
-    - sections/05-adc-data-publishing.qmd
-    - sections/06-data-structures-netcdf.qmd
-    - sections/07-parallel-with-dask.qmd
-    - sections/08-group-project-1.qmd
-    - sections/10-geopandas.qmd
-    - sections/11-parquet-arrow.qmd
-    - sections/13-group-project-2.qmd
-    - sections/15-google-earth-engine.qmd
-    - sections/17-group-project-3.qmd
-    - sections/18-arctic-data-staging.qmd
-    - sections/20-reproducibility-containers.qmd
-    - sections/references.qmd
+    - 01-adc-intro.qmd
+    - 02-remote-computing.qmd
+    - 03-python-intro.qmd
+    - 04-parallel-programming.qmd
+    - 05-adc-data-publishing.qmd
+    - 06-group-project-1.qmd
+    - 07-software-design-1.qmd
+    - 08-data-structures-netcdf.qmd
+    - 09-parallel-with-dask.qmd
+    - 10-geopandas.qmd
+    - 11-parquet-arrow.qmd
+    - 12-software-design-2.qmd
+    - 13-group-project-2.qmd
+    - 14-data-ethics.qmd
+    - 15-google-earth-engine.qmd
+    - 17-group-project-3.qmd
+    - 18-arctic-data-staging.qmd
+    - 19-cloud-computing.qmd
+    - 20-reproducibility-containers.qmd
 
 bibliography: references.bib
 
