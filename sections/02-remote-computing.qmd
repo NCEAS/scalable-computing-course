@@ -21,13 +21,14 @@ title: "Remote Computing"
 Host computers connect via networking equipment and can send messages to each other over communication protocols (aka an [Internet Protocol](https://en.wikipedia.org/wiki/Internet_Protocol), or IP). Host computers can take the role of **client** or **server**, though these are not inherent properties of a host (i.e. the same machine can play either role). 
 
 - **Client**: the host *intiating* a request
-- **Server**: the host **responding* to a request
+- **Server**: the host *responding* to a request
 
 ::: {.callout-note}
  Hosts typically have one network address but can have many different ones (for example, adding multiple network cards to a single server increases bandwith).
 :::
 
-::: {.callout-important} GET FEEDBACK ON VISUAL + ADD KUBERNETES CONFIGURATION VISUAL
+::: {.callout-important} 
+GET FEEDBACK ON VISUAL + ADD KUBERNETES CONFIGURATION VISUAL
 ![](../images/remote-computing-configs.png)
 :::
 
@@ -43,15 +44,15 @@ The IP address for included-crab.nceas.ucsb.edu is _______.
 
 ## Bash Shell Programming
 
-*What is a shell?* From [Wikipedia](https://en.wikipedia.org/wiki/Shell_(computing)) 
+*What is a shell?* From [Wikipedia](https://en.wikipedia.org/wiki/Shell_(computing)): 
 
 > "a computer program which exposes an operating system's services to a human user or other programs. In general, operating system shells use either a command-line interface (CLI) or graphical user interface (GUI), depending on a computer's role and particular operation."
 
 *What is Bash?* Bash, or **B**ourne-**a**gain **Sh**ell, is a command line tool (language) commonly used to manipulate files and directories. Accessing and using bash is slightly different depending on what type of machine you work on:
 
-    - **Mac:** bash via the [Terminal](https://support.apple.com/guide/terminal/welcome/mac), which comes ready-to-use with all Macs
+- **Mac:** bash via the [Terminal](https://support.apple.com/guide/terminal/welcome/mac), which comes ready-to-use with all Macs
 
-    - **Windows:** bash via [Git Bash](https://gitforwindows.org/), which needs to be installed
+- **Windows:** bash via [Git Bash](https://gitforwindows.org/), which needs to be installed
 
 ::: {.callout-note}
 Mac users may have to switch from [Z Shell](https://www.zsh.org/), or zsh, to bash. Use the command `exec bash` to switch your default shell to bash (or `exec zsh` to switch switch back)
@@ -65,24 +66,69 @@ Some commonly used (and very helpful) bash commands:
 |      `cd`        | change directory                                                              |
 |      `ls`        | list contents of a directory                                                  |
 |      `tree`      | display the contents of a directory in the form of a tree structure           |
+|      `mv`        | move or rename a file                                                         |
 |      `touch`     | create a new empty file                                                       |
 |      `mkdir`     | create a new directory                                                        |
 |      `grep`      | searches a given file(s) for lines containing a match to a given pattern list |
-|      `auk`       |
+|      `awk`       |
 |      `sed`       | stands for **S**tream **Ed**itor; a versatile command for editing files       |
 |      `cut`       | extract a specific portion of text in a file                                  |
 |      `join`      | join two files based on a key field present in both                           |
 |   `top`, `htop`  | view running processes in a Linux system                                      |
 
+Let's practice using some of these commands:
+
+1. Open up VS Code and launch a new Terminal by clicking **Terminal > New Terminal** from the top menu bar. A Terminal window should appear at the bottom of VS Code.
+
+2. Use the `pwd` command to print your current location, or working directory. You'll likely be in your computer's home directory.
+
+2. Use the `cd` command to move into a new directory. Let's say you're in your home directory (on a Mac, this looks like `Users/yourusername`) which contains a subdirectory (or "folder") called `Projects`. To navigate into that subdirectory, run:
+
+```{bash}
+#| eval: false
+# move from Users/yourusername to Users/yourusername/Projects
+cd Projects
+```
+
+To move *up* a directory level, use two dots, `..`: 
+
+```{bash}
+#| eval: false
+# move from Users/yourusername/Projects back to Users/yourusername
+$ cd ..
+```
+
+To quickly navigate back to your home directory from wherever you may be on your computer, use a tilde, `~`:
+
+```{bash}
+#| eval: false
+# move from some subdirectory, e.g. Users/yourusername/Projects/project1/data, back to your home direcotry, Users/yourusername
+$ cd ~
+
+# or use .. to back out three subdirectories
+$ cd ../../..
+```
+
+3. Verify that you've successfully navigated back to your home directory using `pwd`, then list the contents (any files or subdirectories) of your home directory using the `ls` command.
+
+4. Create a new directory called, **bash_practice** within your home directory using `mkdir`.
+
+```{bash}
+#| eval: false
+$ mkdir bash_practice
+```
+
+ Run `ls` to print out the contents of your home directory -- you should now see your **bash_practice** directory added to the list.
+
+ 5. TO BE CONTINUED
+
 ## Connecting to a remote computer via a shell
 
 You can use a shell to gain accesss to and remotely control other computers (manage/transfer files/etc). To do so, you'll need the following:
 
-    - a remote computer (e.g. server) turned on
-
-    - the IP address or name of remote computer
-
-    - the necessary permissions to access the remote computer
+- a remote computer (e.g. server) turned on
+- the IP address or name of remote computer
+- the necessary permissions to access the remote computer
 
 Secure Shell, or SSH, is a network communication protocol that is often used for securely connecting to and running shell commands on a remote host. SSH temendously simplifies remote computing because ______, and it is supported out-of-the-box on Linux and Macs. If working on a Windows machine, you'll need ____.
 
@@ -105,6 +151,7 @@ Secure Shell, or SSH, is a network communication protocol that is often used for
 You can choose to SSH into the server (included-crab.nceas.ucsb.edu) through the command line by using the `ssh` command, or through VS Code's command palette. If you prefer the latter, please refer back to the [**Log in to the server** section](https://learning.nceas.ucsb.edu/2022-09-arctic/#log-in-to-the-server). Doing so via the command line should look something like this:
 
 ```{bash}
+#| eval: false
 samanthacsik:~$ ssh scsik@included-crab.nceas.ucsb.edu 
 scsik@included-crab.nceas.ucsb.edu's password: 
 scsik@included-crab:~$ 
@@ -114,10 +161,12 @@ scsik@included-crab:~$
 You won't see anything appear as you type your password!
 :::
 
-::: {.callout-warning} DO WE NEED THIS SECTION? 
-3. Change your password
+::: {.callout-warning} 
+DO WE NEED THIS SECTION?  
 
-```
+3. Change your password
+```{bash}
+#| eval: false
 scsik@included-crab:~$ passwd
 Changing password for scsik.
 (current) UNIX password: 
@@ -127,6 +176,69 @@ Retype new UNIX password:
 :::
 
 4. **Write a bash shell script**
+
+We can use bash commands in the terminal to accomplish a variety of tasks like navigating our computer's directories, manipulating/creating/adding files, and much more. However, writing a bash *script* allows us to gather and save our code for automated execusion. 
+
+Earlier, we created a collection of `.txt` files and saved them to a new directory called `bash_practice`. Here, we'll write a bash script to iterate over all those files and update ___.
+
+Let's begin by creating a simple bash script that when executed, will print out the message, "Hello, World!" This simple script will help us determine whether or not things are working as expected before writing some more complex (and interesting) code. 
+
+1. Open a terminal window and determine where you are by using the `pwd` command. Navigate to where you'd like to save your bash script (your home directory on the server is fine) by using the `cd` command. 
+
+2. Next, we'll create a shell script called `hello_world.sh` using the `touch` command:
+
+```{bash}
+#| eval: false
+$ touch hello_world.sh
+```
+
+3. There are a number of ways to edit a file or script -- here, we'll use [Nano](https://www.nano-editor.org/), a terminal-based text editor. Open your `hello_world.sh` with nano by running the following in your terminal:
+
+```{bash}
+#| eval: false
+$ nano hello_world.sh
+```
+
+::: {.callout-tip}
+You can create and open a file in nano in just one line of code. For example, running `nano hello_world.sh` is the same as creating the file first using `touch hello_world.sh`, then opening it with nano using `nano hello_world.sh`
+:::
+
+4. We can now start to write our script. Some important considerations:
+
+- Anything following a `#` will not be executed as code -- these are useful for adding comments to your scripts
+- The first line of a Bash script starts with a **shebang**, `#!`, followed by a path to the Bash interpreter -- this is used to tell the operating system which interpreter to use to parse the rest of the file. There are two ways to use the shebang to set your interpreter (read up on the pros & cons of both methods on this [Stack Overflow post](https://stackoverflow.com/questions/10376206/what-is-the-preferred-bash-shebang)):
+
+```{bash}
+#| eval: false
+
+# (option a): use the absolute path to the bash binary
+#!/bin/bash
+
+# (option b): use the env untility to search for the bash executable in the user's $PATH environmental variable
+#!/usr/bin/env bash
+```
+
+5. We'll first specify our bash interpreter using the shebang, which indicates the start of our script. Then, we'll use the `echo` command, which when executed, will print whatever text is passed as an argument. Type the following into your script (which should be opened with nano), then save (Use the keyboard shortcut `control` + `X` to exit, then type `Y` when it asks if you'd like to save your work. Press `enter/return` to exit nano).
+
+```{bash}
+#| eval: false
+# specify bash as the interpreter
+#!/bin/bash
+
+# print "Hello, World!"
+$ echo "Hello, World!"
+```
+
+6. To execute your script, be sure that you're in the same working directory as your `hello_world.sh` file, then run the following in your terminal:
+
+```{bash}
+#| eval: false
+bash hello_world.sh
+```
+
+If successful, "Hello, World!" should be printed in your terminal window.
+
+7. TO BE CONTINUED
 
 
 UPDATE: write a simple shell script that does something -- e.g. renaming files with bash loop (e.g. change extension, add date, move them around)
