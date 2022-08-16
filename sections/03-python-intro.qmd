@@ -37,7 +37,7 @@ To open the project, open the folder into your workspace
 
 ## Virtual Environments
 
-![](https://imgs.xkcd.com/comics/python_environment.png)
+<img src="https://imgs.xkcd.com/comics/python_environment.png">
 
 When you install a python library, let's say `pandas`, via `pip`, unless you specify otherwise, `pip` will go out and grab the most recent version of the library, and install it somewhere on your system path (where, exactly, depends highly on how you install python originally, and other factors). This is all great, untl you realize that as part of a new project, a new library you are starting to work with requires a older version of `pandas`, what do you do? You need both `pandas` versions for each of your projects. Virtual environments help to solve this issue without making the all to common situation in the comic above even more complicated.
 
