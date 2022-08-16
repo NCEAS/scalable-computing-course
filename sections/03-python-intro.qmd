@@ -54,7 +54,7 @@ First we will create a `.bash_profile` file to create variables that point to th
 - In VS Code, select 'File > New Text File' 
 - Paste this text into the file:
 
-```{.bash, filename = ".bash_profile"}
+```{.bash}
 export VIRTUALENVWRAPPER_VIRTUAWORKON_HOME=$HOME/.virtualenvs
 source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 ```
