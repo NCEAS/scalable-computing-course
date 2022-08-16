@@ -54,7 +54,7 @@ First we will create a `.bash_profile` file to create variables that point to th
 - In VS Code, select 'File > New Text File' 
 - Paste this text into the file:
 
-```
+```{.bash, filename = ".bash_profile"}
 export VIRTUALENVWRAPPER_VIRTUAWORKON_HOME=$HOME/.virtualenvs
 source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 ```
@@ -66,13 +66,13 @@ commands available in your terminal session.
  - Restart your terminal (Terminal > New Terminal)
  - Check to make sure it was installed and configured correctly by running this in the terminal:
 
-```
+```{.bash}
 mkvirtualenv --version
 ```
 
 It should return some content that looks like this (with more output, potentially).
 
-```
+```{.bash}
 virtualenv 20.13.0+ds from /usr/lib/python3/dist-packages/virtualenv/__init__.py
 ```
 
@@ -80,25 +80,25 @@ virtualenv 20.13.0+ds from /usr/lib/python3/dist-packages/virtualenv/__init__.py
 
 Now we can create the virtual environment we will use for the course. In the terminal run: 
 
-```
+```{.bash}
 mkvirtualenv -p python3.9 scomp
 ```
 
 Here, we've specified explicitly which python version to use by using the `-p` flag, and the path to the python 3.9 installation on the server. After making a virtual environment, it will automatically be activated. You'll see the name of the env you are working in on the left side of your terminal prompt in parentheses. To deactivate your environment (like if you want to work on a different project), just run `deactivate`. To activate it again, run:
 
-```
+```{.bash}
 workon scomp
 ```
 
 You can get a list of all available environments by just running:
 
-```
+```{.bash}
 workon
 ```
 
 Now let's install the dependencies for this course into that environment. (Note: need to figure out how to get them this file)
 
-```
+```{.bash}
 python3 -m pip install -r requirements.txt
 ```
 
@@ -107,7 +107,7 @@ python3 -m pip install -r requirements.txt
 `virtualenvwrapper` was already installed on the server we are working on. To install on your local computer,
 run:
 
-```
+```{.bash}
 pip3 install virtualenvwrapper
 ```
 
