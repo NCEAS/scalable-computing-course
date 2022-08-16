@@ -2,6 +2,16 @@
 title: "Parallelization with Dask"
 ---
 
+## TODO
+
+- Find dataset(s) to use:
+    - https://arcticdata.io/catalog/view/doi%3A10.18739%2FA24B2X59C
+        "Understory micrometorology across a larch forest density gradient in northeastern Siberia 2014-2020"
+        ~50MB, has a few different axes to filter on
+    - https://arcticdata.io/catalog/view/doi%3A10.18739%2FA28W38388
+        "River and lake ice phenology data for Alaska and Northwest Canada from 1882 to 2021"
+    - Also check out candidats in the xarray lesson TODO section
+
 ## Learning Objectives
 
 - Learn about the map-reduce

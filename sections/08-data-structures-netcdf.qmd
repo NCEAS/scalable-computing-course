@@ -5,7 +5,13 @@ title: "Data Structures and Formats for Large Data"
 ## TODO
 
 - Look into parallel access and NetCDF and whether all wheels can take advantage of the built-in parallel access. Looking at [NetCDF's Parallel I/O page](https://docs.unidata.ucar.edu/netcdf-c/current/parallel_io.html) you can see the low-level libraries support it.
-- Find dataset(s) to use in the xarray hands on. Jeanette says there on on the Arctic Data Center we store in /var/data. Ask her for more info.
+- Find dataset(s) to use in the xarray hands on.
+    - Jeanette says there on on the Arctic Data Center we store in /var/data. Ask her for more info.
+    - Candiate: https://www.ncei.noaa.gov/products/climate-data-records/snow-cover-extent (https://arcticdata.io/catalog/view/doi%3A10.7289%2FV5N014G9)
+    - Candiate: https://arcticdata.io/catalog/view/doi%3A10.18739%2FA24B2X59C
+        "Understory micrometorology across a larch forest density gradient in northeastern Siberia 2014-2020"
+        ~50MB, has a few different axes to filter on
+    - Also check out candidats in the Dask lesson TODO section
 
 ## Learning Objectives
 
