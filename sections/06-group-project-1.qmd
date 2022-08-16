@@ -34,6 +34,6 @@ Today we will undertake the first step of the workflow, staging and tiling the d
 
 ![](../images/gp-step1.png)
 
-In your fork of the [`scalable-computing-example`](https://github.com/NCEAS/scalable-computing-examples) repository, open the Jupyter notebook in the `group-project` called `session08.ipynb`. This workbook will serve as a skeleton for you to work in. It will load in all the libraries you need, including a few helper functions we wrote for the course, show an example for how to use the method on one file, and then lays out blocks for you and your group to fill in with code that will run that method in parallel.
+In your fork of the [`scalable-computing-examples`](https://github.com/NCEAS/scalable-computing-examples) repository, open the Jupyter notebook in the `group-project` directory called `session-06.ipynb`. This workbook will serve as a skeleton for you to work in. It will load in all the libraries you need, including a few helper functions we wrote for the course, show an example for how to use the method on one file, and then lays out blocks for you and your group to fill in with code that will run that method in parallel.
 
 In your small groups, work together to write the solution, but everyone should aim to have a working solution on their own fork of the repository. In other words, everyone should type out the solution themselves as part of the group effort. Writing the code out yourself (even if others are contributing to the content) is a great way to get "mileage" as you develop these skills. 

@@ -6,50 +6,74 @@ execute:
 
 ## Learning Objectives
 
-- Reading raster data with rasterasterio
-- Using geopandas and rasterasterio to process raster data
+- Reading raster data with rasterio
+- Using geopandas and rasterio to process raster data
 - Working with raster and vector data together
 
 ## Introduction
 
-- Raster vs vector data
-- What is a projection
-- Processing overview
-    - goal is to calculate vessel distance per [commercial fishing area](https://doi.org/10.5063/F1TD9VN9)
+In this lesson, we'll be working with geospatial raster and vector data to do an analysis on vessel traffic in south central Alaska. If you aren't already familiar, geospatial vector data consists of points, lines, and/or polygons, which represent locations on the Earth. Geospatial vector data can have differing geometries, depending on what it is representing (eg: points for cities, lines for rivers, polygons for states.) Raster data uses a set of regularly gridded cells (or pixels) to represent geographic features.
+
+Both geospatial vector and raster data have a coordinate reference system, which describes how the points in the dataset relate to the 3-dimensional sphereoid of Earth. A coordinate reference system contains both a datum and a projection. The datum is how you georeference your points (in 3 dimensions!) onto a spheroid. The projection is how these points are mathematically transformed to represent the georeferenced point on a flat piece of paper. All coordinate reference systems require a datum. However, some coordinate reference systems are “unprojected” (also called geographic coordinate systems). Coordinates in latitude/longitude use a geographic (unprojected) coordinate system. One of the most commonly used geographic coordinate systems is WGS 1984.
+
+Coordinate reference systems are often referenced using a shorthand 4 digit code called an EPSG code. We'll be working with two coordinate referece systems in this lesson with the following codes:
+
+- 3338: Alaska Albers
+- 4326: WGS84 (World Geodetic System 1984), used in GPS
+
+In this lesson, we are going to take two datasets: 
+
+- [Alaskan commercial salmon fishing statisical areas](https://doi.org/10.5063/F1QR4VJK)
+- [North Pacific and Arctic Marine Vessel Traffic Dataset](https://doi.org/10.18739/A2SQ8QJ9S)
+
+and use them to calculate the total distance travelled by ships within each fishing area.
+
+The high level steps will be
+
+- read in the datasets
+- reproject them so they are in the same projection
+- extract a subset of the raster and vector data using a bounding box
+- turn each polygon in the vector data into a raster mask
+- use the masks to calculate the total distance travelled (sum of pixels) for each fishing area
 
 ## Pre-processing raster data
 
-This is a test to make sure we can run some code in this notebook.
+First we need to load in our libraries. We'll use `geopandas` for vector manipulation, `rasterio` for raster maniupulation, and `shapely` for manipulating geospatial data generally.
 
 ```{python}
 import geopandas as gpd
+
 import rasterio
 import rasterio.mask
 import rasterio.warp
 import rasterio.plot
 from rasterio import features
+
 from shapely.geometry import box
 from shapely.geometry import Polygon
+
 import requests
+
 import matplotlib.pyplot as plt
 from matplotlib import style
+
 import pandas as pd
 import numpy as np
 ```
 
-Download the ship traffic raster from [Kapsar et al.](https://doi.org/10.18739/A2SQ8QJ9S). We grab a one month slice from December, 2020 of a coastal subset of data with 1km resolution.
+First, we'll use `requests` to download the ship traffic raster from [Kapsar et al.](https://doi.org/10.18739/A2SQ8QJ9S). We grab a one month slice from August, 2020 of a coastal subset of data with 1km resolution. To get the URL in the code chunk below, you can right click the download button for the file of interest and select "copy link address."
 
 ```{python}
-url_sf = 'https://cn.dataone.org/cn/v2/resolve/urn:uuid:dd61089d-f50e-4d87-9b75-6b4e2bd24776'
+url_sf = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A2cc77a90-080b-4696-b5bc-3232523d5e3e'
 
 response_sf = requests.get(url_sf)
-open("Coastal_2020_12.tif", "wb").write(response_sf.content)
+open("Coastal_2020_08.tif", "wb").write(response_sf.content)
 ```
 
 Open the raster file, plot it, and look at the metadata.
 
 ```{python}
-with rasterio.open("Coastal_2020_12.tif") as dem_src:
+with rasterio.open("Coastal_2020_08.tif") as dem_src:
     ships = dem_src.read(1)
     ships_meta = dem_src.profile
 
@@ -72,9 +96,11 @@ Read in the data
 
 ```{python}
 comm = gpd.read_file("Alaska_Commercial_Salmon_Boundaries.gpkg")
+
+comm.crs
 ```
 
-The raster data is in 3338, so we need to reproject this.
+The raster data is in 3338, so we need to reproject this. We use the `to_crs` method on the `comm` object to transform it from 4326 (WGS 84) to 3338 (Alaska Albers).
 
 ```{python}
 comm.crs
@@ -83,30 +109,21 @@ comm_3338 = comm.to_crs("EPSG:3338")
 comm_3338.plot()
 ```
 
-We can extract the bounding box for the area of interest, and use that to clip the original raster data to just the extent we need. We use the `box` function from `shapely` to create the bounding box, then create a `geoDataFrame` from them and convert the WGS84 coordinates to the Alaska Albers projection.
-
-todo: explain the warp transform thing here
+We can create a bounding box for the area of interest, and use that to clip the original raster data to just the extent we need. We use the `box` function from `shapely` to create the bounding box, then create a `geoDataFrame` from the points, and convert the WGS 84 coordinates to the Alaska Albers projection.
 
 ```{python}
-coords = rasterio.warp.transform_bounds('EPSG:4326',
-                                        'EPSG:3338',
-                                         -159.5,
-                                         55,
-                                         -144.5,
-                                         62)
-coord_list = list(coords)
-
-coord_box = box(coord_list[0],coord_list[1], coord_list[2], coord_list[3])
+coord_box = box(-159.5, 55, -144.5, 62)
 
 bbox_crop = gpd.GeoDataFrame(
-    crs = 'EPSG:3338',
-    geometry = [coord_box])
+    crs = 'EPSG:4326',
+    geometry = [coord_box]).to_crs("EPSG:3338")
 ```
 
-Read in raster again cropped to bounding box. 
+Now, we can read in raster again cropped to bounding box. We use the `mask` function from `rasterio.mask`. Note that we apply this to the connection to the raster file (`with rasterio.open(...)`), update the metadata associated with the raster, and then write it back out again.
+
 
 ```{python}
-with rasterio.open("Coastal_2020_12.tif") as src:
+with rasterio.open("Coastal_2020_08.tif") as src:
     out_image, out_transform = rasterio.mask.mask(src, bbox_crop["geometry"], crop=True)
     out_meta = src.meta
 
@@ -116,11 +133,11 @@ out_meta.update({"driver": "GTiff",
                  "transform": out_transform,
                  "compress": "lzw"})
 
-with rasterio.open("Coastal_2020_12_masked.tif", "w", **out_meta) as dest:
+with rasterio.open("Coastal_2020_08_masked.tif", "w", **out_meta) as dest:
     dest.write(out_image)
 ```
 
-We can also clip the shapefile data to the same bounding box
+We can also clip the shapefile data to the same bounding box using the `clip` method, passing it as an argument the `geometry` column of our `bbox_crop` geo data frame.
 
 ```{python}
 comm_clip = comm_3338.clip(bbox_crop['geometry'])
@@ -128,72 +145,120 @@ comm_clip = comm_3338.clip(bbox_crop['geometry'])
 
 ### Check extents
 
-Quick plot to ensure they are in the same extent, and look as expected.
+Let's read in the clipped raster data, and make a quick plot to ensure they are in the same extent, and look as expected.
+
+First we read in the cropped data again, since we'll need it later. We also save the `shape` and `transform` attributes of the raster into their own attributes.
 
 ```{python}
-with rasterio.open('Coastal_2020_12_masked.tif') as src:
-    r = src.read(1)
+with rasterio.open('Coastal_2020_08_masked.tif') as src:
+    shape = src.shape
+    transform = src.transform
+    # read in the cropped raster
+    ship_arr = src.read(1)
+    # turn no data values into actual NaNs
+    ship_arr[ship_arr == src.nodata] = np.nan
+```
 
-r[r == src.nodata] = np.nan
 
+```{python}
+# set up plot
 fig, ax = plt.subplots(figsize=(15, 15))
-
-rasterio.plot.show(r,
+# plot the raster
+rasterio.plot.show(ship_arr,
                    ax=ax,
                    vmin = 0,
                    vmax = 6000,
-                   transform = src.transform)
-
+                   transform = transform)
+# plot the vector
 comm_clip.plot(ax=ax, facecolor='none', edgecolor='red')
 ```
 
 
 ## Calculate total distance per fishing area
 
-Rasterize each polygon in the shapefile that falls within the bounds of the raster data we are calculating statistics for.
+In this step, we rasterize each polygon in the shapefile that falls within the bounds of the raster data we are calculating statistics for.
 
-We return a dictionary of indexed arrays, where each item corresponds to one polygon (fishing area). The array contains the indices of the original raster that fall within that fishing area.
+This process returns a dictionary of indexed arrays, where each item corresponds to one polygon (fishing area). The array contains the indices of the original raster that fall within that fishing area. In other words, we are creating a raster mask for each fishing district.
 
-```{python}
-with rasterio.open('Coastal_2020_12_masked.tif') as src:
-    shape = src.shape
-    transform = src.transform
-    # read in the cropped raster
-    r_array = src.read(1)
-    # turn no data values into actual NaNs
-    r_array[r_array == src.nodata] = np.nan
-```
-
+First we'll create an `id` column in the vector data frame. This will help us track unique fishing districts later.
 
 ```{python}
 comm_3338['id'] = range(0,len(comm_3338))
+```
 
-crosswalk_dict = {}
-for geom, idx in zip(comm_3338.geometry, comm_3338['id']):
-    rasterized = features.rasterize(geom,
+#### Zonal statistics over one polygon
+
+Let's look at how this works over just one fishing area first. We use the `rasterize` method from the `features` module in `rasterio`. This takes as arguments that data to rasterize (in this case the 40th row of our dataset), the shape and transformaion the output raster will take (these were extracted from our raster data when we read it in). We alo set the `all_touched` argument to true, which means any pixel that touches a boundary of our vector will be burned into the mask. 
+
+```{python}
+r40 = features.rasterize(comm_3338['geometry'][40].geoms,
+                                    out_shape=shape,
+                                    transform=transform,
+                                    all_touched=True)
+```
+
+If we have a look at a plot of our rasterized version of the single fishing district, we can see that instead of a vector, we now have a raster with the shape of the district.
+
+```{python}
+# set up plot
+fig, ax = plt.subplots(figsize=(15, 15))
+# plot the raster
+rasterio.plot.show(r40,
+                   ax=ax,
+                   vmin = 0,
+                   vmax = 1,
+                   transform = transform)
+# plot the vector
+comm_clip.plot(ax=ax, facecolor='none', edgecolor='red')
+```
+
+A quick call to `np.unique` shows our unique values are 0 or 1, which is what we expect.
+
+```{python}
+np.unique(r40)
+```
+
+Finally, we need to know is the indices of the original raster where the fishing district is. We can use `np.where` to extract this information
+
+```{python}
+r40_index = np.where(r40 == 1)
+print(r40_index)
+```
+
+In the last step, we'll using these indices to extract the values of the data from the fishing raster, and sum them to get a total distance travelled.
+
+```{python}
+np.nansum(ship_arr[r40_index])
+```
+
+Now that we know the individual steps, let's run this over all of the districts. For each district (with `geometry` and `id`), we run the `features.rasterize` function. If any values equal 1 (some of the districts are outside the bounds of the raster), we calculate the sum of the values of the shipping raster `r_array` based on the indicies in the raster where the district is located.
+
+```{python}
+#| results: false
+
+distance_dict = {}
+for geom, idx in zip(comm_3338['geometry'], comm_3338['id']):
+    rasterized = features.rasterize(geom.geoms,
                                     out_shape=shape,
                                     transform=transform,
                                     all_touched=True,
-                                    fill=0,
-                                    dtype='uint8')
+                                    fill=0)
     # only save polygons that have a non-zero value
     if any(np.unique(rasterized)) == 1:
-        crosswalk_dict[idx] = np.where(rasterized == 1)
+        r_index = np.where(rasterized == 1)
+        distance_dict[idx] = np.nansum(ship_arr[r_index])
 
 ```
 
-Now we use the dictionary to calculate the sum of all of the pixels in the original raster that fall within each fishing area.
+Now we just create a data frame from that dictionary, and join it to the vector data using `pandas` operations.
+
 
 ```{python}
-mean_dict = {}
-# for each item in the dictionary
-for key, value in crosswalk_dict.items():
-    # save the sum of the indices of the raster to a new dictionary
-    mean_dict[key] = np.nansum(r_array[value])
 # create a data frame from the result
-df = pd.DataFrame.from_dict(mean_dict,
+df = pd.DataFrame.from_dict(distance_dict,
     orient='index',
     columns=['distance'])
+
 # extract the index of the data frame as a column to use in a join
 df['id'] = df.index
 ```
@@ -206,7 +271,7 @@ res_full = comm_3338.merge(df, on = "id", how = 'inner')
 ```
 
 
-todo: Group by/summarize across another variable
+Finally, we can plot our result!
 
 ```{python}
 fig, ax = plt.subplots(figsize=(7, 7))
