@@ -11,13 +11,15 @@ title: 'Python Programming on Clusters'
 
 ## Introduction
 
-* VS Code + remote development on a cluster is easy and way faster than your local machine
-* Jupyter is a great way to do literate analysis
-* Functions provide ways to reuse your code across notebooks/projects
+We've chosen to use VS Code in this training, in part, because it has great support for developing on remote machines. Hopefully, your VS Code setup went easily, and you were able to connect to our server `included-crab`. Once connected, the VS Code interface looks just like you were working locally, and connection to the server is seamless. 
+
+Other aspects of VS Code that we like: it supports all languages thanks to the extensive free extension library, it has built in version control integration, and it is highly flexible/configurable.
+
+We will also be working quite a bit in Jupyter notebooks in this course. Notebooks are great ways to interleave rich text (markdown formatted text, equations, images, links) and code in a way that a 'literate analysis' is generated. Although Jupyter notebooks are not subsitutes for python scripts, they can be great communication tools, and can also be convenient for code development.
 
 ## Starting a project
 
-First, let's connect to the server again. If you were able to work through the setup for the lesson without difficulty, follow these steps to connect:
+To get set up for the course, let's connect to the server again. If you were able to work through the setup for the lesson without difficulty, follow these steps to connect:
 
 - open the command pallette (Cmd + Shift + P)
 - enter "Remote SSH: Connect to Host"
@@ -35,16 +37,22 @@ To open the project, open the folder into your workspace
 
 ## Virtual Environments
 
-Why virtual environments? We'll answer this.
+![](https://imgs.xkcd.com/comics/python_environment.png)
 
-First we will create a `.bash_profile` file to create variables that point to the install locations
-of python and `virtualenvwrapper`. `.bash_profile` is just a text file that contains bash commands
-that are run every time you start up a new terminal. Although setting up this file is not required
-to use `virtualenvwrapper`, it is convenient because it allows you to set up some reasonable defaults
-to the commands (meaning less typing, overall), and it makes sure that the package is available every
-time you start a new terminal.
+When you install a python library, let's say `pandas`, via `pip`, unless you specify otherwise, `pip` will go out and grab the most recent version of the library, and install it somewhere on your system path (where, exactly, depends highly on how you install python originally, and other factors). This is all great, untl you realize that as part of a new project, a new library you are starting to work with requires a older version of `pandas`, what do you do? You need both `pandas` versions for each of your projects. Virtual environments help to solve this issue without making the all to common situation in the comic above even more complicated.
 
-To set up the `.bash_profile`. In VS Code, select 'File > New Text File' then paste this into the file:
+A virtual environment is a folder structure which creates a symlink (pointer) to all of the libraries that you need into the folder. The three main components will be: the python distribution itself, its configuration, and a site-packages directory (where your libraries like `pandas` live). So the folder is a self contained directory of all the version-specific python software you need for your project.
+
+Virtual environments are very helpful to create reproducible workflows, and we'll talk more about this concept of reproducible environements later in the course. Perhaps most importantly though, virtual environments also help you maintain your sanity when python programming. Because they are just folders, you can create and delete new ones at will, without worrying about bungling your underlying python setup. 
+
+In this course, we are going to use `virtualenv` as our tool to create and manage virtual environments. Other virtual environment tools used commonly are `conda` and `pipenv`. One reason we like using `virtualenv` is there is an extension to it called `virtualenvwrapper`, which provides easy to remember wrappers around common `virtualenv` operations that make creating, activating, and deactivating a virtual environment very easy.
+
+First we will create a `.bash_profile` file to create variables that point to the install locations of python and `virtualenvwrapper`. `.bash_profile` is just a text file that contains bash commands that are run every time you start up a new terminal. Although setting up this file is not required to use `virtualenvwrapper`, it is convenient because it allows you to set up some reasonable defaults to the commands (meaning less typing, overall), and it makes sure that the package is available every time you start a new terminal.
+
+#### Setup
+
+- In VS Code, select 'File > New Text File' 
+- Paste this text into the file:
 
 ```
 export VIRTUALENVWRAPPER_VIRTUAWORKON_HOME=$HOME/.virtualenvs
@@ -54,9 +62,9 @@ source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 The first line points `virtualenvwrapper` to the directory where your virtual environments will be stored. We point it to a hidden directory (`.virtualenvs`) in your home directory. The last line sources a bash script that ships with `virtualenvwrapper`, which makes all of `virtualenvwrapper`
 commands available in your terminal session.
 
-Save the file in the top of your home directory as `.bash_profile`.
-
-Restart your terminal, then check to make sure it was installed and configured correctly
+ - Save the file in the top of your home directory as `.bash_profile`.
+ - Restart your terminal (Terminal > New Terminal)
+ - Check to make sure it was installed and configured correctly by running this in the terminal:
 
 ```
 mkvirtualenv --version
@@ -68,13 +76,15 @@ It should return some content that looks like this (with more output, potentiall
 virtualenv 20.13.0+ds from /usr/lib/python3/dist-packages/virtualenv/__init__.py
 ```
 
-Now we can create the virtual environment we will use for the course
+#### Course environment
+
+Now we can create the virtual environment we will use for the course. In the terminal run: 
 
 ```
 mkvirtualenv -p python3.9 scomp
 ```
 
-Here, we've specified explicitly which python version to use by using the `-p` flag, and the path to the python 3.9 installation on the server. After making a virtual environment, it will automatically be activated. You'll see the name of the env you are working in on the left side of your terminal prompt in parentheses. To deactivate your environment (like if you want to work on a different project), just run `deactivate`. To activate it again, run
+Here, we've specified explicitly which python version to use by using the `-p` flag, and the path to the python 3.9 installation on the server. After making a virtual environment, it will automatically be activated. You'll see the name of the env you are working in on the left side of your terminal prompt in parentheses. To deactivate your environment (like if you want to work on a different project), just run `deactivate`. To activate it again, run:
 
 ```
 workon scomp
