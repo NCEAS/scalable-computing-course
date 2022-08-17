@@ -5,16 +5,14 @@ title: "Remote Computing"
 ## Learning Objectives
 
 - Understand the basic architecture of computer networks
-
-- Become familiarized with Bash Shell programming to navigate your computer's file system **(??)**
-
 - Learn how to connect to a remote computer via a shell
+- Become familiarized with Bash Shell programming to navigate your computer's file system, manipulate files and directories, and automate processes
 
 ## Introduction
 
-- Scientific synthesis and our ability to effectively and efficiently work with big data depends on the use of computers & the internet
+Scientific synthesis and our ability to effectively and efficiently work with big data depends on the use of computers & the internet. Working on a personal computer may be sufficient for many tasks, but as data get larger and analyses more computationally intensive, scientists often find themselves needing more computing resources than they have available locally. Remote computing, or the process of connecting to a computer(s) in another location via a network link is becoming more and more common in overcoming big data challenges.
 
-- VS Code + remote development on a cluster is easy and way faster than your local machine
+In this lesson, we'll learn about the architecture of computer networks and explore some of the different remote computing configurations that you may encounter, we'll learn how to securely connect to a remote computer via a shell, and we'll become familiarized with using Bash Shell to efficiently manipulate files and directories. We will begin working in the [VS Code](https://code.visualstudio.com/) IDE (integrated development environment), which is a versatile code editor that supports many different languages.
 
 ## Servers & Networking
 
@@ -28,9 +26,11 @@ Host computers connect via networking equipment and can send messages to each ot
 :::
 
 ::: {.callout-important} 
-GET FEEDBACK ON VISUAL + ADD KUBERNETES CONFIGURATION VISUAL
+GET FEEDBACK ON VISUAL + ADD KUBERNETES CONFIGURATION VISUAL; MAKE LARGER?
 ![](../images/remote-computing-configs.png)
 :::
+
+<span style = 'font-size: 85%; color: #6e6d6d;'>**Fig 1.** Different remote computing configurations. (a) A client uses secure shell protocol (SSH) to login/connect to a server over the internet. The client and the server exist in the physical world, but in different locations. (b) A client uses SSH to login/connect to a computing cluster (i.e. a set of computers (nodes) that work together so that they can be viewed as a single system) over the internet. The connection is first made through a gateway node (i.e. a computer that routes traffic from one network to another). The client and the cluster (server) exist in the physical world, but in different locations. (c) A client uses SSH to login/connect to a computing cluser where each node is a virtual machine (VM) hosted by a cloud computing service (e.g. Amazong Web Services, Google Cloud, Microsoft Azure, etc.). The connection is first made through a gateway node. The client and the gateway are located in the physical world, while the VM nodes are hosted in the cloud.</span>
 
 ## IP addressing
 
@@ -76,26 +76,33 @@ Some commonly used (and very helpful) bash commands:
 |      `join`      | join two files based on a key field present in both                           |
 |   `top`, `htop`  | view running processes in a Linux system                                      |
 
+## Connecting to a remote computer via a shell
 
-## Bash practice
+You can also use a shell to gain accesss to and remotely control other computers (manage/transfer files/etc). To do so, you'll need the following:
 
-Let's practice using some of above commands. 
+- a remote computer (e.g. server) turned on
+- the IP address or name of remote computer
+- the necessary permissions to access the remote computer
 
-### Setup
+Secure Shell, or SSH, is a network communication protocol that is often used for securely connecting to and running shell commands on a remote host. SSH temendously simplifies remote computing because ______, and it is supported out-of-the-box on Linux and Macs. If working on a Windows machine, you'll need ____.
 
-1. Launch your Terminal program: 
+## Exercise 1: Connect to a server & practice bash commands
 
-    - **MacOS:** navigate to `Applications > Utilities` and open `Terminal` 
+Let's connect to a remote computer (a server named **included-crab.nceas.ucsb.edu**) and practice using some of above commands. 
 
-    - **Windows:** Navigate to `Windows Start > Git` and open `Git Bash` UPDATE: see if this still stands
+### Launch your Terminal Program
 
-    - **ALTERNATIVELY, from VS Code:** Two options to open a terminal program, if a terminal isn't already an open pane at the bottom of VS Code 
+- **MacOS:** navigate to `Applications > Utilities` and open `Terminal` 
 
-         a) Click on `Terminal > New Terminal` in top menu bar
+- **Windows:** Navigate to `Windows Start > Git` and open `Git Bash` UPDATE: see if this still stands
 
-         b) Click on the `+ (dropdown menu) > bash` in the bottom right corner
+- **ALTERNATIVELY, from VS Code:** Two options to open a terminal program, if a terminal isn't already an open pane at the bottom of VS Code 
 
-2. Connect to a remote server 
+    a) Click on `Terminal > New Terminal` in top menu bar
+
+    b) Click on the `+ (dropdown menu) > bash` in the bottom right corner
+
+### Connect to a remote server 
 
 You can choose to SSH into the server (included-crab.nceas.ucsb.edu) through the command line by using the `ssh` command, or through VS Code's command palette. If you prefer the latter, please refer back to the [**Log in to the server** section](https://learning.nceas.ucsb.edu/2022-09-arctic/#log-in-to-the-server). Doing so via the command line should look something like this:
 
@@ -157,8 +164,6 @@ $ cd ~
 $ cd ../../..
 ```
 
-3. Verify that you've successfully navigated back to your home directory using `pwd`
-
 4. Create a new directory called, **bash_practice** within your home directory using `mkdir`.
 
 ```{bash}
@@ -170,19 +175,9 @@ $ mkdir bash_practice
 
  5. TO BE CONTINUED
 
-## Connecting to a remote computer via a shell
+## Exercise 2: Write a bash shell script
 
-You can use a shell to gain accesss to and remotely control other computers (manage/transfer files/etc). To do so, you'll need the following:
-
-- a remote computer (e.g. server) turned on
-- the IP address or name of remote computer
-- the necessary permissions to access the remote computer
-
-Secure Shell, or SSH, is a network communication protocol that is often used for securely connecting to and running shell commands on a remote host. SSH temendously simplifies remote computing because ______, and it is supported out-of-the-box on Linux and Macs. If working on a Windows machine, you'll need ____.
-
-## Exercise: Write a bash shell script
-
-We can use bash commands in the terminal to accomplish a variety of tasks like navigating our computer's directories, manipulating/creating/adding files, and much more. However, writing a bash *script* allows us to gather and save our code for automated execusion. 
+As we just demonstrated, we can use bash commands in the terminal to accomplish a variety of tasks like navigating our computer's directories, manipulating/creating/adding files, and much more. However, writing a bash *script* allows us to gather and save our code for automated execusion. 
 
 Earlier, we created a collection of `.txt` files and saved them to a new directory called `bash_practice`. Here, we'll write a bash script to iterate over all those files and update ___.
 
@@ -234,7 +229,7 @@ You can create and open a file in nano in just one line of code. For example, ru
 $ echo "Hello, World!"
 ```
 
-6. To execute your script, be sure that you're in the same working directory as your `hello_world.sh` file, then run the following in your terminal:
+6. To execute your script, then run the following in your terminal (be sure that you're in the same working directory as your `hello_world.sh` file or specify the file path to it):
 
 ```{bash}
 #| eval: false
@@ -243,7 +238,7 @@ bash hello_world.sh
 
 If successful, "Hello, World!" should be printed in your terminal window.
 
-7. TO BE CONTINUED
+7. 
 
 
 UPDATE: write a simple shell script that does something -- e.g. renaming files with bash loop (e.g. change extension, add date, move them around)
