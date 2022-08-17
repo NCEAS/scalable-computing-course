@@ -76,75 +76,24 @@ Some commonly used (and very helpful) bash commands:
 |      `join`      | join two files based on a key field present in both                           |
 |   `top`, `htop`  | view running processes in a Linux system                                      |
 
-Let's practice using some of these commands:
 
-1. Open up VS Code and launch a new Terminal by clicking **Terminal > New Terminal** from the top menu bar. A Terminal window should appear at the bottom of VS Code.
+## Bash practice
 
-2. Use the `pwd` command to print your current location, or working directory. You'll likely be in your computer's home directory.
+Let's practice using some of above commands. 
 
-2. Use the `cd` command to move into a new directory. Let's say you're in your home directory (on a Mac, this looks like `Users/yourusername`) which contains a subdirectory (or "folder") called `Projects`. To navigate into that subdirectory, run:
+### Setup
 
-```{bash}
-#| eval: false
-# move from Users/yourusername to Users/yourusername/Projects
-cd Projects
-```
+1. Launch your Terminal program: 
 
-To move *up* a directory level, use two dots, `..`: 
+    - **MacOS:** navigate to `Applications > Utilities` and open `Terminal` 
 
-```{bash}
-#| eval: false
-# move from Users/yourusername/Projects back to Users/yourusername
-$ cd ..
-```
+    - **Windows:** Navigate to `Windows Start > Git` and open `Git Bash` UPDATE: see if this still stands
 
-To quickly navigate back to your home directory from wherever you may be on your computer, use a tilde, `~`:
+    - **ALTERNATIVELY, from VS Code:** Two options to open a terminal program, if a terminal isn't already an open pane at the bottom of VS Code 
 
-```{bash}
-#| eval: false
-# move from some subdirectory, e.g. Users/yourusername/Projects/project1/data, back to your home direcotry, Users/yourusername
-$ cd ~
+         a) Click on `Terminal > New Terminal` in top menu bar
 
-# or use .. to back out three subdirectories
-$ cd ../../..
-```
-
-3. Verify that you've successfully navigated back to your home directory using `pwd`, then list the contents (any files or subdirectories) of your home directory using the `ls` command.
-
-4. Create a new directory called, **bash_practice** within your home directory using `mkdir`.
-
-```{bash}
-#| eval: false
-$ mkdir bash_practice
-```
-
- Run `ls` to print out the contents of your home directory -- you should now see your **bash_practice** directory added to the list.
-
- 5. TO BE CONTINUED
-
-## Connecting to a remote computer via a shell
-
-You can use a shell to gain accesss to and remotely control other computers (manage/transfer files/etc). To do so, you'll need the following:
-
-- a remote computer (e.g. server) turned on
-- the IP address or name of remote computer
-- the necessary permissions to access the remote computer
-
-Secure Shell, or SSH, is a network communication protocol that is often used for securely connecting to and running shell commands on a remote host. SSH temendously simplifies remote computing because ______, and it is supported out-of-the-box on Linux and Macs. If working on a Windows machine, you'll need ____.
-
-## Exercise:
-
-1. Launch your Terminal program:
-
-    - **MacOS:** navigate to `Applications | Utilities` and open `Terminal` 
-
-    - **Windows:** Navigate to `Windows Start | Git` and open `Git Bash` UPDATE: see if this still stands
-
-    - **ALTERNATIVELY, from VS Code:** Two options to open a terminal program
-
-         a) Click on `Terminal | New Terminal` in top menu bar
-
-         b) Click on the `+ (dropdown menu) | bash` in the bottom right corner
+         b) Click on the `+ (dropdown menu) > bash` in the bottom right corner
 
 2. Connect to a remote server 
 
@@ -175,7 +124,63 @@ Retype new UNIX password:
 ```
 :::
 
-4. **Write a bash shell script**
+### Practice
+
+1. Use the `pwd` command to print your current location, or working directory. You'll likely be in your home directory on the server (e.g. `/home/yourusername`).
+
+2. Use the `ls` command to list the contents (any files or subdirectories) of your home directory -- you should see a directory named **___**
+
+3. Use the `cd` command to move the **___** directory:
+
+```{bash}
+#| eval: false
+# move from /home/yourusername to home/yourusername/____
+cd ___
+```
+
+To move *up* a directory level, use two dots, `..`: 
+
+```{bash}
+#| eval: false
+# move from /home/yourusername/___ back to /home/yourusername
+$ cd ..
+```
+
+To quickly navigate back to your home directory from wherever you may be on your computer, use a tilde, `~`:
+
+```{bash}
+#| eval: false
+# e.g. to move from from some subdirectory, /home/yourusername/Projects/project1/data, back to your home directory, home/yourusername
+$ cd ~
+
+# or use .. to back out three subdirectories
+$ cd ../../..
+```
+
+3. Verify that you've successfully navigated back to your home directory using `pwd`
+
+4. Create a new directory called, **bash_practice** within your home directory using `mkdir`.
+
+```{bash}
+#| eval: false
+$ mkdir bash_practice
+```
+
+ Run `ls` to print out the contents of your home directory -- you should now see your **bash_practice** directory added to the list.
+
+ 5. TO BE CONTINUED
+
+## Connecting to a remote computer via a shell
+
+You can use a shell to gain accesss to and remotely control other computers (manage/transfer files/etc). To do so, you'll need the following:
+
+- a remote computer (e.g. server) turned on
+- the IP address or name of remote computer
+- the necessary permissions to access the remote computer
+
+Secure Shell, or SSH, is a network communication protocol that is often used for securely connecting to and running shell commands on a remote host. SSH temendously simplifies remote computing because ______, and it is supported out-of-the-box on Linux and Macs. If working on a Windows machine, you'll need ____.
+
+## Exercise: Write a bash shell script
 
 We can use bash commands in the terminal to accomplish a variety of tasks like navigating our computer's directories, manipulating/creating/adding files, and much more. However, writing a bash *script* allows us to gather and save our code for automated execusion. 
 
