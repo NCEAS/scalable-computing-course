@@ -277,7 +277,7 @@ Create a new code chunk that will download the csv that we are going to use for 
 Create a variable called URL and assign it the link copied to your clipboard. Then use `requests.get` to download the file, and `open` to write it to disk, to a directory called `data/`. We'll write this bundled in an `if` statement so that we only download the file if it doesn't yet exist. First, we create the directory if it doesn't exist:
 
 ```{python}
-if not exists ('data/'):
+if not os.path.exists ('data/'):
         os.mkdir('data/')
 ```
 
