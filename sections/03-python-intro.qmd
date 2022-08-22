@@ -374,10 +374,11 @@ def myplot(df, var):
 
 ```{python}
 myplot(daily_flow, 'temperature_degrees_c')
-
 ```
 
-* more to come in Bryce's section
+We'll have more on functions in the software design sections.
 
-## Resources
+## Code Linting and Formatting
+
+In this course, we are going to use a few tools to try and format our code automatically. The Pylance extension will highlight potential code issues (errors and warnings, with red and yellow squiggles respectively). We also have set up the `flake8` linter. To enable it, from the control palette (cmd + shift + p), type "Python: Select Linter" and select `flake8`. Note that `flake8` does not work on Juptyer notebooks, which unfortunately don't have great linter support. We also have installed `autopep8` to help with some automatic code formatting. Pressing option + shift + f with your cursor in a code block will find and fix formatting errors (like lines that are too long). 
 

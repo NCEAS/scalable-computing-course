@@ -60,6 +60,7 @@ After connecting to the server, in the extensions pane (View > Extensions) searc
     - Python
     - Jupyter
     - Jupyter Keymap
+    - Pylance
 
 Note that these extensions will be installed on the server, and not locally. 
 
