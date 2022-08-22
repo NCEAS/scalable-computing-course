@@ -96,10 +96,10 @@ You can get a list of all available environments by just running:
 workon
 ```
 
-Now let's install the dependencies for this course into that environment. (Note: need to figure out how to get them this file)
+Now let's install the dependencies for this course into that environment. To install our libraries we'll use `pip`. As of Python 3.4, `pip` is automatically included with your python installation. `pip` is a package manager for python, and you might have used it already to install common python libraries like `pandas` or `numpy`. `pip` goes out to [PyPI](https://pypi.org/), the Python Package Index, to download the code and put it in your `site-packages` directory. Note that on this shared server, your user directory will ahve a `site-packages` directory, in addition to one that our systems administrator manages as the root of the system.
 
 ```{.bash}
-python3 -m pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 #### Installing locally (optional)
@@ -116,18 +116,28 @@ when you edit your `.bash_profile`.
 
 ## Brief overview of python syntax
 
+We'll very briefly go over some basic python syntax and the base variable types. First, open a python script. From the File menu, select New File, type "python", then save it as 'python-intro.py' in the top level of your directory.
+
 ```{python}
 #| echo: false
 from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = 'all'
 ```
 
-Assign values to variables using `=`
+In your file, assign a value to a variable using `=` and print the result.
 
 ```{python}
 x = 4
 print(x)
 ```
+
+To run this code in python we can:
+
+* execute `python python-intro.py` in the terminal
+* click the Play button in the upper right hand corner of the file editor
+* right click any line and select: "Run to line in interactive terminal"
+
+In that interactive window you can then run python code interactively, which is what we'll use for the next bit of exploring data types.
 
 There are 5 standard data types in python
 
@@ -226,8 +236,7 @@ At the top of your notebook, add a first level header using a single hash. Pract
 
 Use the [Markdown cheat sheet](https://www.markdownguide.org/cheat-sheet/) if needed.
 
-To open a chunk of code, type three backticks (`), curly braces, and then the word python. Close
-the code chunk using three more backticks.
+You can click the plus button below any chunk to add a chunk of either markdown or python.
 
 ### Load libraries
 
@@ -239,7 +248,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import requests
 import skimpy
-from os.path import exists
+import os
 ```
 
 A note on style: There are a few ways to construct import statements. The above code uses three of the most common:
@@ -265,18 +274,16 @@ Create a new code chunk that will download the csv that we are going to use for 
 - Right click the download button for 'Discharge_timeseries.csv'
 - Click 'copy link address'
 
-Create a variable called URL and assign it the link copied to your clipboard. Then use `requests.get` to download the file, and `open` to write it to disk, to a directory called `data/`. We'll write this bundled in an `if` statement so that we only download the file if it doesn't yet exist.
+Create a variable called URL and assign it the link copied to your clipboard. Then use `requests.get` to download the file, and `open` to write it to disk, to a directory called `data/`. We'll write this bundled in an `if` statement so that we only download the file if it doesn't yet exist. First, we create the directory if it doesn't exist:
 
 ```{python}
-#| echo: false
-import os
 if not exists ('data/'):
         os.mkdir('data/')
 ```
 
 
 ```{python}
-if not exists('data/discharge_timeseries.csv'):
+if not os.path.exists('data/discharge_timeseries.csv'):
 
         url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Ae248467d-e1f9-4a32-9e38-a9b4fb17cefb'
 
@@ -313,7 +320,7 @@ If we wanted to calculate the daily mean flow (as opposed to the flow every 5 mi
 
 - create a new column with only the date
 - group by that variable
-- summarize over it by taking the mean of the discharge variable
+- summarize over it by taking the mean
 
 First we should probably rename our existing date/time column to prevent from getting confused.
 
@@ -327,7 +334,7 @@ Now create the new date column
 clean_df['date'] = clean_df['datetime'].dt.date
 ```
 
-Finally, we use group by to split the data into groups according to the date, apply a function (`mean`) to each group, and then combine the results in a single data table.
+Finally, we use group by to split the data into groups according to the date. We can then apply the `mean` method to calculate the mean value across all of the columns. Note that there are other methods you can use to calculate different statistics across different columns (eg: `clean_df.groupby('date').agg({'discharge_m_3_s': 'max'})`).
 
 ```{python}
 daily_flow = clean_df.groupby('date', as_index = False).mean()
@@ -377,8 +384,4 @@ myplot(daily_flow, 'temperature_degrees_c')
 ```
 
 We'll have more on functions in the software design sections.
-
-## Code Linting and Formatting
-
-In this course, we are going to use a few tools to try and format our code automatically. The Pylance extension will highlight potential code issues (errors and warnings, with red and yellow squiggles respectively). We also have set up the `flake8` linter. To enable it, from the control palette (cmd + shift + p), type "Python: Select Linter" and select `flake8`. Note that `flake8` does not work on Juptyer notebooks, which unfortunately don't have great linter support. We also have installed `autopep8` to help with some automatic code formatting. Pressing option + shift + f with your cursor in a code block will find and fix formatting errors (like lines that are too long). 
 
