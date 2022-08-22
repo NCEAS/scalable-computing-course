@@ -69,8 +69,8 @@ paramiko==2.11.0
 parsl==1.2.0
 parso==0.8.3
 pathspec==0.9.0
-pdgraster @ git+https://github.com/PermafrostDiscoveryGateway/viz-raster.git@77d9861c875b183a9bb4547aa6564532fddbc592
-pdgstaging @ git+https://github.com/PermafrostDiscoveryGateway/viz-staging.git@e44c88bfaf21da6077c9cd7444eb0b39c49e9f4b
+pdgraster @ git+https://github.com/PermafrostDiscoveryGateway/viz-raster.git@scalable-computing-course
+pdgstaging @ git+https://github.com/PermafrostDiscoveryGateway/viz-staging.git@scalable-computing-course
 pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==9.2.0
