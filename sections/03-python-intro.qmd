@@ -347,10 +347,9 @@ var = 'discharge_m_3_s'
 var_labs = {'discharge_m_3_s': 'Total Discharge'}
 
 fig, ax = plt.subplots(figsize=(7, 7))
-plt.style.use("seaborn-talk")
-plt.plot(daily_flow['date'], daily_flow[var]);
-plt.xticks(rotation = 45);
-ax.set_ylabel(var_labs.get('discharge_m_3_s'));
+plt.plot(daily_flow['date'], daily_flow[var])
+plt.xticks(rotation = 45)
+ax.set_ylabel(var_labs.get('discharge_m_3_s'))
 ```
 
 ## Functions
@@ -369,10 +368,9 @@ def myplot(df, var):
                     'temperature_degrees_c': 'Temperature (C)'}
 
         fig, ax = plt.subplots(figsize=(7, 7))
-        plt.style.use("seaborn-talk")
-        plt.plot(df['date'], df[var]);
-        plt.xticks(rotation = 45);
-        ax.set_ylabel(var_labs.get(var));
+        plt.plot(df['date'], df[var])
+        plt.xticks(rotation = 45)
+        ax.set_ylabel(var_labs.get(var))
 ```
 
 
