@@ -211,12 +211,12 @@ temp_dataset
 ### Save and reopen
 
 ```{python}
-#fp = os.path.join(os.getcwd(),'temp_dataset.nc')
-#temp_dataset.to_netcdf(fp)
+fp = os.path.join(os.getcwd(),'temp_dataset.nc')
+temp_dataset.to_netcdf(fp)
 
 # open to check:
-#check = xr.open_dataset(fp)
-#check
+check = xr.open_dataset(fp)
+check
 ```
 
 ### Exercise 2
