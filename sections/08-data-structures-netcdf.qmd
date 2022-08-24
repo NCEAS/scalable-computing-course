@@ -13,71 +13,221 @@ title: "Data Structures and Formats for Large Data"
         ~50MB, has a few different axes to filter on
     - Also check out candidats in the Dask lesson TODO section
 
-## Learning Objectives
-
-- Learn about the NetCDF data format
-- Understand how formats such as NetCDF differ from formats like CSV in terms of random/arbitrary access and how that applies to parallel computing
-- Learn how to use the `xarray` package to work with N-Dimensional datasets in NetCDF files
-
 ## Introduction
 
-TODO
+Efficient and reproducible data analysis begins with choosing a proper format to store our data, particularly when working with large, complex, multi-dimensional datasets. Consider, for example, the following Earth System Data Cube, which measures nine environmental variables at high resolution across space and time. We can consider this dataset large (high-resolution means we have a big file), complex (multiple variables), and multi-dimensional (each variable is measured along three dimensions: latitude, longitude, and time). Additionally to the data, necessary metadata must accompany the dataset to make it functional, such as long names or units of measurement for variables and information about the authors or processing software used.
+https://esd.copernicus.org/preprints/esd-2019-62/esd-2019-62.pdf 
 
-- [Insert amazing image representing "large scale" and "multidimensional"]
-- Talk about how the choice of our data formats is at least as important as how we parallelize our code
-- Maybe talk about how it's very common to convert our data from a less efficient format (e.g., CSV) into a more efficient one (NetCDF, Parquet) _before_ we parallelize
+[IMAGE HERE]
 
-## Working with Large Data
+Keeping complex datasets such as the Earth System Data Cube in a format that facilitates access, processing, sharing, and archiving can be at least as important as how we parallelize the code we use to analyze them. In practice, it is common to convert our data from less efficient formats into more efficient ones before we parallelize any processing. 
+In this lesson, we will familiarize ourselves with the NetCDF data format, which enables us to store large, complex, multi-dimensional data efficiently, and learn to use the `xarray` Python package to read, process, and create NetCDF files.
 
-TODO
 
-- Size & Dimension, "N-D": Talk about common dimensions (ie space-time, where space is xy, or xyz). _This is a great time to ask students about their N-Dimensional experience_
-- Data Organization / File Naming?
-    - Using hierarchical folder structures
-    - Encoding hierarchy into filenames
-    - File naming for natural ordering (principle of most sig. fist, ie YMD vs DMY)
-    - Setting things up for multi-file support in tools like Dask, XArray, Arrow
+## Objectives
 
-## NetCDF/HDF Overview
+- Learn about the NetCDF data format: 
+    - Understand the NetCDF data model: what are dimensions, variables and attributes
+    - Advantages of random/arbitrary access and how that applies to parallel computing
+- Learn how to use the xarray Python package to work with NetCDF files:
+    -Describe the core xarray data structures, the DataArray and the Dataset, and the components that make them up, including: Data Variables, Dimensions, Coordinates, and Attributes
+    - Create xarray DataArrays and DataSets out of raw numpy arrays and save them as netCDF files
+    - Load xarray datasets from netCDF and understand the attributes view 
+    - Perform basic indexing, processing and reduction of xarray DataArrays
 
-TODO
 
-Overview major functionality of NetCDF.
-Students who aren't already familiar with NetCDF should come away feeling more able to engage with it and maybe even excited about it.
+## NetCDF data format
 
-- NetCDF is for Multidimensional / N-Dimensional data: Storing multidimensional data in common taular formats such as CSV can get cumbersome, though there are ways to do it by adding columns full of redundant data or splitting data into multiple files. But once you get into 4+ dimensions (e.g., x, y, z, time) formats like NetCDF start looking a lot better.
-- NetCDF is "self-describing", meaning we can encode metadata about every variable such as its units, definitions, and lots of other information
-- Cover the [NetCDF data model](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html) so students have the lingo
-- Random access: While CSVs are ubiquitous and easy to work with, they can get really slow to read into our scripts and programs and can take up a lot of RAM because we have to read and parse the entire CSV into RAM before we can do anything with it. With NetCDF, on the other hand, we don't need to read the entire file into RAM before we query it. Instead of reading the entire dataset into RAM, we only need to read the first part of a NetCDF to get enough information about the data in the rest of the file in order to query it. We call this random or arbitrary access meaning the file describes itself well enough for us to know where the subset of the file we care about is within the whole file. Random access file formats such as NetCDF are fantastic in scalable computing contexts because our parallel workers don't need to read our data files completely into RAM before running our queries or other transformation.
-- Remote access: See https://rabernat.github.io/research_computing_2018/xarray-tips-and-tricks.html. Because NetCDF supports random access (we don't have to read the entire file to know where the subset of the dataa we want is), servers can host more NetCDF files on disk than they could store in RAM, throw something like a THREDDS server in front of them, and we can just query the files without making the server read each file into memory an the server can return just the data we asked for.
+[NetCDF](https://docs.unidata.ucar.edu/netcdf-c/current/index.html) (network Common Data Form) is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. NetCDF is supported on almost all platforms, and parsers exist for the vast majority of scientific programming languages. 
 
-Other topics:
+The netCDF software was developed by Glenn Davis, Russ Rew, Ed Hartnett, John Caron, Dennis Heimbigner, Steve Emmerson, Harvey Davies, and Ward Fisher at the Unidata Program Center in Boulder, Colorado, with [contributions](https://docs.unidata.ucar.edu/netcdf-c/current/credits.html) from many other netCDF users. [*]
 
-- Describe available tooling (python packages, Panoply, others?). This doesn't necessarily need to be hands on:
-    - Command line
-    - Python packages: xarray
-    - GUI applications: Panoply, others?
-    - Some students might have experience with this, what do they use and like/hate?
-- ? Talk about CF conventions (climate forecast conventions for metadata). This could be cut for time.
-- Talk about NetCDF and its role in data archival
-    - Is it a good archival format: Yes! Better than CSV in many (not all) ways. The format is open and well-documented, support for the reading the format is ubiquitous, it's efficient w/ disk space (compared to CSV), it supports remote querying (unlike CSV).
+### Characteristics
+ [https://www.unidata.ucar.edu/software/netcdf/]
 
-## Introduction to Xarray
+1. Self-describing
+Information describing the data contents of the file are embedded within the data file itself. This means that there is a header which describes the layout of the rest of the file as well as arbitrary file metadata.
 
-[Time estimate ~20-30min, link to the dataset and work through dataset with students bit-by-bit]
+2. Scalable
+A small subset of a large dataset may be accessed efficiently.
 
-TODO: Base on https://docs.xarray.dev/en/stable/getting-started-guide/quick-overview.html but with a course-appropriate dataset.
+3. Portable
+A NetCDF file is machine-independent i.e. it can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.
 
-Course appropriate datasets:
+4. Appendable
+Data may be appended to a properly structured NetCDF file without copying the dataset or redefining its structure.
 
-- Probably a space<->time one, maybe one with x, y, z and time
-- Jeanette says there's a nice one One in /var/data on ADC, may have to ask her for more information
+5. Sharable
+One writer and multiple readers may simultaneously access the same NetCDF file.
 
-The focus here is for students to learn how to open up a NetCDF file, get info on it, read in the data and do some basic map-reduce type operations using xarray.
-Being able to write out a NetCDF file might be outside the scope here.
+6. Archivable
+Access to all earlier forms of NetCDF data will be supported by current and future versions of the software.
 
-## Exercise
+### Data Model
+The netCDF data model is the way that NetCDF organizes data. The Classic NetCDF Data Model consists of variables, dimensions, and attributes. This way of thinking about data was introduced with the very first netCDF release, and is still the core of all netCDF files. There exists a new Enhanced Data Model, but for maximum interoperability with existing code, new data should be created with the Classic Model.  [https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html#classic_model] 
 
-(30-45min)
+**Variables**
+N-dimensional arrays of data. Variables in netCDF files can be one of six types (char, byte, short, int, float, double). We can think of these as the varying/measured/dependent quantities.
 
-TODO: Students work on their own or in pairs to write a script to analyze a NetCDF dataset
+**Dimensions**
+describe the axes of the data arrays. A dimension has a name and a length. An unlimited dimension has a length that can be expanded at any time, as more data are written to it. NetCDF files can contain at most one unlimited dimension. We can think of these as the constant/fixed/independent quantities at which we measure the variables.
+
+**Attributes**
+Small notes or supplementary metadata to annotate either a variable or the file as a whole. Although there is no enforced limit, the user is expected to keep attributes small.
+
+[NetCDF data model diagram]
+
+### Exercise 1
+
+Imagine the following scenario: we have a 5m by 5m square plot. The plot is divided into 25 square subplots of 1m by side, labeled by 1 to 5 across each side of the plot. On each subplot we measure the air temperature at the center of the plot at 10am in the morning for three days, starting on September 1st, 2022. The first day we record a temperature of 0°C on all subplots, the second day all temperatures are 1°C and the third day all temperatures are 3°C. What would be the variables, dimensions and attributes for this data? A simple diagram of how we can visualize the data can be very useful:
+
+[** DIAGRAM **]
+
+**Variables**: There is a single variable being measured: temperature. The variable values can be represented as a 3x5x5 array, with constant values for each day as seen in the diagram.  
+
+**Dimensions**: There are three dimensions in this dataset: time, the x-label of the plot, and the y-label of the plot. Time is measured in days and can have values 1, 2 or 3, assuming we have a reference time of September 1, 2022. The x and y labels are discrete identifiers of the position of the subplots and can each take the values 1, 2, 3, 4 or 5. 
+
+**Attributes**: Let’s divide this in attributes for the variable,  the dimensions and the whole dataset:
+        Temperature attributes: 
+            units: degrees Celsius
+            measurement: measured at 10am at center of plot
+        Time attributes:
+            units: "days since 1990-1-1 0:0:0" 
+        x-label attributes:
+            name: plot identifier along horizontal axis (from left to right)
+        y-label attributes:
+            name: plot identifier along vertical axis (from bottom to top)
+        Dataset attributes:
+            title: temperature at test subplots
+            contact: Carmen GG
+            comment: this is an example of NetCDF data format
+
+
+### Climate and Forecast metadata standards
+*The most commonly used metadata standard for geospatial data is the Climate and Forecast metadata standard, also called CF conventions. These standards are specifically designed to promote the processing and sharing of files created with the NetCDF API. Principles of CF include self-describing data (no external tables needed for understanding); metadata equally readable by humans and software; minimum redundancy and maximum simplicity.*  [http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#_filename] 
+
+Our next step is to see how we can translate all this information into something we can store and handle in our computer.
+
+## Xarray
+https://docs.xarray.dev/en/stable/getting-started-guide/why-xarray.html 
+https://docs.xarray.dev/en/stable/getting-started-guide/faq.html 
+
+Multi-dimensional arrays or ND arrays are frequently encountered in geosciences. Consider, for example, how many variables can be measured with respect to space-time dimensions, making those datasets three or even four-dimensional (for instance, if we use latitude, longitude, height/depth, and time). In Python, the [NumPy](https://numpy.org) package provides the fundamental data structure and API for working with raw ND arrays. However, real-world datasets are usually more than just raw numbers; they have labels that encode information about how the array values correspond to locations in space, time, etc. [Xarray](https://docs.xarray.dev/en/stable/index.html) is an answer to this necessity: an xarray.DataArray has labeled dimensions (e.g. “time”, “latitude”) that can be directly referenced for processing. It is easier to keep track of a dimension labeled “time” than to remember that time is the n-th dimension of the array.  Moreover, xarray is based on the netCDF data model, making it the appropriate tool to open, process and create datasets in netCDF format.
+
+### Creating an xarray.DataArray
+An xarray.DataArray is an N-dimensional array with labeled coordinates and dimensions. It is the primary data structure of the xarray package. We can think of it as representing a single variable in the NetCDF data format: it holds the variable's values, dimensions, and attributes. Additionally, each dimension has at least one set of coordinates, which indicate the values the dimension takes. *In the usual one-dimensional case, the coordinate array's values can loosely be thought of as tick labels along a dimension.* [https://docs.xarray.dev/en/stable/user-guide/terminology.html]
+
+
+As our first example, let's suppose we want to make an xarray.DataArray that includes all the information from our previous example about measuring temperature across three days. First we import all our necessary libraries.
+
+```{python}
+import os              # module for interacting with the operating system
+import numpy as np
+import xarray as xr    # THIS IS THE LIBRARY WE WILL BE EXPLORING
+```
+
+The underlying data in the xarray.DataArray is a numpy.ndarray that holds the variable values. So we can start by making a numpy.ndarray with our mock temperature data:
+
+```{python}
+# values of a single variable at each point of the coords (it's a numpy.ndarray)
+
+temp_data = np.array([np.zeros((5,5)), 
+                      np.ones((5,5)), 
+                      np.ones((5,5))*2]).astype(int)
+print(temp_data.shape)
+temp_data
+```
+
+Next, we add information about the dimensions over which the variable is being measured and some attributes to create the xarray.DataArray:
+
+```{python}
+# names of the data dimensions (tuple of strings)
+dims = ('day', 'lat', 'lon')
+
+# coordinates (tick labels) to use for indexing along each dimension (dictionary)
+coords = {'day' : [1, 2, 3],
+          'lat' : np.arange(10,60,10),
+          'lon' : np.arange(30,80,10)}  
+
+# attributes (metadata) of the data array (it's a dictionary)
+attrs = { 'title' : 'precipitation data on days 1, 2, and 3',
+          'units' : 'mm'}
+
+# initialize xarray.DataArray
+prec = xr.DataArray(data = prec_data, 
+                    dims = dims,
+                    coords = coords,
+                    attrs = attrs)
+prec
+```
+
+We can also update the variable’s attributes after creating the object. Notice too that each of the coordinates is also an xarray.DataArray, so we can add attributes to them.
+
+```{python}
+# we can also update the attributes (metadata) after creating the set
+prec.attrs['description'] = 'a small example of an xarray.DataArray'
+
+# each of the coordinates is also an xarray.DataArray
+# so we can add attributes to coordinates 
+prec.day.attrs = {'standard_name':'day of collection'}
+
+prec.lat.attrs['standard_name']= 'latitude'
+prec.lat.attrs['units'] = 'degrees_north'
+
+prec.lon.attrs['standard_name']= 'longitude'
+prec.lon.attrs['units'] = 'degrees_east'
+prec
+```
+
+At this point, since we have a single variable, the dataset attributes and the variable attributes are the same. 
+
+### Indexing
+
+### Reduction
+xarray has implemented a number of methods to reduce an xarray.DataArray along any number of dimensions. For example, we can calculate the average temperature at each subplot over time and obtain a new xarray.DataArray. One of the advantages of xarray.DataArray is that, if we chose to, it can carry over attributes when doing calculations:
+
+```{python}
+avg_prec = prec.mean(dim = 'day') # to keep attributes add keep_attrs = True
+
+avg_prec.attrs = {'title':'average precipitation over three days',
+                  'units': 'mm/*'}
+avg_prec
+```
+
+### Creating an xarray.DataSet
+A dataset resembles an in-memory representation of a NetCDF file, and consists of variables, coordinates and attributes which together form a self describing dataset.
+
+```{python}
+prec_data = xr.Dataset( data_vars = {'avg_prec': avg_prec,
+                                     'prec': prec},
+                        attrs = {'creator_name':'Carmen GG', 
+                                 'title':'mock precipitation data',
+                                 'description':'a simple example of an xarray.Dataset'})
+prec_data
+```
+
+### Indexing
+
+### Save and reopen
+
+```{python}
+fp = os.path.join(os.getcwd(),'prec_data.nc')
+prec_data.to_netcdf(fp)
+
+# open to check:
+check_prec = xr.open_dataset(fp)
+check_prec
+```
+
+### Exercise 2
+https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2280504J
+
+```{python}
+fp = os.path.join(os.getcwd(), 'FW_data_CESM_LW_2006_2100.nc')
+fw_data = xr.open_dataset(fp)
+fw_data
+#netPrec_annual
+```
+### Exercise 3
+
+https://arcticdata.io/catalog/view/doi:10.18739/A26T0GX63
