@@ -253,12 +253,12 @@ Now we just create a data frame from that dictionary, and join it to the vector 
 
 ```{python}
 # create a data frame from the result
-df = pd.DataFrame.from_dict(distance_dict,
+distance_df = pd.DataFrame.from_dict(distance_dict,
     orient='index',
     columns=['distance'])
 
 # extract the index of the data frame as a column to use in a join
-df['id'] = df.index
+distance_df['id'] = distance_df.index
 distance_df['distance'] = distance_df['distance']/1000
 ```
 
@@ -266,7 +266,7 @@ Now we join the result to the original geodataframe.
 
 ```{python}
 # join the sums to the original data frame
-res_full = comm_3338.merge(df, on = "id", how = 'inner')
+res_full = comm_3338.merge(distance_df, on = "id", how = 'inner')
 ```
 
 
