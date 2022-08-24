@@ -180,7 +180,7 @@ In this step, we rasterize each polygon in the shapefile, such that pixels in or
 
 Here is a simplified diagram of the process:
 
-![](images/raster-mask.png)
+![](../images/raster-mask.png)
 
 
 #### Zonal statistics over one polygon
