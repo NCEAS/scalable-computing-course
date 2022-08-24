@@ -70,7 +70,7 @@ response_sf = requests.get(url_sf)
 open("Coastal_2020_08.tif", "wb").write(response_sf.content)
 ```
 
-Open the raster file, plot it, and look at the metadata.
+Open the raster file, plot it, and look at the metadata. We use the `with` here as a context manager. This ensures that the connection to the raster file is closed and cleaned up when we are done with it.
 
 ```{python}
 with rasterio.open("Coastal_2020_08.tif") as dem_src:
@@ -176,19 +176,16 @@ comm_clip.plot(ax=ax, facecolor='none', edgecolor='red')
 
 ## Calculate total distance per fishing area
 
-In this step, we rasterize each polygon in the shapefile that falls within the bounds of the raster data we are calculating statistics for.
+In this step, we rasterize each polygon in the shapefile, such that pixels in or touching the polygon get a value of 1, and pixels not touching it get a value of 0. Then, for each polygon, we extract the indices of the raster array that are equal to 1. We then extract the values of these indicies from the original ship traffic raster data, and calculate the sum of the values over all of those pixels.
 
-This process returns a dictionary of indexed arrays, where each item corresponds to one polygon (fishing area). The array contains the indices of the original raster that fall within that fishing area. In other words, we are creating a raster mask for each fishing district.
+Here is a simplified diagram of the process:
 
-First we'll create an `id` column in the vector data frame. This will help us track unique fishing districts later.
+![](images/raster-mask.png)
 
-```{python}
-comm_3338['id'] = range(0,len(comm_3338))
-```
 
 #### Zonal statistics over one polygon
 
-Let's look at how this works over just one fishing area first. We use the `rasterize` method from the `features` module in `rasterio`. This takes as arguments that data to rasterize (in this case the 40th row of our dataset), the shape and transformaion the output raster will take (these were extracted from our raster data when we read it in). We alo set the `all_touched` argument to true, which means any pixel that touches a boundary of our vector will be burned into the mask. 
+Let's look at how this works over just one fishing area first. We use the `rasterize` method from the `features` module in `rasterio`. This takes as arguments the data to rasterize (in this case the 40th row of our dataset), the shape and transform the output raster will take (these were extracted from our raster data when we read it in). We alo set the `all_touched` argument to true, which means any pixel that touches a boundary of our vector will be burned into the mask. 
 
 ```{python}
 r40 = features.rasterize(comm_3338['geometry'][40].geoms,
@@ -231,7 +228,13 @@ In the last step, we'll using these indices to extract the values of the data fr
 np.nansum(ship_arr[r40_index])
 ```
 
-Now that we know the individual steps, let's run this over all of the districts. For each district (with `geometry` and `id`), we run the `features.rasterize` function. If any values equal 1 (some of the districts are outside the bounds of the raster), we calculate the sum of the values of the shipping raster `r_array` based on the indicies in the raster where the district is located.
+Now that we know the individual steps, let's run this over all of the districts. First we'll create an `id` column in the vector data frame. This will help us track unique fishing districts later.
+
+```{python}
+comm_3338['id'] = range(0,len(comm_3338))
+```
+
+ For each district (with `geometry` and `id`), we run the `features.rasterize` function. If any values equal 1 (some of the districts are outside the bounds of the raster), we calculate the sum of the values of the shipping raster `r_array` based on the indicies in the raster where the district is located.
 
 ```{python}
 #| results: false
@@ -241,8 +244,7 @@ for geom, idx in zip(comm_3338['geometry'], comm_3338['id']):
     rasterized = features.rasterize(geom.geoms,
                                     out_shape=shape,
                                     transform=transform,
-                                    all_touched=True,
-                                    fill=0)
+                                    all_touched=True)
     # only save polygons that have a non-zero value
     if any(np.unique(rasterized)) == 1:
         r_index = np.where(rasterized == 1)
