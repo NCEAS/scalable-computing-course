@@ -150,33 +150,33 @@ coords = {'day' : [1, 2, 3],
           'lon' : np.arange(30,80,10)}  
 
 # attributes (metadata) of the data array (it's a dictionary)
-attrs = { 'title' : 'precipitation data on days 1, 2, and 3',
-          'units' : 'mm'}
+attrs = { 'title' : 'temperature data on days 1, 2, and 3',
+          'units' : 'C'}
 
 # initialize xarray.DataArray
-prec = xr.DataArray(data = prec_data, 
+temp = xr.DataArray(data = temp_data, 
                     dims = dims,
                     coords = coords,
                     attrs = attrs)
-prec
+temp
 ```
 
 We can also update the variable’s attributes after creating the object. Notice too that each of the coordinates is also an xarray.DataArray, so we can add attributes to them.
 
 ```{python}
 # we can also update the attributes (metadata) after creating the set
-prec.attrs['description'] = 'a small example of an xarray.DataArray'
+temp.attrs['description'] = 'a small example of an xarray.DataArray'
 
 # each of the coordinates is also an xarray.DataArray
 # so we can add attributes to coordinates 
-prec.day.attrs = {'standard_name':'day of collection'}
+temp.day.attrs = {'standard_name':'day of collection'}
 
-prec.lat.attrs['standard_name']= 'latitude'
-prec.lat.attrs['units'] = 'degrees_north'
+temp.lat.attrs['standard_name']= 'latitude'
+temp.lat.attrs['units'] = 'degrees_north'
 
-prec.lon.attrs['standard_name']= 'longitude'
-prec.lon.attrs['units'] = 'degrees_east'
-prec
+temp.lon.attrs['standard_name']= 'longitude'
+temp.lon.attrs['units'] = 'degrees_east'
+temp
 ```
 
 At this point, since we have a single variable, the dataset attributes and the variable attributes are the same. 
@@ -187,23 +187,23 @@ At this point, since we have a single variable, the dataset attributes and the v
 xarray has implemented a number of methods to reduce an xarray.DataArray along any number of dimensions. For example, we can calculate the average temperature at each subplot over time and obtain a new xarray.DataArray. One of the advantages of xarray.DataArray is that, if we chose to, it can carry over attributes when doing calculations:
 
 ```{python}
-avg_prec = prec.mean(dim = 'day') # to keep attributes add keep_attrs = True
+avg_temp = temp.mean(dim = 'day') # to keep attributes add keep_attrs = True
 
-avg_prec.attrs = {'title':'average precipitation over three days',
+avg_temp.attrs = {'title':'average temperature over three days',
                   'units': 'mm/*'}
-avg_prec
+avg_temp
 ```
 
 ### Creating an xarray.DataSet
 A dataset resembles an in-memory representation of a NetCDF file, and consists of variables, coordinates and attributes which together form a self describing dataset.
 
 ```{python}
-prec_data = xr.Dataset( data_vars = {'avg_prec': avg_prec,
-                                     'prec': prec},
+temp_dataset = xr.Dataset( data_vars = {'avg_temp': avg_temp,
+                                     'temp': temp},
                         attrs = {'creator_name':'Carmen GG', 
-                                 'title':'mock precipitation data',
+                                 'title':'mock temperature data',
                                  'description':'a simple example of an xarray.Dataset'})
-prec_data
+temp_dataset
 ```
 
 ### Indexing
@@ -211,21 +211,21 @@ prec_data
 ### Save and reopen
 
 ```{python}
-fp = os.path.join(os.getcwd(),'prec_data.nc')
-prec_data.to_netcdf(fp)
+#fp = os.path.join(os.getcwd(),'temp_dataset.nc')
+#temp_dataset.to_netcdf(fp)
 
 # open to check:
-check_prec = xr.open_dataset(fp)
-check_prec
+#check = xr.open_dataset(fp)
+#check
 ```
 
 ### Exercise 2
 https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2280504J
 
 ```{python}
-fp = os.path.join(os.getcwd(), 'FW_data_CESM_LW_2006_2100.nc')
-fw_data = xr.open_dataset(fp)
-fw_data
+#fp = os.path.join(os.getcwd(), 'FW_data_CESM_LW_2006_2100.nc')
+#fw_data = xr.open_dataset(fp)
+#fw_data
 #netPrec_annual
 ```
 ### Exercise 3
