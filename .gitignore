@@ -147,3 +147,6 @@ sections/data
 .RProj.user
 .Rhistory
 *.Rproj
+
+# netcdf files in sections
+sections/*nc
