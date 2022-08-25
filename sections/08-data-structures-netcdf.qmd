@@ -62,6 +62,8 @@ The NetCDF data model is the way that NetCDF organizes data. The *Classic NetCDF
 
 [REF https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html#classic_model] 
 
+![ Classic NetCDF Data Model ([NetCDF documentation](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html#classic_model))](../images/netcdf_data_model.png)
+
 **Variables**
 are N-dimensional arrays of data. Variables in netCDF files can be one of six types (char, byte, short, int, float, double). We can think of these as the varying/measured/dependent quantities.
 
@@ -71,89 +73,97 @@ describe the axes of the data arrays. A dimension has a name and a length. An un
 **Attributes**
 are small notes or supplementary metadata to annotate either a variable or the file as a whole. Although there is no enforced limit, the user is expected to keep attributes small.
 
-![ Classic NetCDF Data Model ([NetCDF documentation](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html#classic_model))](../images/netcdf_data_model.png)
 
-### Exercise 1
+:::{.callout-note}
+*The most commonly used metadata standard for geospatial data is the Climate and Forecast metadata standard, also called the [CF conventions](https://cfconventions.org). These standards are specifically designed to promote the processing and sharing of files created with the NetCDF API. Principles of CF include self-describing data (no external tables needed for understanding); metadata equally readable by humans and software; minimum redundancy and maximum simplicity.*  
+:::
+
+
+### Exercise
 [TO DO: check exercise setup]
 
-Imagine the following scenario: we have a 5m by 5m square plot. The plot is divided into 25 square subplots of 1m by side, labeled by 1 to 5 across each side of the plot. On each subplot we measure the air temperature at the center of the plot at 10am in the morning for three days, starting on September 1st, 2022. The first day we record a temperature of 0°C on all subplots, the second day all temperatures are 1°C, and the third day all temperatures are 3°C. What would be the *variables*, *dimensions* and *attributes* for this data? A simple diagram of how we can visualize the data can be very useful:
+Imagine the following scenario: we have a a network of 25 weather stations. 
+They are located in a square grid: starting at 30°0′N 60°0′E, there is a station every 10° North and every 10° East. 
+Each station measures the air temperature at a set time for three days, starting on September 1st, 2022. 
+The first day all stations record a temperature of 0°C, the second day all temperatures are 1°C, and the third day all temperatures are 3°C. 
+What are the *variables*, *dimensions* and *attributes* for this data? 
+A simple diagram of how we can visualize the data can be very useful:
 
 [TO DO: make diagram]
 
 **Variables**: There is a single variable being measured: temperature. The variable values can be represented as a 3x5x5 array, with constant values for each day as seen in the diagram.  
 
-**Dimensions**: There are three dimensions in this dataset: time, the x-label of the plot, and the y-label of the plot. Time is measured in days and can have values 1, 2 or 3, assuming we have a reference time of September 1, 2022. The x and y labels are discrete identifiers of the position of the subplots and can each take the values 1, 2, 3, 4 or 5. 
+**Dimensions**: There are three dimensions in this dataset: time, latitude, and longitude. Time is measured in days and can have values 1, 2 or 3, assuming we have a reference time of September 1, 2022. The combinations of latitude and longitude values indicate the positions of the weather stations and. Latitude has values ****, longitude has values ****.
 
 **Attributes**: Let’s divide this in attributes for the variable,  the dimensions and the whole dataset:
 
 * Temperature attributes: 
     + units: degrees Celsius
-    + measurement: measured at 10am at center of plot
 
 * Time attributes:
     + units: "days since 1990-1-1 0:0:0" 
 
-* x-label attributes:
-    + name: plot identifier along horizontal axis (from left to right)
+* latitude attributes:
+    + units: degrees north
 
-* y-label attributes:
-    + name: plot identifier along vertical axis (from bottom to top)
+* longitude attributes:
+    + units: degrees east
 
 * Dataset attributes:
-    + title: temperature at test subplots
+    + title: temperature at weather stations
     + contact: Carmen GG
     + comment: an example of NetCDF data format
 
-
-### Climate and Forecast metadata standards
-*The most commonly used metadata standard for geospatial data is the Climate and Forecast metadata standard, also called CF conventions. These standards are specifically designed to promote the processing and sharing of files created with the NetCDF API. Principles of CF include self-describing data (no external tables needed for understanding); metadata equally readable by humans and software; minimum redundancy and maximum simplicity.*  [http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#_filename] 
-
 Our next step is to see how we can translate all this information into something we can store and handle in our computer.
 
-## Xarray
+## `xarray`
 https://docs.xarray.dev/en/stable/getting-started-guide/why-xarray.html 
 https://docs.xarray.dev/en/stable/getting-started-guide/faq.html 
 
-Multi-dimensional arrays or ND arrays are frequently encountered in geosciences. Consider, for example, how many variables can be measured with respect to space-time dimensions, making those datasets three or even four-dimensional (for instance, if we use latitude, longitude, height/depth, and time). In Python, the [NumPy](https://numpy.org) package provides the fundamental data structure and API for working with raw ND arrays. However, real-world datasets are usually more than just raw numbers; they have labels that encode information about how the array values correspond to locations in space, time, etc. [Xarray](https://docs.xarray.dev/en/stable/index.html) is an answer to this necessity: an xarray.DataArray has labeled dimensions (e.g. “time”, “latitude”) that can be directly referenced for processing. It is easier to keep track of a dimension labeled “time” than to remember that time is the n-th dimension of the array.  Moreover, xarray is based on the netCDF data model, making it the appropriate tool to open, process and create datasets in netCDF format.
+Multi-dimensional arrays or ND arrays are frequently encountered in geosciences. Consider, for example, how many variables can be measured with respect to space-time dimensions, making those datasets three or even four-dimensional (for instance, if we use latitude, longitude, height/depth, and time). In Python, the [`NumPy`](https://numpy.org) package provides the fundamental data structure and API for working with raw ND arrays. However, real-world datasets are usually more than just raw numbers; they have labels that encode information about how the array values correspond to locations in space, time, etc. [`xarray`](https://docs.xarray.dev/en/stable/index.html) is an answer to this necessity: an `xarray.DataArray` has labeled dimensions (e.g. “time”, “latitude”) that can be directly referenced for processing. It is easier to keep track of a dimension labeled “time” than to remember that time is the n-th dimension of the array.  Moreover, `xarray` is based on the netCDF data model, making it the appropriate tool to open, process and create datasets in netCDF format.
 
-### Creating an xarray.DataArray
-An xarray.DataArray is an N-dimensional array with labeled coordinates and dimensions. It is the primary data structure of the xarray package. We can think of it as representing a single variable in the NetCDF data format: it holds the variable's values, dimensions, and attributes. Additionally, each dimension has at least one set of coordinates, which indicate the values the dimension takes. *In the usual one-dimensional case, the coordinate array's values can loosely be thought of as tick labels along a dimension.* [https://docs.xarray.dev/en/stable/user-guide/terminology.html]
+### Creating an `xarray.DataArray`
+An `xarray.DataArray` is an N-dimensional array with labeled coordinates and dimensions. 
+It is the primary data structure of the `xarray` package. 
+We can think of it as representing a single variable in the NetCDF data format: it holds the variable's values, dimensions, and attributes. 
+Additionally, each dimension has at least one set of *coordinates*, which indicate the values the dimension takes. 
+*In the usual one-dimensional case, the coordinate array's values can loosely be thought of as tick labels along a dimension.* [https://docs.xarray.dev/en/stable/user-guide/terminology.html]
 
 
-As our first example, let's suppose we want to make an xarray.DataArray that includes all the information from our previous example about measuring temperature across three days. First we import all our necessary libraries.
+As our first example, let's suppose we want to make an `xarray.DataArray` that includes all the information from our previous exercise about measuring temperature across three days. First we import all our necessary libraries.
 
 ```{python}
-import os              # module for interacting with the operating system
+import os              
 import numpy as np
-import xarray as xr    # THIS IS THE LIBRARY WE WILL BE EXPLORING
+import requests 
+
+import xarray as xr   
 ```
 
-The underlying data in the xarray.DataArray is a numpy.ndarray that holds the variable values. So we can start by making a numpy.ndarray with our mock temperature data:
+The underlying data in the `xarray.DataArray` is a `numpy.ndarray` that holds the variable values. So we can start by making a `numpy.ndarray` with our mock temperature data:
 
 ```{python}
-# values of a single variable at each point of the coords (it's a numpy.ndarray)
-
+# values of a single variable at each point of the coords 
 temp_data = np.array([np.zeros((5,5)), 
                       np.ones((5,5)), 
                       np.ones((5,5))*2]).astype(int)
-print(temp_data.shape)
 temp_data
 ```
 
-Next, we add information about the dimensions over which the variable is being measured and some attributes to create the xarray.DataArray:
+Next, we add information about the dimensions over which the variable is being measured and some attributes to create the `xarray.DataArray`:
 
 ```{python}
-# names of the data dimensions (tuple of strings)
+# names of the dimensions
 dims = ('day', 'lat', 'lon')
 
-# coordinates (tick labels) to use for indexing along each dimension (dictionary)
+# coordinates (tick labels) to use for indexing along each dimension 
 coords = {'day' : [1, 2, 3],
           'lat' : np.arange(10,60,10),
           'lon' : np.arange(30,80,10)}  
 
-# attributes (metadata) of the data array (it's a dictionary)
-attrs = { 'title' : 'temperature data on days 1, 2, and 3',
-          'units' : 'C'}
+# attributes (metadata) of the data array 
+attrs = { 'title' : 'temperature data across weather stations',
+          'units' : 'degrees C'}
 
 # initialize xarray.DataArray
 temp = xr.DataArray(data = temp_data, 
@@ -163,14 +173,14 @@ temp = xr.DataArray(data = temp_data,
 temp
 ```
 
-We can also update the variable’s attributes after creating the object. Notice too that each of the coordinates is also an xarray.DataArray, so we can add attributes to them.
+We can also update the variable’s attributes after creating the object. 
+Notice too that each of the coordinates is also an `xarray.DataArray`, so we can add attributes to them.
 
 ```{python}
-# we can also update the attributes (metadata) after creating the set
+# update attributes
 temp.attrs['description'] = 'a small example of an xarray.DataArray'
 
-# each of the coordinates is also an xarray.DataArray
-# so we can add attributes to coordinates 
+# add attributes to coordinates 
 temp.day.attrs = {'standard_name':'day of collection'}
 
 temp.lat.attrs['standard_name']= 'latitude'
@@ -186,29 +196,28 @@ At this point, since we have a single variable, the dataset attributes and the v
 ### Indexing
 
 ### Reduction
-xarray has implemented a number of methods to reduce an xarray.DataArray along any number of dimensions. For example, we can calculate the average temperature at each subplot over time and obtain a new xarray.DataArray. One of the advantages of xarray.DataArray is that, if we chose to, it can carry over attributes when doing calculations:
+`xarray` has implemented a number of methods to reduce an `xarray.DataArray` along any number of dimensions. 
+For example, we can calculate the average temperature at each subplot over time and obtain a new `xarray.DataArray`. 
+One of the advantages of `xarray.DataArray` is that, if we chose to, it can carry over attributes when doing calculations.
 
 ```{python}
 avg_temp = temp.mean(dim = 'day') # to keep attributes add keep_attrs = True
 
-avg_temp.attrs = {'title':'average temperature over three days',
-                  'units': 'mm/*'}
+avg_temp.attrs = {'title':'average temperature over three days'}
 avg_temp
 ```
 
-### Creating an xarray.DataSet
-A dataset resembles an in-memory representation of a NetCDF file, and consists of variables, coordinates and attributes which together form a self describing dataset.
+### Creating an `xarray.DataSet`
+A dataset resembles an in-memory representation of a NetCDF file, and consists of multiple variables, with coordinates and attributes, which together form a self describing dataset.
 
 ```{python}
 temp_dataset = xr.Dataset( data_vars = {'avg_temp': avg_temp,
                                      'temp': temp},
                         attrs = {'creator_name':'Carmen GG', 
-                                 'title':'mock temperature data',
+                                 'title':'temperature data',
                                  'description':'a simple example of an xarray.Dataset'})
 temp_dataset
 ```
-
-### Indexing
 
 ### Save and reopen
 
@@ -221,20 +230,30 @@ check = xr.open_dataset(fp)
 check
 ```
 
-### Exercise 2
+### Exercise
 https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2280504J
 
+
 ```{python}
-#fp = os.path.join(os.getcwd(), 'FW_data_CESM_LW_2006_2100.nc')
-#fw_data = xr.open_dataset(fp)
-#fw_data
+url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A792bfc37-416e-409e-80b1-fdef8ab60033'
+
+response = requests.get(url)
+open("FW_data_CESM_LW_2006_2100.nc", "wb").write(response.content)
+```
+
+```{python}
+fp = os.path.join(os.getcwd(),'FW_data_CESM_LW_2006_2100.nc')
+fw_data = xr.open_dataset(fp)
+fw_data
 #netPrec_annual
+
+
 ```
 ### Exercise 3
 
 https://arcticdata.io/catalog/view/doi:10.18739/A26T0GX63
 
-## HOW TO INCLUDE THIS?
+## INCLUDE THIS? - Bryce's notes
 
 - Look into parallel access and NetCDF and whether all wheels can take advantage of the built-in parallel access
 - Data Organization / File Naming?
