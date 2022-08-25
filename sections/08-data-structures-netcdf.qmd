@@ -2,105 +2,107 @@
 title: "Data Structures and Formats for Large Data"
 ---
 
-## TODO
-
-- Look into parallel access and NetCDF and whether all wheels can take advantage of the built-in parallel access. Looking at [NetCDF's Parallel I/O page](https://docs.unidata.ucar.edu/netcdf-c/current/parallel_io.html) you can see the low-level libraries support it.
-- Find dataset(s) to use in the xarray hands on.
-    - Jeanette says there on on the Arctic Data Center we store in /var/data. Ask her for more info.
-    - Candiate: https://www.ncei.noaa.gov/products/climate-data-records/snow-cover-extent (https://arcticdata.io/catalog/view/doi%3A10.7289%2FV5N014G9)
-    - Candiate: https://arcticdata.io/catalog/view/doi%3A10.18739%2FA24B2X59C
-        "Understory micrometorology across a larch forest density gradient in northeastern Siberia 2014-2020"
-        ~50MB, has a few different axes to filter on
-    - Also check out candidats in the Dask lesson TODO section
-
 ## Introduction
 
-Efficient and reproducible data analysis begins with choosing a proper format to store our data, particularly when working with large, complex, multi-dimensional datasets. Consider, for example, the following Earth System Data Cube, which measures nine environmental variables at high resolution across space and time. We can consider this dataset large (high-resolution means we have a big file), complex (multiple variables), and multi-dimensional (each variable is measured along three dimensions: latitude, longitude, and time). Additionally to the data, necessary metadata must accompany the dataset to make it functional, such as long names or units of measurement for variables and information about the authors or processing software used.
-https://esd.copernicus.org/preprints/esd-2019-62/esd-2019-62.pdf 
+Efficient and reproducible data analysis begins with choosing a proper format to store our data, particularly when working with large, complex, multi-dimensional datasets. 
+Consider, for example, the following Earth System Data Cube from [Mahecha et al. 2020](https://esd.copernicus.org/articles/11/201/2020/esd-11-201-2020.pdf), which measures nine environmental variables at high resolution across space and time. 
+We can consider this dataset large (high-resolution means we have a big file), complex (multiple variables), and multi-dimensional (each variable is measured along three dimensions: latitude, longitude, and time). 
+Additionally, necessary metadata must accompany the dataset to make it functional, such as units of measurement for variables, information about the authors, and processing software used.
 
-[IMAGE HERE]
+![Mahecha et al. 2020 . *Visualization of the implemented Earth system data cube. The figure shows from the top left to bottom right the variables sensible heat (H ), latent heat (LE), gross primary production (GPP), surface moisture (SM), land surface temperature (LST), air temperature (Tair ), cloudiness (C ), precipitation (P ), and water vapour (V ). The resolution in space is 0.25◦ and 8 d in time, and we are inspecting the time from May 2008 to May 2010; the spatial range is from 15◦ S to 60◦ N, and 10◦ E to 65◦ W.*](../images/mahecha_data_cube.png)
 
-Keeping complex datasets such as the Earth System Data Cube in a format that facilitates access, processing, sharing, and archiving can be at least as important as how we parallelize the code we use to analyze them. In practice, it is common to convert our data from less efficient formats into more efficient ones before we parallelize any processing. 
+Keeping complex datasets in a format that facilitates access, processing, sharing, and archiving can be at least as important as how we parallelize the code we use to analyze them. In practice, it is common to convert our data from less efficient formats into more efficient ones before we parallelize any processing. 
 In this lesson, we will familiarize ourselves with the NetCDF data format, which enables us to store large, complex, multi-dimensional data efficiently, and learn to use the `xarray` Python package to read, process, and create NetCDF files.
 
 
 ## Objectives
 
 - Learn about the NetCDF data format: 
+    - Characterstics: self-describing, scalable, portable, appendable, shareble, and archivable
     - Understand the NetCDF data model: what are dimensions, variables and attributes
     - Advantages of random/arbitrary access and how that applies to parallel computing
-- Learn how to use the xarray Python package to work with NetCDF files:
-    -Describe the core xarray data structures, the DataArray and the Dataset, and the components that make them up, including: Data Variables, Dimensions, Coordinates, and Attributes
-    - Create xarray DataArrays and DataSets out of raw numpy arrays and save them as netCDF files
-    - Load xarray datasets from netCDF and understand the attributes view 
-    - Perform basic indexing, processing and reduction of xarray DataArrays
+- Learn how to use the `xarray` Python package to work with NetCDF files:
+    - Describe the core `xarray` data structures, the `xarray.DataArray` and the `xarray.Dataset`, and their components, including: *data variables*, *dimensions*, *coordinates*, and *attributes*
+    - Create `xarray.DataArrays` and `xarra.DataSets` out of raw `numpy` arrays and save them as netCDF files
+    - Load `xarray` datasets from netCDF and understand the attributes view 
+    - Perform basic indexing, processing and reduction of `xarray.DataArrays`
 
 
 ## NetCDF data format
 
-[NetCDF](https://docs.unidata.ucar.edu/netcdf-c/current/index.html) (network Common Data Form) is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. NetCDF is supported on almost all platforms, and parsers exist for the vast majority of scientific programming languages. 
+[NetCDF](https://docs.unidata.ucar.edu/netcdf-c/current/index.html) (network Common Data Form) is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. NetCDF is supported on almost all platforms, and parsers exist for the vast majority of scientific programming languages. The netCDF software was developed at the Unidata Program Center in Boulder, Colorado.
 
-The netCDF software was developed by Glenn Davis, Russ Rew, Ed Hartnett, John Caron, Dennis Heimbigner, Steve Emmerson, Harvey Davies, and Ward Fisher at the Unidata Program Center in Boulder, Colorado, with [contributions](https://docs.unidata.ucar.edu/netcdf-c/current/credits.html) from many other netCDF users. [*]
+[REF: https://docs.unidata.ucar.edu/netcdf-c/current/faq.html#ncFAQGeneral]
 
 ### Characteristics
- [https://www.unidata.ucar.edu/software/netcdf/]
+TO DO: maybe add a 5 word discussion of each point
 
-1. Self-describing
+ NetCDF files are designed to be:
+
+1. **Self-describing:**
 Information describing the data contents of the file are embedded within the data file itself. This means that there is a header which describes the layout of the rest of the file as well as arbitrary file metadata.
 
-2. Scalable
-A small subset of a large dataset may be accessed efficiently.
+2. **Scalable:**
+Small subsets of large datasets may be accessed efficiently through netCDF interfaces, even from remote servers.
 
-3. Portable
+3. **Portable:**
 A NetCDF file is machine-independent i.e. it can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.
 
-4. Appendable
+4. **Appendable:**
 Data may be appended to a properly structured NetCDF file without copying the dataset or redefining its structure.
 
-5. Sharable
+5. **Sharable:**
 One writer and multiple readers may simultaneously access the same NetCDF file.
 
-6. Archivable
+6. **Archivable:**
 Access to all earlier forms of NetCDF data will be supported by current and future versions of the software.
 
 ### Data Model
-The netCDF data model is the way that NetCDF organizes data. The Classic NetCDF Data Model consists of variables, dimensions, and attributes. This way of thinking about data was introduced with the very first netCDF release, and is still the core of all netCDF files. There exists a new Enhanced Data Model, but for maximum interoperability with existing code, new data should be created with the Classic Model.  [https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html#classic_model] 
+The NetCDF data model is the way that NetCDF organizes data. The *Classic NetCDF Data Model* consists of variables, dimensions, and attributes. This way of thinking about data was introduced with the very first NetCDF release, and is still the core of all netCDF files. There exists a new Enhanced Data Model, but for maximum interoperability with existing code, new data should be created with the Classic Model.  
+
+[REF https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html#classic_model] 
 
 **Variables**
-N-dimensional arrays of data. Variables in netCDF files can be one of six types (char, byte, short, int, float, double). We can think of these as the varying/measured/dependent quantities.
+are N-dimensional arrays of data. Variables in netCDF files can be one of six types (char, byte, short, int, float, double). We can think of these as the varying/measured/dependent quantities.
 
 **Dimensions**
 describe the axes of the data arrays. A dimension has a name and a length. An unlimited dimension has a length that can be expanded at any time, as more data are written to it. NetCDF files can contain at most one unlimited dimension. We can think of these as the constant/fixed/independent quantities at which we measure the variables.
 
 **Attributes**
-Small notes or supplementary metadata to annotate either a variable or the file as a whole. Although there is no enforced limit, the user is expected to keep attributes small.
+are small notes or supplementary metadata to annotate either a variable or the file as a whole. Although there is no enforced limit, the user is expected to keep attributes small.
 
-[NetCDF data model diagram]
+![ Classic NetCDF Data Model ([NetCDF documentation](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html#classic_model))](../images/netcdf_data_model.png)
 
 ### Exercise 1
+[TO DO: check exercise setup]
 
-Imagine the following scenario: we have a 5m by 5m square plot. The plot is divided into 25 square subplots of 1m by side, labeled by 1 to 5 across each side of the plot. On each subplot we measure the air temperature at the center of the plot at 10am in the morning for three days, starting on September 1st, 2022. The first day we record a temperature of 0°C on all subplots, the second day all temperatures are 1°C and the third day all temperatures are 3°C. What would be the variables, dimensions and attributes for this data? A simple diagram of how we can visualize the data can be very useful:
+Imagine the following scenario: we have a 5m by 5m square plot. The plot is divided into 25 square subplots of 1m by side, labeled by 1 to 5 across each side of the plot. On each subplot we measure the air temperature at the center of the plot at 10am in the morning for three days, starting on September 1st, 2022. The first day we record a temperature of 0°C on all subplots, the second day all temperatures are 1°C, and the third day all temperatures are 3°C. What would be the *variables*, *dimensions* and *attributes* for this data? A simple diagram of how we can visualize the data can be very useful:
 
-[** DIAGRAM **]
+[TO DO: make diagram]
 
 **Variables**: There is a single variable being measured: temperature. The variable values can be represented as a 3x5x5 array, with constant values for each day as seen in the diagram.  
 
 **Dimensions**: There are three dimensions in this dataset: time, the x-label of the plot, and the y-label of the plot. Time is measured in days and can have values 1, 2 or 3, assuming we have a reference time of September 1, 2022. The x and y labels are discrete identifiers of the position of the subplots and can each take the values 1, 2, 3, 4 or 5. 
 
 **Attributes**: Let’s divide this in attributes for the variable,  the dimensions and the whole dataset:
-        Temperature attributes: 
-            units: degrees Celsius
-            measurement: measured at 10am at center of plot
-        Time attributes:
-            units: "days since 1990-1-1 0:0:0" 
-        x-label attributes:
-            name: plot identifier along horizontal axis (from left to right)
-        y-label attributes:
-            name: plot identifier along vertical axis (from bottom to top)
-        Dataset attributes:
-            title: temperature at test subplots
-            contact: Carmen GG
-            comment: this is an example of NetCDF data format
+
+* Temperature attributes: 
+    + units: degrees Celsius
+    + measurement: measured at 10am at center of plot
+
+* Time attributes:
+    + units: "days since 1990-1-1 0:0:0" 
+
+* x-label attributes:
+    + name: plot identifier along horizontal axis (from left to right)
+
+* y-label attributes:
+    + name: plot identifier along vertical axis (from bottom to top)
+
+* Dataset attributes:
+    + title: temperature at test subplots
+    + contact: Carmen GG
+    + comment: an example of NetCDF data format
 
 
 ### Climate and Forecast metadata standards
@@ -231,3 +233,15 @@ https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2280504J
 ### Exercise 3
 
 https://arcticdata.io/catalog/view/doi:10.18739/A26T0GX63
+
+## HOW TO INCLUDE THIS?
+
+- Look into parallel access and NetCDF and whether all wheels can take advantage of the built-in parallel access
+- Data Organization / File Naming?
+- Using hierarchical folder structures
+    - Encoding hierarchy into filenames
+    - File naming for natural ordering (principle of most sig. fist)
+    - Setting things up for Dask multi-file support
+- Understand the advantages of random and parallel formats such as NetCDF
+- Talk about NetCDF and its role in data archival
+- Is it a good archival format: Yes! Better than CSV in many (not all) ways. The format is open and well-documented, support for the reading the format is ubiquitous, it's efficient w/ disk space (compared to CSV), it supports remote querying (unlike CSV).
