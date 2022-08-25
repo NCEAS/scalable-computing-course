@@ -9,7 +9,7 @@ Consider, for example, the following Earth System Data Cube from [Mahecha et al.
 We can consider this dataset large (high-resolution means we have a big file), complex (multiple variables), and multi-dimensional (each variable is measured along three dimensions: latitude, longitude, and time). 
 Additionally, necessary metadata must accompany the dataset to make it functional, such as units of measurement for variables, information about the authors, and processing software used.
 
-![Mahecha et al. 2020 . *Visualization of the implemented Earth system data cube. The figure shows from the top left to bottom right the variables sensible heat (H ), latent heat (LE), gross primary production (GPP), surface moisture (SM), land surface temperature (LST), air temperature (Tair ), cloudiness (C ), precipitation (P ), and water vapour (V ). The resolution in space is 0.25◦ and 8 d in time, and we are inspecting the time from May 2008 to May 2010; the spatial range is from 15◦ S to 60◦ N, and 10◦ E to 65◦ W.*](../images/mahecha_data_cube.png)
+![Mahecha et al. 2020 . *Visualization of the implemented Earth system data cube. The figure shows from the top left to bottom right the variables sensible heat (H), latent heat (LE), gross primary production (GPP), surface moisture (SM), land surface temperature (LST), air temperature (Tair), cloudiness (C), precipitation (P), and water vapour (V). The resolution in space is 0.25° and 8 d in time, and we are inspecting the time from May 2008 to May 2010; the spatial range is from 15° S to 60° N, and 10° E to 65° W.*](../images/mahecha_data_cube.png)
 
 Keeping complex datasets in a format that facilitates access, processing, sharing, and archiving can be at least as important as how we parallelize the code we use to analyze them. In practice, it is common to convert our data from less efficient formats into more efficient ones before we parallelize any processing. 
 In this lesson, we will 
@@ -213,35 +213,77 @@ temp
 At this point, since we have a single variable, the dataset attributes and the variable attributes are the same. 
 
 ### Indexing
+An `xarray.DataArray` allows both positional indexing (like `numpy`) and label-based indexing (like `pandas`). 
+Positional indexing is the most basic and it's done using Python's `[]` syntax, as in `array[i,j]` with i and j both integers. 
+Label-based indexing takes advantage of dimensions in the array having names and coordinate values that we can use to access data, instead of remembering the positional order of each dimension.
+
+As an example, suppose we want to know what was the temperature recorded by the weather station located at 40°0′N 80°0′E on September 1st, 2022. 
+By recalling all the information about how the array is setup with respect to the dimensions and coordiantes, we can access this data positionally:
+
+```{python}
+temp[0,1,2]
+```
+
+Or, we can use the dimensions names and their coordinates to access the same value:
+
+```{python}
+temp.sel(time='2022-09-01', lat=40, lon=80)
+```
+
+Notice that the result of this indeixing is a 1x1 `xarray.DataArray`. 
+This is because operations on a `xarray.DataArray`n(resp. `xarray.DataSet`) always return another`xarray.DataArray` (resp. `xarray.DataSet`) object. 
+In particular, operations returning scalar values will also return an `xarray` objects, so we need to cast as numbers them manualy. 
+See [xarray.DataArray.item](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.item.html).
+
+More about [`xarray` indexing](https://docs.xarray.dev/en/stable/user-guide/indexing.html).
 
 ### Reduction
 `xarray` has implemented a number of methods to reduce an `xarray.DataArray` along any number of dimensions. 
-For example, we can calculate the average temperature at each subplot over time and obtain a new `xarray.DataArray`. 
 One of the advantages of `xarray.DataArray` is that, if we chose to, it can carry over attributes when doing calculations.
+For example, we can calculate the average temperature at each weather station over time and obtain a new `xarray.DataArray`. 
+
 
 ```{python}
-avg_temp = temp.mean(dim = 'time') # to keep attributes add keep_attrs = True
+avg_temp = temp.mean(dim = 'time') 
+# to keep attributes add keep_attrs = True
 
 avg_temp.attrs = {'title':'average temperature over three days'}
 avg_temp
 ```
 
+More about [`xarray` computations](https://docs.xarray.dev/en/stable/user-guide/computation.html).
+
 ### Creating an `xarray.DataSet`
-A dataset resembles an in-memory representation of a NetCDF file, and consists of multiple variables, with coordinates and attributes, which together form a self describing dataset.
+An `xarray.DataSet` resembles an in-memory representation of a NetCDF file, and consists of *multiple* variables, with coordinates and attributes, which together form a self describing dataset.
+We can make create a `xarray.DataSet` by putting together the temperature data with the average temperature data. 
+We also add some attributes that now describe the whole dataset, not only each variable. 
+Take some time to click through the data viewer and notice how all the data and metadata is ordered within the dataset.
 
 ```{python}
-temp_dataset = xr.Dataset( data_vars = {'avg_temp': avg_temp,
-                                     'temp': temp},
-                        attrs = {'creator_name':'CGG', 
-                                 'title':'temperature data',
-                                 'description':'simple example of an xarray.Dataset'})
+# make dictionaries with variables and attributes
+data_vars = {'avg_temp': avg_temp,
+            'temp': temp}
+
+attrs = {'creator_name':'CGG',
+        'title':'temperature data at weather stations: daily and and average',
+        'description':'simple example of an xarray.Dataset'}
+
+# create xarray.Dataset
+temp_dataset = xr.Dataset( data_vars = data_vars,
+                        attrs = attrs)
 temp_dataset
 ```
 
 ### Save and reopen
+Finally, we want to save our dataset as a NetCDF file. 
+To do this, first specify the file path and use the *.nc* extension for the file name. 
+Then save the datset by using the `to_netcdf` method with your file path.
+Opening NetCDF is similarly straightforward using `xarray.open_dataset()`.
 
 ```{python}
-fp = os.path.join(os.getcwd(),'temp_dataset.nc')
+# specify file path: don't forget the .nc extension!
+fp = os.path.join(os.getcwd(),'temp_dataset.nc') 
+# save file
 temp_dataset.to_netcdf(fp)
 
 # open to check:
