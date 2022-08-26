@@ -85,9 +85,9 @@ So far, we have discussed the difference between organizing information in row-m
 
 Arrow is a language-agnostic specification that enables representation of column-major information in memory without having to serialize data from disk. The Arrow project provides implementation of this specification in a number of languages, including Python.
 
-Let's say that you have utilized the Parquet data format for more efficient storage of your data on disk. At some point, you'll need to read that data into memory in order to do analysis on it. Arrow enables data transfer between the on disk Parquet files and in-memory Python computations, via the `PyArrow` library.
+Let's say that you have utilized the Parquet data format for more efficient storage of your data on disk. At some point, you'll need to read that data into memory in order to do analysis on it. Arrow enables data transfer between the on disk Parquet files and in-memory Python computations, via the `pyarrow` library.
 
-`PyArrow` is great, but relatively low level. It supports basic group by and aggregate functions, as well as table and dataset joins, but it does not support the full operations that `pandas` does.
+`pyarrow` is great, but relatively low level. It supports basic group by and aggregate functions, as well as table and dataset joins, but it does not support the full operations that `pandas` does.
 
 ## Example
 
@@ -106,10 +106,10 @@ Next we can read in the data using `ds.dataset()`, passing it the path to the pa
 
 ```{python}
 #| eval: false
-deltafish = ds.dataset("/home/jclark/deltafish/fish", format="parquet", partitioning=["Species"])
+deltafish = ds.dataset("/home/shares/deltafish/fish", format="parquet", partitioning=["Species"])
 ```
 
-You can check out a file listing using the `files` method. Another great feature of parquet files is that they allow you to partition the data accross variables of the dataset. These partitiions mean that, in this case, data from each species of fish is written to it's own file. This allows for even faster operations down the road, since we know that users will commonly need to filter on the species variable. Even though the data are partitioned into different files, `pyarrow` knows that this is a single dataset, and you still work with it by referencing just the directory in which all of the partitioned files live.
+You can check out a file listing using the `files` method. Another great feature of parquet files is that they allow you to partition the data accross variables of the dataset. These partitions mean that, in this case, data from each species of fish is written to it's own file. This allows for even faster operations down the road, since we know that users will commonly need to filter on the species variable. Even though the data are partitioned into different files, `pyarrow` knows that this is a single dataset, and you still work with it by referencing just the directory in which all of the partitioned files live.
 
 ```{python}
 #| eval: false
@@ -117,17 +117,17 @@ deltafish.files
 ```
 
 ```
-['/home/jclark/deltafish/fish/Taxa=Acanthogobius flavimanus/part-0.parquet',
- '/home/jclark/deltafish/fish/Taxa=Acipenser medirostris/part-0.parquet',
- '/home/jclark/deltafish/fish/Taxa=Acipenser transmontanus/part-0.parquet',
- '/home/jclark/deltafish/fish/Taxa=Acipenser/part-0.parquet'...
+['/home/shares/deltafish/fish/Taxa=Acanthogobius flavimanus/part-0.parquet',
+ '/home/shares/deltafish/fish/Taxa=Acipenser medirostris/part-0.parquet',
+ '/home/shares/deltafish/fish/Taxa=Acipenser transmontanus/part-0.parquet',
+ '/home/shares/deltafish/fish/Taxa=Acipenser/part-0.parquet'...
  ```
 
  You can view the columns of a dataset using `schema.to_string()`
 
 ```{python}
 #| eval: false
-print(deltafish.schema.to_string())
+deltafish.schema.to_string()
 ```
 
 ```
@@ -161,7 +161,7 @@ survey = ds.dataset("/home/jclark/deltafish/survey", format="parquet", partition
 
 ```{python}
 #| eval: false
-print(survey.schema.to_string())
+survey.schema.to_string()
 ```
 
 Then do the join, and convert to a pandas `data.frame`. 
