@@ -4,4 +4,23 @@ title: "Documenting and Publishing Data"
 
 ## Learning Objectives
 
+-   Learn what data needs to be archived
+-   Become familiar with data submission form
+-   Understand what good metadata looks like
+-   Understand what constitutes as "large data"
+    -   Know when to reach out to support team for help
+
 ## Introduction
+
+Overview of open data and data archival repositories
+
+What is a repository? 
+A data repository is a database infrastructure that collects, manages, and stores data. In addition to the [Arctic Data Center](arcticdata.io), there are many other repositories dedicated to archiving data, code, and creating rich metadata. The Knowledge Network for Biocomplexity (KNB), the Digital Archaeological Record (tDAR), Environmental Data Initiative (EDI), and Zenodo are all examples of dedicated data repositories. 
+
+![](../images/data-repository-logos.png)
+
+## Metadata
+
+## Data Package Structure
+
+## 
