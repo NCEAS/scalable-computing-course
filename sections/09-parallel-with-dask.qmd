@@ -2,11 +2,16 @@
 title: "Parallelization with Dask"
 ---
 ## Introduction
-Dask is a library for parallel computing in Python. It can scale up code to use your full laptop capacity or out to a cloud cluster. *Dask provides a familiar user interface by mirroring the APIs of other libraries in the PyData ecosystem including: Pandas, Scikit-learn and NumPy. wiki* It also exposes low-level APIs that help programmers run custom algorithms in parallel. In this lesson, we will get acquainted with some of Dask's most commonly used objects and Dask's way of distributing and evaluating computations. 
+Dask is a library for parallel computing in Python. 
+It can scale up code to use the full capacity of your personal computer or to use a cloud cluster. 
+By mirroring APIs of other commonly used Python libraries such as Pandas, NumPy, and Scikit-learn, Dask provides a familiar interface that makes it easier to parallelize your code. 
+In this lesson, we will get acquainted with some of Dask's most commonly used objects and Dask's way of distributing and evaluating computations. 
+
+![ ](../images/dask_logo.png)
 
 ## Objectives
 
-- Learn basics of working with `dask.arrays` and `dask.dataframes`:
+- Learn basics of `dask.arrays` and `dask.dataframes`:
     - Load data and specifying chunk sizes
     - Understand delayed computations and "lazy" evaluation
     - https://saturncloud.io/blog/a-data-scientist-s-guide-to-lazy-evaluation-with-dask/
@@ -33,20 +38,77 @@ https://docs.dask.org/en/latest/10-minutes-to-dask.html
 
 https://tutorial.dask.org/00_overview.html
 
-![ ](../images/dask_logo.png)
 
 
-## Dask Arrays
-![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/array.html))](../images/dask_array.png)
 
+
+
+Dask provides high-level Array, Bag, and DataFrame collections that mimic NumPy, lists, and pandas but can operate in parallel on datasets that don’t fit into memory.
+
+It is important to remember that, while APIs may be similar, some differences do exist. Additionally, the performance of some algorithms may differ from their in-memory counterparts due to the advantages and disadvantages of parallel programming.  
 
 
 ## Dask Data Frames
 
-*Dask DataFrames coordinate many pandas DataFrames/Series arranged along the index. A Dask DataFrame is partitioned row-wise, grouping rows by index value for efficiency. These pandas objects may live on disk or on other machines.*
+When we analyze tabular data, we usually start our analysis by loading it into memory as a Pandas DataFrame. 
+But, what if this data does not fit in memory? 
+Or maybe our analyzes crash because we run out of memory? 
+These scenarios are typical entry points into parallel computing. 
+In such cases, Dask’s scalable alternative to a Pandas DataFrame is the Dask Dataframe. 
+A `dask.DataFrame` is made up of many `pd.DataFrames`, each containing a subset of rows of the original dataset.
+We call each of these pandas pieces a *partition* of the `dask.DataFrame`.
+
+
 
 ![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/dataframe.html))](../images/dask_dataframe.png)
 
+```{python}
+## THIS IS AN EXAMPLE OF LOADING A MASSIVE FILE OR CREATING A REALLY BIG DATAFRAME
+
+```
+
+
+The application programming interface (API) of a `dask.DataFrame` is a subset of the `pd.DataFrame` API.
+So if you are familiar with pandas, many of the core `pd.DataFrame` methods directly translate to `dask.DataFrames`. 
+
+
+
+A major difference between both objects is that `dask.DataFrames` are *lazy*, meaning that they do not evaluate until we explicitly ask for a result using the `compute` method.
+This is the case with most Dask workloads.
+
+```{python}
+## THIS IS AN EXAMPLE OF LAZY COMPUTATION
+
+```
+
+
+*This means that your framework will queue up sets of transformations or calculations so that they are ready to run later, in parallel. This is a concept you’ll find in lots of frameworks for parallel computing, including Dask. Your framework won’t evaluate the requested computations until explicitly told to. This differs from “eager” evaluation functions, which compute instantly upon being called.*
+
+https://saturncloud.io/blog/a-data-scientist-s-guide-to-lazy-evaluation-with-dask/ 
+Lead into task graphs. 
+```{python}
+### THIS IS AN EXAMPLE OF TASK GRAPH
+```
+
+
+
+
+## Dask Arrays
+If you want scalable NumPy arrays, then start with Dask array
+
+
+![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/array.html))](../images/dask_array.png)
+
+## Best Practices
+
+It is important to remember that, while APIs may be similar, some differences do exist. Additionally, the performance of some algorithms may differ from their in-memory counterparts due to the advantages and disadvantages of parallel programming. Some thought and attention is still required when using Dask.
+https://docs.dask.org/en/latest/user-interfaces.html
+
+:::{.callout-warning}
+For data that fits into RAM, Pandas can often be faster and easier to use than Dask DataFrame. 
+While “Big Data” tools can be exciting, they are almost always worse than normal data tools while those remain appropriate.
+https://docs.dask.org/en/stable/dataframe-best-practices.html
+:::
 
 ## TODO
 
