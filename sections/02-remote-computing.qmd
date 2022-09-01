@@ -64,24 +64,24 @@ Below are just a few bash commands that you're likely to use. Some may be extend
 |      `pwd`       | print your current working directory                                          | 
 |      `cd`        | change directory                                                              |
 |      `ls`        | list contents of a directory                                                  |
-|      `tree`      | display the contents of a directory in the form of a tree structure           |
+|      `tree`      | display the contents of a directory in the form of a tree structure (not installed by default) |
 |      `echo`      | print text that is passed in as an argument                                   |
 |      `mv`        | move or rename a file                                                         |
 |      `cp`        | copy a file(s) or directory(ies)                                              |
 |      `touch`     | create a new empty file                                                       |
 |      `mkdir`     | create a new directory                                                        |
-|      `rm`/`rmdir`| remove a file/ empty directory (be careful -- there is not "trash" folder!)    |
+|      `rm`/`rmdir`| remove a file/ empty directory (be careful -- there is not "trash" folder!)   |
 |      `grep`      | searches a given file(s) for lines containing a match to a given pattern list |
 |      `sed`       | stands for **S**tream **Ed**itor; a versatile command for editing files       |
 |      `cut`       | extract a specific portion of text in a file                                  |
 |      `join`      | join two files based on a key field present in both                           |
-|   `top`, `htop`  | view running processes in a Linux system                                      |
+|   `top`, `htop`  | view running processes in a Linux system  (press `Q` to quit)                 |
 
 ### General command syntax
 
 Bash commands are typically are written as: `command [options] [arguments]` where the command must be an executable on your PATH and where [options](https://tldp.org/LDP/abs/html/options.html) (settings that change the shell and/or script behavior) take one of two forms: **short form** (e.g. `command -option-abbrev`) or **long form** (e.g. `command --option-name` or `command -o option-name`). An example:
 
-```{bash}
+```{.bash}
 # the `ls` command lists the files in a directory
 ls file/path/to/directory
 
@@ -129,7 +129,7 @@ Let's connect to a remote computer (**included-crab**) and practice using some o
 
 - You can choose to SSH into the server (included-crab.nceas.ucsb.edu) through **(a)**  the command line by using the `ssh` command, or **(b)** through VS Code's command palette. If you prefer the latter, please refer back to the [**Log in to the server** section](https://learning.nceas.ucsb.edu/2022-09-arctic/#log-in-to-the-server). Doing so via the command line using the `ssh` command should look something like this:
 
-```{bash}
+```{.bash}
 yourusername:~$ ssh yourusername@included-crab.nceas.ucsb.edu 
 yourusername@included-crab.nceas.ucsb.edu's password: 
 yourusername@included-crab:~$ 
@@ -143,7 +143,7 @@ You won't see anything appear as you type or paste your password -- this is a se
 DO WE NEED THIS SECTION?  
 
 3. Change your password
-```{bash}
+```{.bash}
 yourusername@included-crab:~$ passwd
 Changing password for yourusername.
 (current) UNIX password: 
@@ -155,7 +155,7 @@ Retype new UNIX password:
 ::: {.callout-note}
 To log out of the server, type `exit` -- it should look something like this:
 
-```{bash}
+```{.bash}
 yourusername@included-crab.nceas.ucsb.edu:$ exit
 logout
 Connection to included-crab.nceas.ucsb.edu closed.
@@ -165,43 +165,77 @@ Connection to included-crab.nceas.ucsb.edu closed.
 
 ### **Exercise 2:** Practice using some common bash commands
 
-1. Use the `pwd` command to print your current location, or working directory. You'll likely be in your home directory on the server (e.g. `/home/yourusername`).
+1. Use the `pwd` command to print your current location, or working directory. You should be in your home directory on the server (e.g. `/home/yourusername`).
 
-2. Use the `ls` command to list the contents (any files or subdirectories) of your home directory -- you should see a directory named **?_**
+2. Use the `ls` command to list the contents (any files or subdirectories) of your home directory 
 
-3. Use the `cd` command to move the **?** directory:
+3. Use the `mkdir` command to create a new directory named `bash_practice`:
 
-```{bash}
-# move from /home/yourusername to home/yourusername/?
-cd ?
+```{.bash}
+mkdir bash_practice
 ```
 
-To move *up* a directory level, use two dots, `..`: 
+4. Use the `cd` command to move into your new `bash_practice` directory:
 
-```{bash}
-# move from /home/yourusername/? back to /home/yourusername
+```{.bash}
+# move from /home/yourusername to home/yourusername/bash_practice
+cd bash_practice
+```
+
+- To move *up* a directory level, use two dots, `..` : 
+
+```{.bash}
+# move from /home/yourusername/bash_practice back to /home/yourusername
 $ cd ..
 ```
 
-To quickly navigate back to your home directory from wherever you may be on your computer, use a tilde, `~`:
+:::{.callout-note}
+To quickly navigate back to your home directory from wherever you may be on your computer, use a tilde, `~` :
 
-```{bash}
+```{.bash}
 # e.g. to move from from some subdirectory, /home/yourusername/Projects/project1/data, back to your home directory, home/yourusername
 $ cd ~
 
 # or use .. to back out three subdirectories
 $ cd ../../..
 ```
+:::
 
-4. Create a new directory called, **bash_practice** within your home directory using `mkdir`.
+5. Add some `.txt` files (`file1.txt`, `file2.txt`, `file3.txt`) to your `bash_practice` subdirectory using the `touch` command (**Note:** be sure to `cd` into `bash_practice` if you're not already there):
 
-```{bash}
-$ mkdir bash_practice
+```{.bash}
+# add one file at a time
+touch file1.txt
+touch file2.txt
+touch file3.txt
+
+# or add all files simultanously like this:
+touch file{1..3}.txt
+
+# or like this:
+touch file1.txt file2.txt file3.txt
 ```
 
- Run `ls` to print out the contents of your home directory -- you should now see your **bash_practice** directory added to the list.
+6. Add other file types (e.g. `.py`, `.csv`, etc.)
 
- 5. TO BE CONTINUED
+```{.bash}
+touch mypython.py mycsv.csv
+```
+
+7. Count the number of `.txt` files in `bash_practice` by combining the `ls` and `wc` (word count) funtions using the pipe, `|`, operator:
+
+```{.bash}
+# `ls *.txt` lists all files with a .txt extension
+# `wc` returns a word count (lines, words, chrs) and the `-l` option only returns the number of lines
+# use a pipe, `|`, to execute both commands at once
+ls *.txt | wc -l
+```
+
+8. Delete `mypython.py` and `mycsv.csv` using the `rm` command:
+
+```{.bash}
+rm mypython.py mycsv.csv
+```
 
 ### **Bonus Exercise:** Automate processes with a Bash script
 
@@ -215,13 +249,13 @@ Let's begin by creating a simple bash script that when executed, will print out 
 
 2. Next, we'll create a shell script called `hello_world.sh` using the `touch` command:
 
-```{bash}
+```{.bash}
 $ touch hello_world.sh
 ```
 
 3. There are a number of ways to edit a file or script -- here, we'll use [Nano](https://www.nano-editor.org/), a terminal-based text editor. Open your `hello_world.sh` with nano by running the following in your terminal:
 
-```{bash}
+```{.bash}
 $ nano hello_world.sh
 ```
 
@@ -234,7 +268,7 @@ You can create and open a file in nano in just one line of code. For example, ru
 - Anything following a `#` will not be executed as code -- these are useful for adding comments to your scripts
 - The first line of a Bash script starts with a **shebang**, `#!`, followed by a path to the Bash interpreter -- this is used to tell the operating system which interpreter to use to parse the rest of the file. There are two ways to use the shebang to set your interpreter (read up on the pros & cons of both methods on this [Stack Overflow post](https://stackoverflow.com/questions/10376206/what-is-the-preferred-bash-shebang)):
 
-```{bash}
+```{.bash}
 # (option a): use the absolute path to the bash binary
 #!/bin/bash
 
@@ -244,7 +278,7 @@ You can create and open a file in nano in just one line of code. For example, ru
 
 5. We'll first specify our bash interpreter using the shebang, which indicates the start of our script. Then, we'll use the `echo` command, which when executed, will print whatever text is passed as an argument. Type the following into your script (which should be opened with nano), then save (Use the keyboard shortcut `control` + `X` to exit, then type `Y` when it asks if you'd like to save your work. Press `enter/return` to exit nano).
 
-```{bash}
+```{.bash}
 # specify bash as the interpreter
 #!/bin/bash
 
@@ -254,7 +288,7 @@ $ echo "Hello, World!"
 
 6. To execute your script, run the following in your terminal (be sure that you're in the same working directory as your `hello_world.sh` file or specify the file path to it):
 
-```{bash}
+```{.bash}
 bash hello_world.sh
 ```
 
