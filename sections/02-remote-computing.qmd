@@ -10,36 +10,33 @@ title: "Remote Computing"
 
 ## Introduction
 
-Scientific synthesis and our ability to effectively and efficiently work with big data depends on the use of computers & the internet. Working on a personal computer may be sufficient for many tasks, but as data get larger and analyses more computationally intensive, scientists often find themselves needing more computing resources than they have available locally. Remote computing, or the process of connecting to a computer(s) in another location via a network link is becoming more and more common in overcoming big data challenges.
+Scientific synthesis and our ability to effectively and efficiently work with big data depends on the use of computers and the internet. Working on a personal computer may be sufficient for many tasks, but as data get larger and analyses more computationally intensive, scientists often find themselves needing more computing resources than they have available locally. Remote computing, or the process of connecting to a computer(s) in another location via a network link is becoming more and more common in overcoming big data challenges.
 
 In this lesson, we'll learn about the architecture of computer networks and explore some of the different remote computing configurations that you may encounter, we'll learn how to securely connect to a remote computer via a shell, and we'll become familiarized with using Bash Shell to efficiently manipulate files and directories. We will begin working in the [VS Code](https://code.visualstudio.com/) IDE (integrated development environment), which is a versatile code editor that supports many different languages.
 
 ## Servers & Networking
 
-Host computers connect via networking equipment and can send messages to each other over communication protocols (aka an [Internet Protocol](https://en.wikipedia.org/wiki/Internet_Protocol), or IP). Host computers can take the role of **client** or **server**, though these are not inherent properties of a host (i.e. the same machine can play either role). 
+Remote computing typically involves communication between two or more "host" computers. Host computers connect via networking equipment and can send messages to each other over communication protocols (aka an [Internet Protocol](https://en.wikipedia.org/wiki/Internet_Protocol), or IP). Host computers can take the role of **client** or **server**, where servers share their resources with the client. Importantly,  these client and server roles are not inherent properties of a host (i.e. the same machine can play either role). 
 
-- **Client**: the host *intiating* a request
-- **Server**: the host *responding* to a request
+- **Client**: the host computer *intiating* a request
+- **Server**: the host computer *responding* to a request
 
 ::: {.callout-note}
  Hosts typically have one network address but can have many different ones (for example, adding multiple network cards to a single server increases bandwith).
 :::
 
-::: {.callout-important} 
-GET FEEDBACK ON VISUAL + ADD KUBERNETES CONFIGURATION VISUAL; MAKE LARGER?
-![](../images/remote-computing-configs.png)
-:::
+![](../images/remote-comp-configs.png)
 
-<span style = 'font-size: 85%; color: #6e6d6d;'>**Fig 1.** Different remote computing configurations. (a) A client uses secure shell protocol (SSH) to login/connect to a server over the internet. The client and the server exist in the physical world, but in different locations. (b) A client uses SSH to login/connect to a computing cluster (i.e. a set of computers (nodes) that work together so that they can be viewed as a single system) over the internet. The connection is first made through a gateway node (i.e. a computer that routes traffic from one network to another). The client and the cluster (server) exist in the physical world, but in different locations. (c) A client uses SSH to login/connect to a computing cluser where each node is a virtual machine (VM) hosted by a cloud computing service (e.g. Amazong Web Services, Google Cloud, Microsoft Azure, etc.). The connection is first made through a gateway node. The client and the gateway are located in the physical world, while the VM nodes are hosted in the cloud.</span>
+<span style = 'font-size: 85%; color: #6e6d6d;'>**Fig 1.** Examples of different remote computing configurations. (a) A client uses secure shell protocol (SSH) to login/connect to a server over the internet. The client and the server exist in the physical world, but in different locations. (b) A client uses SSH to login/connect to a computing cluster (i.e. a set of computers (nodes) that work together so that they can be viewed as a single system) over the internet. The connection is first made through a gateway node (i.e. a computer that routes traffic from one network to another). The client and the cluster (server) exist in the physical world, but in different locations. (c) A client uses SSH to login/connect to a computing cluser where each node is a virtual machine (VM) hosted by a cloud computing service (e.g. Amazon Web Services, Google Cloud, Microsoft Azure, etc.). The connection is first made through a gateway node. The client and the gateway are located in the physical world, while the VM nodes are hosted in the cloud.</span>
 
 ## IP addressing
 
-Hosts are assigned a **unique numerical address** used for all communication and routing called an [Internet Protocol Address (IP Address)](https://en.wikipedia.org/wiki/IP_address). They look something like this: **128.111.220.7**. Each IP Address can be used to communicate over various "ports", which allows multiple applications to communicate with a host without mixing up traffic. 
+Hosts are assigned a **unique numerical address** used for all communication and routing called an [Internet Protocol Address (IP Address)](https://en.wikipedia.org/wiki/IP_address). They look something like this: **128.111.220.7**. Each IP Address can be used to communicate over various "[ports](https://en.wikipedia.org/wiki/Port_(computer_networking))", which allows multiple applications to communicate with a host without mixing up traffic. 
 
 Because IP addresses can be difficult to remember, they are also assigned **hostnames**, which are handled through the global [Domain Name System (DNS)](https://en.wikipedia.org/wiki/Domain_Name_System). Clients first look up a hostname in the DNS to find the IP address, then open a connection to the IP address.
     
 ::: {.callout-note} 
-The IP address for included-crab.nceas.ucsb.edu is _______. 
+Throughout this course, we'll be working on a server with the hostname, **included-crab** and an IP address, 128.111.85.1. 
 :::
 
 ## Bash Shell Programming
@@ -55,10 +52,12 @@ The IP address for included-crab.nceas.ucsb.edu is _______.
 - **Windows:** bash via [Git Bash](https://gitforwindows.org/), which needs to be installed
 
 ::: {.callout-note}
-Mac users may have to switch from [Z Shell](https://www.zsh.org/), or zsh, to bash. Use the command `exec bash` to switch your default shell to bash (or `exec zsh` to switch switch back)
+Mac users may have to switch from [Z Shell](https://www.zsh.org/), or zsh, to bash. Use the command `exec bash` to switch your default shell to bash (or `exec zsh` to switch back).
 :::
 
-Some commonly used (and very helpful) bash commands:
+### Some commonly used (and very helpful) bash commands:
+
+Below are just a few bash commands that you're likely to use. Some may be extended with options (more on that in the next section) or even piped together (i.e. where the output of one command gets sent to the next command, using the `|` operator).
 
 | bash command     | what it does                                                                  |
 |------------------|-------------------------------------------------------------------------------|
@@ -66,35 +65,59 @@ Some commonly used (and very helpful) bash commands:
 |      `cd`        | change directory                                                              |
 |      `ls`        | list contents of a directory                                                  |
 |      `tree`      | display the contents of a directory in the form of a tree structure           |
+|      `echo`      | print text that is passed in as an argument                                   |
 |      `mv`        | move or rename a file                                                         |
+|      `cp`        | copy a file(s) or directory(ies)                                              |
 |      `touch`     | create a new empty file                                                       |
 |      `mkdir`     | create a new directory                                                        |
+|      `rm`/`rmdir`| remove a file/ empty directory (be careful -- there is not "trash" folder!)    |
 |      `grep`      | searches a given file(s) for lines containing a match to a given pattern list |
-|      `awk`       |
 |      `sed`       | stands for **S**tream **Ed**itor; a versatile command for editing files       |
 |      `cut`       | extract a specific portion of text in a file                                  |
 |      `join`      | join two files based on a key field present in both                           |
 |   `top`, `htop`  | view running processes in a Linux system                                      |
 
+### General command syntax
+
+Bash commands are typically are written as: `command [options] [arguments]` where the command must be an executable on your PATH and where [options](https://tldp.org/LDP/abs/html/options.html) (settings that change the shell and/or script behavior) take one of two forms: **short form** (e.g. `command -option-abbrev`) or **long form** (e.g. `command --option-name` or `command -o option-name`). An example:
+
+```{bash}
+# the `ls` command lists the files in a directory
+ls file/path/to/directory
+
+# adding on the `-a` or `--all` option lists all files (including hidden files) in a directory
+ls -a file/path/to/directory # short form
+ls --all file/path/to/directory # long form
+ls -o all file/path/to/directory # long form
+```
+
 ## Connecting to a remote computer via a shell
 
-You can also use a shell to gain accesss to and remotely control other computers (manage/transfer files/etc). To do so, you'll need the following:
+In addition to navigating your computer/manipulating your files, you can also use a shell to gain accesss to and remotely control other computers. To do so, you'll need the following:
 
-- a remote computer (e.g. server) turned on
-- the IP address or name of remote computer
+- a remote computer (e.g. server) which is turned on
+- the IP address or name of the remote computer
 - the necessary permissions to access the remote computer
 
 Secure Shell, or SSH, is a network communication protocol that is often used for securely connecting to and running shell commands on a remote host. SSH temendously simplifies remote computing because ______, and it is supported out-of-the-box on Linux and Macs. If working on a Windows machine, you'll need ____.
 
-## Exercise 1: Connect to a server & practice bash commands
+## Let's practice!
 
-Let's connect to a remote computer (a server named **included-crab.nceas.ucsb.edu**) and practice using some of above commands. 
+We'll now use bash commands to do the following: 
 
-### Launch your Terminal Program
+- connect to the server, **included-crab.nceas.ucsb.edu**, that we'll be working on for the remainder of this course
+- navigate through directories on the server and add/change/manipulate files
+- automate some of the above processes by writing a bash script
+
+### **Exercise 1:** Connect to a server using the `ssh` command (or using VS Code's command palette)
+
+Let's connect to a remote computer (**included-crab**) and practice using some of above commands. 
+
+1. Launch your Terminal Program
 
 - **MacOS:** navigate to `Applications > Utilities` and open `Terminal` 
 
-- **Windows:** Navigate to `Windows Start > Git` and open `Git Bash` UPDATE: see if this still stands
+- **Windows:** Navigate to `Windows Start > Git` and open `Git Bash`
 
 - **ALTERNATIVELY, from VS Code:** Two options to open a terminal program, if a terminal isn't already an open pane at the bottom of VS Code 
 
@@ -102,19 +125,18 @@ Let's connect to a remote computer (a server named **included-crab.nceas.ucsb.ed
 
     b) Click on the `+ (dropdown menu) > bash` in the bottom right corner
 
-### Connect to a remote server 
+2.  Connect to a remote server 
 
-You can choose to SSH into the server (included-crab.nceas.ucsb.edu) through the command line by using the `ssh` command, or through VS Code's command palette. If you prefer the latter, please refer back to the [**Log in to the server** section](https://learning.nceas.ucsb.edu/2022-09-arctic/#log-in-to-the-server). Doing so via the command line should look something like this:
+- You can choose to SSH into the server (included-crab.nceas.ucsb.edu) through **(a)**  the command line by using the `ssh` command, or **(b)** through VS Code's command palette. If you prefer the latter, please refer back to the [**Log in to the server** section](https://learning.nceas.ucsb.edu/2022-09-arctic/#log-in-to-the-server). Doing so via the command line using the `ssh` command should look something like this:
 
 ```{bash}
-#| eval: false
-samanthacsik:~$ ssh scsik@included-crab.nceas.ucsb.edu 
-scsik@included-crab.nceas.ucsb.edu's password: 
-scsik@included-crab:~$ 
+yourusername:~$ ssh yourusername@included-crab.nceas.ucsb.edu 
+yourusername@included-crab.nceas.ucsb.edu's password: 
+yourusername@included-crab:~$ 
 ```
 
 ::: {.callout-important}
-You won't see anything appear as you type your password!
+You won't see anything appear as you type or paste your password -- this is a security feature! Type or paste your password and press enter/return when done to finish connecting to the server.
 :::
 
 ::: {.callout-warning} 
@@ -122,41 +144,48 @@ DO WE NEED THIS SECTION?
 
 3. Change your password
 ```{bash}
-#| eval: false
-scsik@included-crab:~$ passwd
-Changing password for scsik.
+yourusername@included-crab:~$ passwd
+Changing password for yourusername.
 (current) UNIX password: 
 Enter new UNIX password: 
 Retype new UNIX password: 
 ```
 :::
 
-### Practice
+::: {.callout-note}
+To log out of the server, type `exit` -- it should look something like this:
+
+```{bash}
+yourusername@included-crab.nceas.ucsb.edu:$ exit
+logout
+Connection to included-crab.nceas.ucsb.edu closed.
+(base) .....
+```
+:::
+
+### **Exercise 2:** Practice using some common bash commands
 
 1. Use the `pwd` command to print your current location, or working directory. You'll likely be in your home directory on the server (e.g. `/home/yourusername`).
 
-2. Use the `ls` command to list the contents (any files or subdirectories) of your home directory -- you should see a directory named **___**
+2. Use the `ls` command to list the contents (any files or subdirectories) of your home directory -- you should see a directory named **?_**
 
-3. Use the `cd` command to move the **___** directory:
+3. Use the `cd` command to move the **?** directory:
 
 ```{bash}
-#| eval: false
-# move from /home/yourusername to home/yourusername/____
-cd ___
+# move from /home/yourusername to home/yourusername/?
+cd ?
 ```
 
 To move *up* a directory level, use two dots, `..`: 
 
 ```{bash}
-#| eval: false
-# move from /home/yourusername/___ back to /home/yourusername
+# move from /home/yourusername/? back to /home/yourusername
 $ cd ..
 ```
 
 To quickly navigate back to your home directory from wherever you may be on your computer, use a tilde, `~`:
 
 ```{bash}
-#| eval: false
 # e.g. to move from from some subdirectory, /home/yourusername/Projects/project1/data, back to your home directory, home/yourusername
 $ cd ~
 
@@ -167,7 +196,6 @@ $ cd ../../..
 4. Create a new directory called, **bash_practice** within your home directory using `mkdir`.
 
 ```{bash}
-#| eval: false
 $ mkdir bash_practice
 ```
 
@@ -175,7 +203,7 @@ $ mkdir bash_practice
 
  5. TO BE CONTINUED
 
-## Exercise 2: Write a bash shell script
+### **Bonus Exercise:** Automate processes with a Bash script
 
 As we just demonstrated, we can use bash commands in the terminal to accomplish a variety of tasks like navigating our computer's directories, manipulating/creating/adding files, and much more. However, writing a bash *script* allows us to gather and save our code for automated execusion. 
 
@@ -188,14 +216,12 @@ Let's begin by creating a simple bash script that when executed, will print out 
 2. Next, we'll create a shell script called `hello_world.sh` using the `touch` command:
 
 ```{bash}
-#| eval: false
 $ touch hello_world.sh
 ```
 
 3. There are a number of ways to edit a file or script -- here, we'll use [Nano](https://www.nano-editor.org/), a terminal-based text editor. Open your `hello_world.sh` with nano by running the following in your terminal:
 
 ```{bash}
-#| eval: false
 $ nano hello_world.sh
 ```
 
@@ -209,8 +235,6 @@ You can create and open a file in nano in just one line of code. For example, ru
 - The first line of a Bash script starts with a **shebang**, `#!`, followed by a path to the Bash interpreter -- this is used to tell the operating system which interpreter to use to parse the rest of the file. There are two ways to use the shebang to set your interpreter (read up on the pros & cons of both methods on this [Stack Overflow post](https://stackoverflow.com/questions/10376206/what-is-the-preferred-bash-shebang)):
 
 ```{bash}
-#| eval: false
-
 # (option a): use the absolute path to the bash binary
 #!/bin/bash
 
@@ -221,7 +245,6 @@ You can create and open a file in nano in just one line of code. For example, ru
 5. We'll first specify our bash interpreter using the shebang, which indicates the start of our script. Then, we'll use the `echo` command, which when executed, will print whatever text is passed as an argument. Type the following into your script (which should be opened with nano), then save (Use the keyboard shortcut `control` + `X` to exit, then type `Y` when it asks if you'd like to save your work. Press `enter/return` to exit nano).
 
 ```{bash}
-#| eval: false
 # specify bash as the interpreter
 #!/bin/bash
 
@@ -229,10 +252,9 @@ You can create and open a file in nano in just one line of code. For example, ru
 $ echo "Hello, World!"
 ```
 
-6. To execute your script, then run the following in your terminal (be sure that you're in the same working directory as your `hello_world.sh` file or specify the file path to it):
+6. To execute your script, run the following in your terminal (be sure that you're in the same working directory as your `hello_world.sh` file or specify the file path to it):
 
 ```{bash}
-#| eval: false
 bash hello_world.sh
 ```
 
