@@ -292,7 +292,9 @@ check
 ```
 
 ### Exercise
-https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2280504J
+
+For this exercise we will use a dataset including timeseries of annual Arctic freshwater fluxes and storage terms. The data was produced for the publication [Jahn and Laiho, 2020](https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2020GL088854) about changes in the Arctic freshwater budget and 
+is archived at the Arctic Data Center [doi:10.18739/A2280504J](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2280504J)
 
 
 ```{python}

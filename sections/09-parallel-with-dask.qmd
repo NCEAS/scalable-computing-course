@@ -1,6 +1,52 @@
 ---
 title: "Parallelization with Dask"
 ---
+## Introduction
+Dask is a library for parallel computing in Python. It can scale up code to use your full laptop capacity or out to a cloud cluster. *Dask provides a familiar user interface by mirroring the APIs of other libraries in the PyData ecosystem including: Pandas, Scikit-learn and NumPy. wiki* It also exposes low-level APIs that help programmers run custom algorithms in parallel. In this lesson, we will get acquainted with some of Dask's most commonly used objects and Dask's way of distributing and evaluating computations. 
+
+## Objectives
+
+- Learn basics of working with `dask.arrays` and `dask.dataframes`:
+    - Load data and specifying chunk sizes
+    - Understand delayed computations and "lazy" evaluation
+    - https://saturncloud.io/blog/a-data-scientist-s-guide-to-lazy-evaluation-with-dask/
+    - Interpret a task graph
+
+- Integrate `xarray` with Dask:
+    - https://docs.xarray.dev/en/stable/user-guide/dask.html
+    
+- Become familiar with Dask's distributed scheduler:
+    - What are the client, scheduler, workers, and cluster
+    - https://www.datarevenue.com/en-blog/understanding-dask-architecture-client-scheduler-workers
+
+    https://tutorial.dask.org/04_distributed.html
+    - Obtain information about computations via the Dask dashboard
+    - https://www.youtube.com/watch?v=N_GqzcuGLCY
+    - https://medium.com/@kartikbhanot/dask-scheduler-dashboard-understanding-resource-and-task-allocation-in-local-machines-bc5aa60eca6e
+
+- Share best practices and resources for a deeper dive
+    - https://docs.dask.org/en/stable/best-practices.html#load-data-with-dask
+    - https://coiled.io/blog/common-dask-mistakes/
+
+## Possible computing examples:
+https://docs.dask.org/en/latest/10-minutes-to-dask.html 
+
+https://tutorial.dask.org/00_overview.html
+
+![ ](../images/dask_logo.png)
+
+
+## Dask Arrays
+![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/array.html))](../images/dask_array.png)
+
+
+
+## Dask Data Frames
+
+*Dask DataFrames coordinate many pandas DataFrames/Series arranged along the index. A Dask DataFrame is partitioned row-wise, grouping rows by index value for efficiency. These pandas objects may live on disk or on other machines.*
+
+![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/dataframe.html))](../images/dask_dataframe.png)
+
 
 ## TODO
 
@@ -12,14 +58,6 @@ title: "Parallelization with Dask"
         "River and lake ice phenology data for Alaska and Northwest Canada from 1882 to 2021"
     - Also check out candidats in the xarray lesson TODO section
 
-## Learning Objectives
-
-- Learn about the map-reduce
-- Learn how to use Dask
-
-## Introduction
-
-TODO
 
 ### Notes
 
@@ -44,17 +82,3 @@ TODO
 > Dask is convenient on a laptop. It installs trivially with conda or pip and extends the size of convenient datasets from “fits in memory” to “fits on disk”.
 
 -- From https://docs.dask.org/en/stable/
-
-## Dask Tutorial
-
-TODO
-## Exercise
-
-TODO
-(50min)
-
-
-## Conclusion
-
-- Comparison with other libraries
-    Thread pools, process pools, distributed dask clusters
