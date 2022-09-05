@@ -53,23 +53,34 @@ In order to interact with the client and generate tasks that can be processed in
 We can deploy a Dask cluster on a single machine or an actual cluster with multiple machines. Here we will use the Dask cluster instead of the default Dask scheduler to take advantage of the *cluster Dashboard*, which keeps track of the performance and progress of our computations. [Read more about Dask Clusters](https://docs.dask.org/en/latest/deploying.html)
 :::
 
+```{python}
+from dask.distributed import LocalCluster, Client
+```
+
+```{python}
+cluster = LocalCluster()
+cluster
+```
 ## Dask Data Frames
+
 
 When we analyze tabular data, we usually start our analysis by loading it into memory as a Pandas DataFrame. 
 But, what if this data does not fit in memory? 
 Or maybe our analyzes crash because we run out of memory. 
 These scenarios are typical entry points into parallel computing. 
 In such cases, Dask’s scalable alternative to a Pandas DataFrame is the `dask.dataframe`. 
-A `dask.DataFrame` is made up of many `pd.DataFrames`, each containing a subset of rows of the original dataset.
-We call each of these pandas pieces a *partition* of the `dask.DataFrame`.
+A `dask.dataframe` is made up of many `pd.DataFrames`, each containing a subset of rows of the original dataset.
+We call each of these pandas pieces a *partition* of the `dask.dataframe`.
 
 
 
 ![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/dataframe.html))](../images/dask_dataframe.png)
 
-For this example we will use a dataset including weather and soil condition measurements at six forest stands in northeastern Siberia. 
-The data has been collected since 2014 and is archived at the Arctic Data Center [Loranty & Alexander, doi:10.18739/A24B2X59C.](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA24B2X59C)
-Today we will use the soil mositure measurements from this dataset. Just as we did on the previous lesson, we download the data using the `requests` package and the link to the data obtained from the Arctic Data Center website. 
+
+### Reading csv as `dask.dataframe`
+To get familiar with `dask.dataframes` we will use tabular data of soil mositure measurements at six forest stands in northeastern Siberia. 
+The data has been collected since 2014 and is archived at the Arctic Data Center ([Loranty & Alexander, doi:10.18739/A24B2X59C](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA24B2X59C)).
+Just as we did on the previous lesson, we download the data using the `requests` package and the url to the data obtained from the Arctic Data Center website. 
 
 ```{python}
 import os              
@@ -84,7 +95,24 @@ open("dg_soil_moisture.csv", "wb").write(response.content)
 
 ```
 
-We can see the file is 115MB. Next we import the data as `dask.dataframe`.
+In the Arctic Data Center metadata we can see this file is 115MB. 
+To import this data as `dask.dataframe` with more than one partition we need to specify the size of each partition with the `blocksize` parameter. 
+In this example we will split the data frame into six partitions, which would mean a blocksize of approximately 20 MB.
+
+:::{.callout-note collapse=True}
+*About the encoding parameter:*  
+If we try to import the file directly we will obtain the error `UnicodeDecodeError: 'utf-8' codec can't decode byte 0xb3 in position 192:` `invalid start byte`. 
+This means XXXX.
+To find the encoding of the file and add the appropiate encodign to `dask.dataframe.read_csv` we can run the following code.
+```{python}
+# import chardet
+# fp = os.path.join(os.getcwd(),'dg_soil_moisture.csv')
+# with open(fp, 'rb') as rawdata:
+#     result = chardet.detect(rawdata.read(100000))
+# result
+
+```
+:::
 
 ```{python}
 import dask.dataframe as dd
@@ -94,28 +122,19 @@ df = dd.read_csv(fp, blocksize = '20MB' , encoding='ISO-8859-1')
 df
 ```
 
+Notice that we cannot see any values in the data frame. 
+This is because dask has not really loaded the data, it will wait until we explicitely ask it to print or compute something with the dataframe to start handling the data. 
+However, we can still do `df.head()`, it's fast and not costly for memory to just access a few rows of the data frame. 
+
 ```{python}
 df.head()
 ```
 
+### Lazy Computations & Task Graph
+The application programming interface (API) of a `dask.dataframe` is a subset of the `pd.DataFrame` API.
+So if you are familiar with pandas, many of the core `pd.DataFrame` methods directly translate to `dask.dataframes`. 
 
-:::{.callout-note collapse=True}
-UnicodeDecodeError: 'utf-8' codec can't decode byte 0xb3 in position 192: invalid start byte
-```{python}
-# import chardet
-# with open(fp, 'rb') as rawdata:
-#     result = chardet.detect(rawdata.read(100000))
-# result
-
-```
-:::
-
-The application programming interface (API) of a `dask.DataFrame` is a subset of the `pd.DataFrame` API.
-So if you are familiar with pandas, many of the core `pd.DataFrame` methods directly translate to `dask.DataFrames`. 
-
-
-
-A major difference between both objects is that `dask.DataFrames` are *lazy*, meaning that they do not evaluate until we explicitly ask for a result using the `compute` method.
+A major difference between both objects is that `dask.datagrames` are *lazy*, meaning that they do not evaluate until we explicitly ask for a result using the `compute` method.
 **This is the case with most Dask workloads.**
 
 ```{python}
