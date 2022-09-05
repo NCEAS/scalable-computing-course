@@ -25,7 +25,8 @@ Remote computing typically involves communication between two or more "host" com
  Hosts typically have one network address but can have many different ones (for example, adding multiple network cards to a single server increases bandwith).
 :::
 
-![](../images/remote-comp-configs.png)
+<center><img src="../images/remote-comp-configs.png" alt="Examples of ifferent remote computing configurations." width="700"/></center>
+
 
 <span style = 'font-size: 85%; color: #6e6d6d;'>**Fig 1.** Examples of different remote computing configurations. (a) A client uses secure shell protocol (SSH) to login/connect to a server over the internet. The client and the server exist in the physical world, but in different locations. (b) A client uses SSH to login/connect to a computing cluster (i.e. a set of computers (nodes) that work together so that they can be viewed as a single system) over the internet. The connection is first made through a gateway node (i.e. a computer that routes traffic from one network to another). The client and the cluster (server) exist in the physical world, but in different locations. (c) A client uses SSH to login/connect to a computing cluser where each node is a virtual machine (VM) hosted by a cloud computing service (e.g. Amazon Web Services, Google Cloud, Microsoft Azure, etc.). The connection is first made through a gateway node. The client and the gateway are located in the physical world, while the VM nodes are hosted in the cloud.</span>
 
@@ -45,6 +46,8 @@ Throughout this course, we'll be working on a server with the hostname, **includ
 
 > "a computer program which exposes an operating system's services to a human user or other programs. In general, operating system shells use either a command-line interface (CLI) or graphical user interface (GUI), depending on a computer's role and particular operation."
 
+<center><img src="../images/bash.png" alt="The Bash logo" width="400"/></center>
+
 *What is Bash?* Bash, or **B**ourne-**a**gain **Sh**ell, is a command line tool (language) commonly used to manipulate files and directories. Accessing and using bash is slightly different depending on what type of machine you work on:
 
 - **Mac:** bash via the [Terminal](https://support.apple.com/guide/terminal/welcome/mac), which comes ready-to-use with all Macs
@@ -57,7 +60,7 @@ Mac users may have to switch from [Z Shell](https://www.zsh.org/), or zsh, to ba
 
 ### Some commonly used (and very helpful) bash commands:
 
-Below are just a few bash commands that you're likely to use. Some may be extended with options (more on that in the next section) or even piped together (i.e. where the output of one command gets sent to the next command, using the `|` operator).
+Below are just a few bash commands that you're likely to use. Some may be extended with options (more on that in the next section) or even piped together (i.e. where the output of one command gets sent to the next command, using the `|` operator). You can also find some nice bash cheat sheets online, like [this one](https://github.com/RehanSaeed/Bash-Cheat-Sheet). Alternatively, the [Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html) has *all* the content you need, albeit a bit dense.
 
 | bash command     | what it does                                                                  |
 |------------------|-------------------------------------------------------------------------------|
@@ -96,38 +99,51 @@ ls -o all file/path/to/directory # long form
 In addition to navigating your computer/manipulating your files, you can also use a shell to gain accesss to and remotely control other computers. To do so, you'll need the following:
 
 - a remote computer (e.g. server) which is turned on
+- client and server ssh clients installed/enabled 
 - the IP address or name of the remote computer
 - the necessary permissions to access the remote computer
 
-Secure Shell, or SSH, is a network communication protocol that is often used for securely connecting to and running shell commands on a remote host. SSH temendously simplifies remote computing because ______, and it is supported out-of-the-box on Linux and Macs. If working on a Windows machine, you'll need ____.
+Secure Shell, or SSH, is a network communication protocol that is often used for securely connecting to and running shell commands on a remote host, tremendously simplifying remote computing. It is supported out-of-the-box on Linux and Macs via Teminal and on Windows machines via Windows PowerShell.
+
+## Git via a shell
+
+[Git](https://git-scm.com/), a popular version control systemm and command line tool can be accessed via a shell. While there are lots of graphical user interfaces (GUIs) that faciliatate version control with Git, they often only implement a small subset of Git's most-used functionality. By interacting with Git via the command line, you have access to *all* Git commands. While all-things Git is outside the scope of this workshop, we will use some basic Git commands in the shell to clone GitHub (remote) repositories to the server and save/store our changes to files. A few important Git commands:
+
+| Git command     | what it does                                                                  |
+|-----------------|-------------------------------------------------------------------------------|
+|    `git clone`  | create a copy (clone) of repository in a new direcotry ad a different location| 
+|    `git add`    | adds a change in the working directory to the staging area                    |
+|    `git commit` | record a snapshot of a repository; the `-m` option adds a commit message      |
+|    `git push`   | send commits from a local repository to a remote repository                   |
 
 ## Let's practice!
 
 We'll now use bash commands to do the following: 
 
-- connect to the server, **included-crab.nceas.ucsb.edu**, that we'll be working on for the remainder of this course
+- connect to the server (**included-crab**) that we'll be working on for the remainder of this course
 - navigate through directories on the server and add/change/manipulate files
+- clone a GitHub repository to the server
 - automate some of the above processes by writing a bash script
 
 ### **Exercise 1:** Connect to a server using the `ssh` command (or using VS Code's command palette)
 
 Let's connect to a remote computer (**included-crab**) and practice using some of above commands. 
 
-1. Launch your Terminal Program
+1. Launch a terminal in VS Code
 
-- **MacOS:** navigate to `Applications > Utilities` and open `Terminal` 
-
-- **Windows:** Navigate to `Windows Start > Git` and open `Git Bash`
-
-- **ALTERNATIVELY, from VS Code:** Two options to open a terminal program, if a terminal isn't already an open pane at the bottom of VS Code 
+- There are two options to open a terminal window, if a terminal isn't already an open pane at the bottom of VS Code 
 
     a) Click on `Terminal > New Terminal` in top menu bar
 
     b) Click on the `+ (dropdown menu) > bash` in the bottom right corner
 
+::: {.callout-note}
+You don't *need* to use the VS Code terminal to ssh into a remote computer, but it's conveniently located in the same window as your code when working in the VS Code IDE.
+:::
+
 2.  Connect to a remote server 
 
-- You can choose to SSH into the server (included-crab.nceas.ucsb.edu) through **(a)**  the command line by using the `ssh` command, or **(b)** through VS Code's command palette. If you prefer the latter, please refer back to the [**Log in to the server** section](https://learning.nceas.ucsb.edu/2022-09-arctic/#log-in-to-the-server). Doing so via the command line using the `ssh` command should look something like this:
+- You can choose to SSH into the server (included-crab.nceas.ucsb.edu) through **(a)**  the command line by using the `ssh` command, or **(b)** through VS Code's command palette. If you prefer the latter, please refer back to the [**Log in to the server** section](https://learning.nceas.ucsb.edu/2022-09-arctic/#log-in-to-the-server). To do so via the command line, use the `ssh` command followed by `yourusername@included-crab.nceas.ucsb.edu`. You'll be prompted to type/paste your password to complete the login. It should look something like this:
 
 ```{.bash}
 yourusername:~$ ssh yourusername@included-crab.nceas.ucsb.edu 
@@ -216,25 +232,94 @@ touch file{1..3}.txt
 touch file1.txt file2.txt file3.txt
 ```
 
-6. Add other file types (e.g. `.py`, `.csv`, etc.)
+6. You can also add other file types (e.g. `.py`, `.csv`, etc.)
 
 ```{.bash}
 touch mypython.py mycsv.csv
 ```
 
-7. Count the number of `.txt` files in `bash_practice` by combining the `ls` and `wc` (word count) funtions using the pipe, `|`, operator:
+7. Print out all the `.txt` files in `bash_practice` using a wildcard, `*`:
 
 ```{.bash}
-# `ls *.txt` lists all files with a .txt extension
-# `wc` returns a word count (lines, words, chrs) and the `-l` option only returns the number of lines
-# use a pipe, `|`, to execute both commands at once
+ls *.txt
+```
+
+8. Count the number of `.txt` files in `bash_practice` by combining the `ls` and `wc` (word count) funtions using the pipe, `|`, operator:
+
+```{.bash}
+# `wc` returns a word count (lines, words, chrs)
+# the `-l` option only returns the number of lines
+# use a pipe, `|`, to send the output from `ls *.txt` to `wc -l`
 ls *.txt | wc -l
 ```
 
-8. Delete `mypython.py` and `mycsv.csv` using the `rm` command:
+9. Delete `mypython.py` using the `rm` command:
 
 ```{.bash}
-rm mypython.py mycsv.csv
+rm mypython.py 
+```
+
+10. Create a new directory inside `bash_practice` called `data` and move `mycsv.csv` into it. 
+
+```{.bash}
+mkdir data
+mv mycsv.csv ~/bash_practice/data
+
+# add the --interactive option (-i for short) to prevent a file from being overwritten by accident (e.g. in case there's a file with the same name in the destination location)
+mv -i mycsv.csv ~/bash_practice/data
+```
+
+11. Use `mv` to rename `mycsv.csv` to `mydata.csv`
+
+```{.bash}
+mv mycsv.csv mydata.csv
+```
+
+12. Add column headers `col1`, `col2`, `col3` to `mydata.csv` using `echo` + the `>` operator
+
+```{.bash}
+echo "col1, col2, col3" > mydata.csv
+```
+
+:::{.callout-tip}
+You can check to see that `mydata.csv` was updated using [GNU nano](https://www.nano-editor.org/), a text editor for the command line that comes preinstalled on Linux machines (you can edit your file in nano as well). To do so, use the `nano` command followed by the file you want to open/edit:
+
+```{.bash}
+nano mydata.csv
+```
+
+To save and quit out of nano, use the `control` + `X` keyboard shortcut. 
+
+You can also create and open a file in nano in just one line of code. For example, running `nano hello_world.sh` is the same as creating the file first using `touch hello_world.sh`, then opening it with nano using `nano hello_world.sh`.
+:::
+
+13. Append a row of data to `mydata.csv` using `echo` + the `>>` operator
+
+```{.bash}
+# using `>` will overwrite the contents of an existing file; `>>` appends new information to an existing file
+echo "1, 2, 3" >> mydata.csv
+```
+
+### **Exercise 3:** Clone a GitHub repository to the server
+
+IDEs commonly have helper buttons for cloning (i.e. creating a copy of) remote repositories to your local computer (or in this case, a server), but using git commands in a terminal can be just as easy. We can practice that now, following the steps below: 
+
+1. Go to the **bash-babynames** repository on GitHub at [https://github.com/samanthacsik/bash-babynames](https://github.com/samanthacsik/bash-babynames) and Fork (make your own copy of the repository) it by clicking on the **Fork** button (top right corner of the repository's page).
+
+<center><img src="../images/fork.png" alt="The top menu bar of a GitHub repo showing the 'Fork' button." width="700" height="40"/></center>
+
+<br>
+
+2. Once forked, click on the green **Code** button and copy the URL to your clipboard.
+
+<center><img src="../images/clone.png" alt="A green button with the text, 'Code' is clicked and a popup box containing the URL of the GitHub repository is open below it" width="475" height="230"/></center>
+
+<br>
+
+3. In the VS Code terminal, use the `git clone` command to create a copy of the bash-babynames repository on the server. 
+
+```{.bash}
+git clone <url>
 ```
 
 ### **Bonus Exercise:** Automate processes with a Bash script
