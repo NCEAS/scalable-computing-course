@@ -67,11 +67,48 @@ We call each of these pandas pieces a *partition* of the `dask.DataFrame`.
 
 ![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/dataframe.html))](../images/dask_dataframe.png)
 
+For this example we will use a dataset including weather and soil condition measurements at six forest stands in northeastern Siberia. 
+The data has been collected since 2014 and is archived at the Arctic Data Center [Loranty & Alexander, doi:10.18739/A24B2X59C.](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA24B2X59C)
+Today we will use the soil mositure measurements from this dataset. Just as we did on the previous lesson, we download the data using the `requests` package and the link to the data obtained from the Arctic Data Center website. 
+
 ```{python}
-## THIS IS AN EXAMPLE OF LOADING A MASSIVE FILE OR CREATING A REALLY BIG DATAFRAME
+import os              
+import requests 
+```
+
+```{python}
+url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A27e4043d-75eb-4c4f-9427-0d442526c154'
+
+response = requests.get(url)
+open("dg_soil_moisture.csv", "wb").write(response.content)
 
 ```
 
+We can see the file is 115MB. Next we import the data as `dask.dataframe`.
+
+```{python}
+import dask.dataframe as dd
+
+fp = os.path.join(os.getcwd(),'dg_soil_moisture.csv')
+df = dd.read_csv(fp, blocksize = '20MB' , encoding='ISO-8859-1')
+df
+```
+
+```{python}
+df.head()
+```
+
+
+:::{.callout-note collapse=True}
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xb3 in position 192: invalid start byte
+```{python}
+# import chardet
+# with open(fp, 'rb') as rawdata:
+#     result = chardet.detect(rawdata.read(100000))
+# result
+
+```
+:::
 
 The application programming interface (API) of a `dask.DataFrame` is a subset of the `pd.DataFrame` API.
 So if you are familiar with pandas, many of the core `pd.DataFrame` methods directly translate to `dask.DataFrames`. 

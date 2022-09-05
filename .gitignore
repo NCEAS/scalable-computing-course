@@ -150,3 +150,6 @@ sections/data
 
 # netcdf files in sections
 sections/*nc
+
+# csv in sections
+sections/*.csv
