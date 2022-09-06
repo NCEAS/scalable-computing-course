@@ -322,32 +322,29 @@ IDEs commonly have helper buttons for cloning (i.e. creating a copy of) remote r
 git clone <url>
 ```
 
-### **Bonus Exercise:** Automate processes with a Bash script
+4. You should now have a copy of the **bash-babynames** repository to work on on the server. Use the `tree` command to see the structure of the repo (you need to be in the `bash-babynames` directory for this to work) -- there should be a respository `README.MD` file, a `KEY.sh` file (this is a functioning bash script available for reference; we'll be recreating it together in the next exercise) and a `namesbystate` folder containing 51 `.TXT` files and a `StateReadMe.pdf` file with some metadata. 
+
+### **Bonus Exercise:** Automate data processing with a Bash script
 
 As we just demonstrated, we can use bash commands in the terminal to accomplish a variety of tasks like navigating our computer's directories, manipulating/creating/adding files, and much more. However, writing a bash *script* allows us to gather and save our code for automated execusion. 
 
-Earlier, we created a collection of `.txt` files and saved them to a new directory called `bash_practice`. Here, we'll write a bash script to iterate over all those files and update ___.
+We just cloned the `bash-babynames` GitHub repository to the server in **Exercise 3** above. This contains 51 `.TXT` files (one for each of the 50 US states + The District of Columbia), each with the top 1000 most popular baby names in that state. We're going to use some of the bash commands we learned in **Exercise 2** to concatenate all rows of data from these 51 files into a single `babynames_allstates.csv` file.
 
 Let's begin by creating a simple bash script that when executed, will print out the message, "Hello, World!" This simple script will help us determine whether or not things are working as expected before writing some more complex (and interesting) code. 
 
-1. Open a terminal window and determine where you are by using the `pwd` command. Navigate to where you'd like to save your bash script (your home directory on the server is fine) by using the `cd` command. 
+1. Open a terminal window and determine where you are by using the `pwd` command -- we want to be in our `bash-babynames` repository. If necessary, navigate here using the `cd` command. 
 
-2. Next, we'll create a shell script called `hello_world.sh` using the `touch` command:
+2. Next, we'll create a shell script called `mybash.sh` using the `touch` command:
 
 ```{.bash}
 $ touch hello_world.sh
 ```
 
-3. There are a number of ways to edit a file or script -- here, we'll use [Nano](https://www.nano-editor.org/), a terminal-based text editor. Open your `hello_world.sh` with nano by running the following in your terminal:
+3. There are a number of ways to edit a file or script -- we'll use [Nano](https://www.nano-editor.org/), a terminal-based text editor, as we did earlier. Open your `mybash.sh` with nano by running the following in your terminal:
 
 ```{.bash}
-$ nano hello_world.sh
+$ nano mybash.sh
 ```
-
-::: {.callout-tip}
-You can create and open a file in nano in just one line of code. For example, running `nano hello_world.sh` is the same as creating the file first using `touch hello_world.sh`, then opening it with nano using `nano hello_world.sh`
-:::
-
 4. We can now start to write our script. Some important considerations:
 
 - Anything following a `#` will not be executed as code -- these are useful for adding comments to your scripts
@@ -368,20 +365,75 @@ You can create and open a file in nano in just one line of code. For example, ru
 #!/bin/bash
 
 # print "Hello, World!"
-$ echo "Hello, World!"
+echo "Hello, World!"
 ```
 
-6. To execute your script, run the following in your terminal (be sure that you're in the same working directory as your `hello_world.sh` file or specify the file path to it):
+6. To execute your script, use the `bash` command followed by the name of your bash script (be sure that you're in the same working directory as your `mybash.sh` file or specify the file path to it). If successful, "Hello, World!" should be printed in your terminal window.
 
 ```{.bash}
-bash hello_world.sh
+bash mybash.sh
 ```
 
-If successful, "Hello, World!" should be printed in your terminal window.
+7. Now let's write our script. Re-open your script in nano by running `nano mybash.sh`. Using what we practiced above and the hints below, write a bash script that does the following:
 
-7. 
+- prints the number of `.TXT` files in the `namesbystate` subdirectory
+- prints the first 10 rows of data from the `CA.TXT` file (HINT: use the `head` command)
+- prints the last 10 rows of data from the `CA.TXT` file (HINT: use the `tail` command)
+- creates an empty `babynames_allstates.csv` file in the `namesbystate` subdirectory (this is where the concatenated data will be saved to)
+- adds the column names, `state`, `gender`, `year`, `firstname`, `count`, in that order, to the `babynames_allstates.csv` file
+- concatenates data from all `.TXT` files in the `namesbystate` subdirectory and appends those data to the `babynames_allstates.csv` file (HINT: use the `cat` function to concatenate files)
 
+Here's a script outline to fill in (**Note:** The `echo` statements below are not necessary but can be included as progress indicators for when the bash script is executed -- these also make it easier to diagnose where any errors occur during execution.):
 
-UPDATE: write a simple shell script that does something -- e.g. renaming files with bash loop (e.g. change extension, add date, move them around)
+```{.bash}
+#!bin/bash
+echo "THIS IS THE START OF MY SCRIPT!"
 
-UPDATE: `nohup`, `screen`, `tmux` for starting remote job that you can come back to later; look for tmux lesson in oss training
+echo "-----Verify that we have .TXT files for all 50 states + DC-----"
+<add your code here>
+
+echo "-----Printing head of CA.TXT-----"
+<add your code here>
+
+echo "-----Printing tail of CA.TXT-----"
+<add your code here>
+
+echo "-----Creating empty .csv file to concatenate all data-----"
+<add your code here>
+
+echo "-----Adding column headers to csv file-----"
+<add your code here>
+
+echo "-----Concatenating files-----"
+<add your code here>
+
+echo "DONE!"
+```
+
+:::{.callout-tip collapse="true"}
+### Answer
+```{.bash}
+#!bin/bash
+echo "THIS IS THE START OF MY SCRIPT!"
+
+echo "-----Verify that we have .TXT files for all 50 states + DC-----"
+ls namesbystate/*.TXT | wc -l
+
+echo "-----Printing head of CA.TXT-----"
+head namesbystate/CA.TXT
+
+echo "-----Printing tail of CA.TXT-----"
+tail namesbystate/CA.TXT
+
+echo "-----Creating empty .csv file to concatenate all data-----"
+touch namesbystate/babynames_allstates.csv
+
+echo "-----Adding column headers to csv file-----"
+echo "state, gender, year, firstname, count" > namesbystate/babynames_allstates.csv
+
+echo "-----Concatenating files-----"
+cat namesbystate/*.TXT >> namesbystate/babynames_allstates.csv
+
+echo "DONE!"
+```
+:::
