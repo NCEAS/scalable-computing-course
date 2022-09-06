@@ -13,7 +13,6 @@ In this lesson, we will get acquainted with some of Dask's most commonly used ob
 
 - Become familiar with Dask processing workflow:
     - What are the client, scheduler, workers, and cluster
-    - https://www.datarevenue.com/en-blog/understanding-dask-architecture-client-scheduler-workers
     - Understand delayed computations and "lazy" evaluation
     - Obtain information about computations via the Dask dashboard
     - https://www.youtube.com/watch?v=N_GqzcuGLCY
@@ -37,6 +36,9 @@ https://tutorial.dask.org/00_overview.html
 
 
 ## Dask Cluster
+We can deploy a Dask cluster on a single machine or an actual cluster with multiple machines. 
+Here we have chosen to use the Dask cluster instead of the default Dask scheduler to take advantage of the *cluster dashboard*, which keeps track of the performance and progress of our computations. 
+
 Dask clusters have three main components for processing computations in parallel. These are the *client*, the *scheduler* and the *workers*.
 
 - When we code, we communicate directly with the **client**, which is responsible for submitting tasks to be executed to the scheduler.
@@ -49,21 +51,30 @@ In order to interact with the client and generate tasks that can be processed in
 
 ![From: https://www.datarevenue.com/en-blog/understanding-dask-architecture-client-scheduler-workers Make this into a collored graph, add cluster envelope ](../images/dask_cluster.png)
 
-:::{.callout-note collapse=True}
-We can deploy a Dask cluster on a single machine or an actual cluster with multiple machines. Here we will use the Dask cluster instead of the default Dask scheduler to take advantage of the *cluster Dashboard*, which keeps track of the performance and progress of our computations. [Read more about Dask Clusters](https://docs.dask.org/en/latest/deploying.html)
-:::
+
+### Setting up a Local Cluster
+We can create a local cluster as follows:
 
 ```{python}
 from dask.distributed import LocalCluster, Client
+# https://distributed.dask.org/en/stable/install.html
 ```
 
 ```{python}
-cluster = LocalCluster()
-cluster
+# cluster = LocalCluster()
+# cluster
 ```
+
+And then we create a client to connect to our cluster:
+
+```{python}
+# client = Client(cluster)
+# client
+```
+
+[Read more about Dask clusters](https://docs.dask.org/en/latest/deploying.html)
+
 ## Dask Data Frames
-
-
 When we analyze tabular data, we usually start our analysis by loading it into memory as a Pandas DataFrame. 
 But, what if this data does not fit in memory? 
 Or maybe our analyzes crash because we run out of memory. 
@@ -123,8 +134,8 @@ df
 ```
 
 Notice that we cannot see any values in the data frame. 
-This is because dask has not really loaded the data, it will wait until we explicitely ask it to print or compute something with the dataframe to start handling the data. 
-However, we can still do `df.head()`, it's fast and not costly for memory to just access a few rows of the data frame. 
+This is because Dask has not really loaded the data, it will wait until we explicitely ask it to print or compute something to do so. 
+However, we can still do `df.head()`, it's not costly for memory to just access a few rows of the data frame. 
 
 ```{python}
 df.head()
@@ -134,21 +145,31 @@ df.head()
 The application programming interface (API) of a `dask.dataframe` is a subset of the `pd.DataFrame` API.
 So if you are familiar with pandas, many of the core `pd.DataFrame` methods directly translate to `dask.dataframes`. 
 
-A major difference between both objects is that `dask.datagrames` are *lazy*, meaning that they do not evaluate until we explicitly ask for a result using the `compute` method.
-**This is the case with most Dask workloads.**
+A major difference between both objects is that `dask.dataframes` are *lazy*, meaning that they do not evaluate until we explicitly ask for a result using the `compute` method.
+This is the case with most Dask workloads, they do **lazy computations**.
 
 ```{python}
-## THIS IS AN EXAMPLE OF LAZY COMPUTATION
 
 ```
 
 
-*This means that your framework will queue up sets of transformations or calculations so that they are ready to run later, in parallel. This is a concept you’ll find in lots of frameworks for parallel computing, including Dask. Your framework won’t evaluate the requested computations until explicitly told to. This differs from “eager” evaluation functions, which compute instantly upon being called.*
+*This means that your framework will queue up sets of transformations or calculations so that they are ready to run later, in parallel. 
 
-https://saturncloud.io/blog/a-data-scientist-s-guide-to-lazy-evaluation-with-dask/ 
+This differs from “eager” evaluation functions, which compute instantly upon being called.*
+https://saturncloud.io/blog/a-data-scientist-s-guide-to-lazy-evaluation-with-dask/
+
 Lead into task graphs. 
 ```{python}
 ### THIS IS AN EXAMPLE OF TASK GRAPH
+
+##!! cannot run graph after installing graphviz with
+#pip install graphviz
+
+# Error:
+# ExecutableNotFound: failed to execute PosixPath('dot'), make sure the Graphviz executables are on your systems' PATH
+
+# See:
+#https://stackoverflow.com/questions/42014458/dask-not-installing-graphviz-dependency
 ```
 
 
@@ -172,35 +193,13 @@ https://docs.dask.org/en/stable/dataframe-best-practices.html
 :::
 
 
-## TODO
-
-- Find dataset(s) to use:
-    - https://arcticdata.io/catalog/view/doi%3A10.18739%2FA24B2X59C
-        "Understory micrometorology across a larch forest density gradient in northeastern Siberia 2014-2020"
-        ~50MB, has a few different axes to filter on
-    - https://arcticdata.io/catalog/view/doi%3A10.18739%2FA28W38388
-        "River and lake ice phenology data for Alaska and Northwest Canada from 1882 to 2021"
-
 ### Bryce's Notes
-
-- https://www.dask.org/
-- https://docs.xarray.dev/en/stable/user-guide/dask.html#dask
 - https://stephanhoyer.com/2015/06/11/xray-dask-out-of-core-labeled-arrays/
 - https://examples.dask.org/xarray.html
 - Good example to base exercise on: https://examples.dask.org/applications/image-processing.html
 
-- Split-apply-combine
 - Dask stuff
-    - Lazy eval (compute())
         - Grouping compute() calls versus calling compute() multiple times
-    - Dask Array
-    - Dask DataFrame
-    - Skip or just mention Bag, Delayed, Futures? Not sure yet.
     - visualize()
     - Choosing how many chunks to divide work into
     - Task overhead
-    - Distributed dask?
-        - Persist
-> Dask is convenient on a laptop. It installs trivially with conda or pip and extends the size of convenient datasets from “fits in memory” to “fits on disk”.
-
--- From https://docs.dask.org/en/stable/
