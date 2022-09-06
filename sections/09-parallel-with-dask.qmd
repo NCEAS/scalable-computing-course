@@ -186,7 +186,11 @@ Here you can find more information about [chunks](https://docs.dask.org/en/lates
 ![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/array.html))](../images/dask_array.png)
 
 
-### Reading a tif as `dask.array`
+```{python}
+import dask.array as da
+```
+
+## Dask and xarray
 
 To get started with `dask.arrays` we will do an NDVI calculation using remote sensing imagery collected by aerial vehicles at a series of fire perimeters in larch forests in northeastern Siberia (Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. Uncrewed aerial vehicle remote sensing imagery of postfire vegetation in Siberian larch forests 2018-2019. [Arctic Data Center. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
 Let's first download the data for the near-infrared (NIR) and red bands to do this.
@@ -205,35 +209,75 @@ open("RU_ANS_TR2_FL005M_nir.tif", "wb").write(response.content)
 
 
 Dask automatically chunks up the data to create the `dask.array`, but we can manually specify either a shape or the size in bytes for each chunk. 
-Both tif files are 76 MB, so let us have chunks of 12 MB to have roughly 6 chunks.
+Both tif files are 76 MB, so let us have chunks of 15 MB to have roughly 6 chunks.
+
 
 ```{python}
-import dask.array as da
+import xarray as xr
 ```
+
 ```{python}
 fp_red = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_red.tif")
-red = da.from_array(fp_red, chunks = 1000)
+red = xr.open_rasterio(fp_red, chunks = '15MB')
 red
 ```
 
-In the information above we can see how many chunks were created and some basic information about the array’s dimensions. 
+```{python}
+red = red.squeeze()
+red
+```
 
 ```{python}
 fp_nir = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_nir.tif")
-nir = da.from_array(fp_nir)
+nir = xr.open_rasterio(fp_nir, chunks = '15MB')
+print(nir.shape)
+nir = nir.squeeze()
+print(nir.shape)
+nir
 ```
 
-
 ```{python}
-x = nir.astype('int16') 
-y = red.astype('int16') 
-ndvi = (x-y) / (x+y)
+ndvi = (nir - red) / (nir + red)
 ndvi
 ```
 
 ```{python}
-ndvi.compute()
-ndvi
+ndvi_x = ndvi.compute()
+```
+
+```{python}
+ndvi_x.plot(robust=True)
+```
+```{python}
+ndvi_x.plot()
+```
+
+
+```{python}
+url = "https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A9a078f8d-32a7-4335-98c1-a31d684c4d7a"
+response = requests.get(url)
+open("RU_ANS_TR2_FL005M_ndvi.tif", "wb").write(response.content)
+```
+
+```{python}
+ndvi_x =  xr.open_rasterio('RU_ANS_TR2_FL005M_ndvi.tif')
+ndvi_x = ndvi.squeeze()
+ndvi_x.plot(robust=True)
+```
+
+```{python}
+# red_x =  xr.open_rasterio(fp_red)
+# nir_x = xr.open_rasterio(fp_nir)
+# red_x
+ndvi_x.plot()
+```
+
+```{python}
+red_x.plot(robust=True)
+```
+
+```{python}
+nir_x.plot(robust=True)
 ```
 
 ## Best Practices
@@ -247,14 +291,6 @@ While “Big Data” tools can be exciting, they are almost always worse than no
 https://docs.dask.org/en/stable/dataframe-best-practices.html
 :::
 
+Overhead
 
-### Bryce's Notes
-- https://stephanhoyer.com/2015/06/11/xray-dask-out-of-core-labeled-arrays/
-- https://examples.dask.org/xarray.html
-- Good example to base exercise on: https://examples.dask.org/applications/image-processing.html
-
-- Dask stuff
-        - Grouping compute() calls versus calling compute() multiple times
-    - visualize()
-    - Choosing how many chunks to divide work into
-    - Task overhead
+Choosing chunking
