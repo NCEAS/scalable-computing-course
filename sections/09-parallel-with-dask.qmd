@@ -176,10 +176,65 @@ Lead into task graphs.
 
 
 ## Dask Arrays
-If you want scalable NumPy arrays, then start with Dask array
+Another common object we might want to parallelize is a NumPy array. 
+The equivalent Dask object is the `dask.array`, which coordinates many NumPy arrays that may live on disk or other machines. 
+Each of these NumPy arrays within the `dask.array` is called a **chunk**. 
+Choosing how these chunks are arranged within the `dask.array` and their size can significantly affect the performance of our code. 
+Here you can find more information about [chunks](https://docs.dask.org/en/latest/array-chunks.html) and [best practices](https://docs.dask.org/en/latest/array-best-practices.html).
 
 
 ![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/array.html))](../images/dask_array.png)
+
+
+### Reading a tif as `dask.array`
+
+To get started with `dask.arrays` we will do an NDVI calculation using remote sensing imagery collected by aerial vehicles at a series of fire perimeters in larch forests in northeastern Siberia (Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. Uncrewed aerial vehicle remote sensing imagery of postfire vegetation in Siberian larch forests 2018-2019. [Arctic Data Center. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
+Let's first download the data for the near-infrared (NIR) and red bands to do this.
+
+```{python}
+# download red band
+url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Aac25a399-b174-41c1-b6d3-09974b161e5a'
+response = requests.get(url)
+open("RU_ANS_TR2_FL005M_red.tif", "wb").write(response.content)
+
+# download nir band
+url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A1762205e-c505-450d-90ed-d4f3e4c302a7'
+response = requests.get(url)
+open("RU_ANS_TR2_FL005M_nir.tif", "wb").write(response.content)
+```
+
+
+Dask automatically chunks up the data to create the `dask.array`, but we can manually specify either a shape or the size in bytes for each chunk. 
+Both tif files are 76 MB, so let us have chunks of 12 MB to have roughly 6 chunks.
+
+```{python}
+import dask.array as da
+```
+```{python}
+fp_red = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_red.tif")
+red = da.from_array(fp_red, chunks = 1000)
+red
+```
+
+In the information above we can see how many chunks were created and some basic information about the array’s dimensions. 
+
+```{python}
+fp_nir = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_nir.tif")
+nir = da.from_array(fp_nir)
+```
+
+
+```{python}
+x = nir.astype('int16') 
+y = red.astype('int16') 
+ndvi = (x-y) / (x+y)
+ndvi
+```
+
+```{python}
+ndvi.compute()
+ndvi
+```
 
 ## Best Practices
 
