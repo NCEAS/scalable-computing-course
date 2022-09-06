@@ -23,16 +23,10 @@ In this lesson, we will get acquainted with some of Dask's most commonly used ob
     - Interpret a task graph
 
 - Integrate `xarray` with Dask:
-    - https://docs.xarray.dev/en/stable/user-guide/dask.html
     
 - Share best practices and resources for a deeper dive
     - https://docs.dask.org/en/stable/best-practices.html#load-data-with-dask
     - https://coiled.io/blog/common-dask-mistakes/
-
-## Possible computing examples:
-https://docs.dask.org/en/latest/10-minutes-to-dask.html 
-
-https://tutorial.dask.org/00_overview.html
 
 
 ## Dask Cluster
@@ -190,6 +184,8 @@ Here you can find more information about [chunks](https://docs.dask.org/en/lates
 import dask.array as da
 ```
 
+TO DO: add compute example and simple dask graph
+
 ## Dask and xarray
 
 To get started with `dask.arrays` we will do an NDVI calculation using remote sensing imagery collected by aerial vehicles at a series of fire perimeters in larch forests in northeastern Siberia (Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. Uncrewed aerial vehicle remote sensing imagery of postfire vegetation in Siberian larch forests 2018-2019. [Arctic Data Center. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
@@ -233,7 +229,7 @@ nir = xr.open_rasterio(fp_nir, chunks = '15MB')
 print(nir.shape)
 nir = nir.squeeze()
 print(nir.shape)
-nir
+print(nir.chunks == red.chunks)
 ```
 
 ```{python}
@@ -242,43 +238,15 @@ ndvi
 ```
 
 ```{python}
-ndvi_x = ndvi.compute()
+ndvi_values = ndvi.compute()
+ndvi_values
 ```
 
 ```{python}
-ndvi_x.plot(robust=True)
-```
-```{python}
-ndvi_x.plot()
+ndvi_values.plot(robust=True)
 ```
 
-
-```{python}
-url = "https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A9a078f8d-32a7-4335-98c1-a31d684c4d7a"
-response = requests.get(url)
-open("RU_ANS_TR2_FL005M_ndvi.tif", "wb").write(response.content)
-```
-
-```{python}
-ndvi_x =  xr.open_rasterio('RU_ANS_TR2_FL005M_ndvi.tif')
-ndvi_x = ndvi.squeeze()
-ndvi_x.plot(robust=True)
-```
-
-```{python}
-# red_x =  xr.open_rasterio(fp_red)
-# nir_x = xr.open_rasterio(fp_nir)
-# red_x
-ndvi_x.plot()
-```
-
-```{python}
-red_x.plot(robust=True)
-```
-
-```{python}
-nir_x.plot(robust=True)
-```
+- https://docs.xarray.dev/en/stable/user-guide/dask.html
 
 ## Best Practices
 
