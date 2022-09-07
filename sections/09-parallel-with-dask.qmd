@@ -123,7 +123,6 @@ import dask.dataframe as dd
 
 fp = os.path.join(os.getcwd(),'dg_soil_moisture.csv')
 df = dd.read_csv(fp, blocksize = '20MB' , encoding='ISO-8859-1')
-df
 ```
 
 Notice that we cannot see any values in the data frame. 
@@ -141,9 +140,6 @@ So if you are familiar with pandas, many of the core `pd.DataFrame` methods dire
 A major difference between both objects is that `dask.dataframes` are *lazy*, meaning that they do not evaluate until we explicitly ask for a result using the `compute` method.
 This is the case with most Dask workloads, they do **lazy computations**.
 
-```{python}
-
-```
 
 
 *This means that your framework will queue up sets of transformations or calculations so that they are ready to run later, in parallel. 
@@ -176,7 +172,7 @@ Choosing how these chunks are arranged within the `dask.array` and their size ca
 Here you can find more information about [chunks](https://docs.dask.org/en/latest/array-chunks.html) and [best practices](https://docs.dask.org/en/latest/array-best-practices.html).
 
 
-![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/array.html))](../images/dask_array.png)
+![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/array.html)](../images/dask_array.png)
 
 
 ```{python}
@@ -188,22 +184,24 @@ import numpy as np
 ```{python}
 data = np.arange(100_000).reshape(200, 500)
 a = da.from_array(data, chunks=(100, 100))
-a
 ```
 
 Indexing Dask collections feels just like slicing NumPy arrays:
 
 ```{python}
-a[:50, 200]
+#| eval: false
+a[:2, 2]
 ```
 
 And computations also work lazily:
 
 ```{python}
+#| eval: false
 a.mean()
 ```
 
 ```{python}
+#| eval: false
 a.mean().compute()
 ```
 
@@ -243,7 +241,6 @@ import xarray as xr
 # read in the file
 fp_red = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_red.tif")
 red = xr.open_rasterio(fp_red, chunks = '15MB')
-red
 ```
 
 We can see a lot of useful information here:
@@ -255,7 +252,6 @@ We can see a lot of useful information here:
 ```{python}
 # getting rid of unnecessary dimension
 red = red.squeeze()
-red
 ```
 
 Next we read in the NIR band and do the same pre-processing:
@@ -274,7 +270,6 @@ Also, both bandas have values of type float32, so we won't have trouble with the
 
 ```{python}
 ndvi = (nir - red) / (nir + red)
-ndvi
 ```
 
 When we look at the ndvi we can see the result is another `dask.array`, nothing has been computed yet. 
@@ -282,7 +277,6 @@ We need to call `compute()` to actually bring the results to memory.
 
 ```{python}
 ndvi_values = ndvi.compute()
-ndvi_values
 ```
 
 And finally we can see how these look like. 
