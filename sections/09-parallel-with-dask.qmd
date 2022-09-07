@@ -19,7 +19,6 @@ In this lesson, we will get acquainted with some of Dask's most commonly used ob
     
 - Learn basics of `dask.arrays` and `dask.dataframes`:
     - Load data and specifying chunk sizes
-    - https://saturncloud.io/blog/a-data-scientist-s-guide-to-lazy-evaluation-with-dask/
     - Interpret a task graph
 
 - Integrate `xarray` with Dask:
@@ -68,7 +67,7 @@ And then we create a client to connect to our cluster:
 
 [Read more about Dask clusters](https://docs.dask.org/en/latest/deploying.html)
 
-## Dask Data Frames
+## `dask.dataframes`
 When we analyze tabular data, we usually start our analysis by loading it into memory as a Pandas DataFrame. 
 But, what if this data does not fit in memory? 
 Or maybe our analyzes crash because we run out of memory. 
@@ -82,7 +81,7 @@ We call each of these pandas pieces a *partition* of the `dask.dataframe`.
 ![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/dataframe.html))](../images/dask_dataframe.png)
 
 
-### Reading csv as `dask.dataframe`
+### Reading a csv
 To get familiar with `dask.dataframes` we will use tabular data of soil mositure measurements at six forest stands in northeastern Siberia. 
 The data has been collected since 2014 and is archived at the Arctic Data Center ([Loranty & Alexander, doi:10.18739/A24B2X59C](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA24B2X59C)).
 Just as we did on the previous lesson, we download the data using the `requests` package and the url to the data obtained from the Arctic Data Center website. 
@@ -169,7 +168,7 @@ Lead into task graphs.
 
 
 
-## Dask Arrays
+## `dask.arrays`
 Another common object we might want to parallelize is a NumPy array. 
 The equivalent Dask object is the `dask.array`, which coordinates many NumPy arrays that may live on disk or other machines. 
 Each of these NumPy arrays within the `dask.array` is called a **chunk**. 
@@ -182,14 +181,41 @@ Here you can find more information about [chunks](https://docs.dask.org/en/lates
 
 ```{python}
 import dask.array as da
+import numpy as np
 ```
 
-TO DO: add compute example and simple dask graph
+
+```{python}
+data = np.arange(100_000).reshape(200, 500)
+a = da.from_array(data, chunks=(100, 100))
+a
+```
+
+Indexing Dask collections feels just like slicing NumPy arrays:
+
+```{python}
+a[:50, 200]
+```
+
+And computations also work lazily:
+
+```{python}
+a.mean()
+```
+
+```{python}
+a.mean().compute()
+```
 
 ## Dask and xarray
+Going forward, it might be more common having to read some big array-like dataset (like a high-resolution multiband raster) than creating one from scratch from a NumPy array. 
+In this case it can be useful to use the `xarray` module together with Dask. 
+It is simple to wrap Dask around `xarray` objetcs, we only need to specify the number of chunks argument as an argument when we are reading in a dataset (see also [[1]](https://docs.xarray.dev/en/stable/user-guide/dask.html)).
 
-To get started with `dask.arrays` we will do an NDVI calculation using remote sensing imagery collected by aerial vehicles at a series of fire perimeters in larch forests in northeastern Siberia (Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. Uncrewed aerial vehicle remote sensing imagery of postfire vegetation in Siberian larch forests 2018-2019. [Arctic Data Center. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
-Let's first download the data for the near-infrared (NIR) and red bands to do this.
+### Open .tif file
+As an example, let's do an NDVI calculation using remote sensing imagery collected by aerial vehicles at a series of fire perimeters in larch forests in northeastern Siberia (Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. Uncrewed aerial vehicle remote sensing imagery of postfire vegetation in Siberian larch forests 2018-2019. [Arctic Data Center. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
+
+First we download the data for the near-infrared (NIR) and red bands:
 
 ```{python}
 # download red band
@@ -204,8 +230,9 @@ open("RU_ANS_TR2_FL005M_nir.tif", "wb").write(response.content)
 ```
 
 
-Dask automatically chunks up the data to create the `dask.array`, but we can manually specify either a shape or the size in bytes for each chunk. 
-Both tif files are 76 MB, so let us have chunks of 15 MB to have roughly 6 chunks.
+Because these are .tif files, we will use `xarray.open_rasterio` to read them.
+To indicate we will open these files with `dask.arrays` as the underlying object to the `xarray.DataArray` (instead of a `numpy.array`) we need to specify either a shape or the size in bytes for each chunk. 
+Both files are 76 MB, so let us have chunks of 15 MB to have roughly 6 chunks.
 
 
 ```{python}
@@ -213,40 +240,57 @@ import xarray as xr
 ```
 
 ```{python}
+# read in the file
 fp_red = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_red.tif")
 red = xr.open_rasterio(fp_red, chunks = '15MB')
 red
 ```
 
+We can see a lot of useful information here:
+
+- There are 8 chunks in the array. We were aiming for six, but this often happens with the way Dask distributes the memory (76MB is not exactly divisible by 6).
+- Geospatial information (transformation, CRS, resolution) and no-data values.
+- There is an unnecessary dimension because as a constant value for the band. So our next step is to squeeze the array to flatten it.
+
 ```{python}
+# getting rid of unnecessary dimension
 red = red.squeeze()
 red
 ```
 
+Next we read in the NIR band and do the same pre-processing:
 ```{python}
 fp_nir = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_nir.tif")
 nir = xr.open_rasterio(fp_nir, chunks = '15MB')
-print(nir.shape)
+print('shape before squeeze:', nir.shape)
 nir = nir.squeeze()
-print(nir.shape)
-print(nir.chunks == red.chunks)
+print('shape after squeeze:', nir.shape)
+print('chunks:', nir.chunks )
 ```
+
+### Calculating NDVI
+Next we set up the NDVI calculation, this step is ease because we can handle xarrays and dask arrays as numpy arrays for arithmetic operations. 
+Also, both bandas have values of type float32, so we won't have trouble with the division. 
 
 ```{python}
 ndvi = (nir - red) / (nir + red)
 ndvi
 ```
 
+When we look at the ndvi we can see the result is another `dask.array`, nothing has been computed yet. 
+We need to call `compute()` to actually bring the results to memory. 
+
 ```{python}
 ndvi_values = ndvi.compute()
 ndvi_values
 ```
 
+And finally we can see how these look like. 
+Notice that `xarray` uses the value of the dimensions as labels along the x and y axes. 
+We use `robust=True` to ignore the nodatavalues when plotting.
 ```{python}
 ndvi_values.plot(robust=True)
 ```
-
-- https://docs.xarray.dev/en/stable/user-guide/dask.html
 
 ## Best Practices
 
