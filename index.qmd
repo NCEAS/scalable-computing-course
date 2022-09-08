@@ -60,13 +60,12 @@ After connecting to the server, in the extensions pane (View > Extensions) searc
     - Python
     - Jupyter
     - Jupyter Keymap
-    - Pylance
 
 Note that these extensions will be installed on the server, and not locally. 
 
 ### Test your local setup (Optional)
 
-We are going to be working on the server exclusively, but if you are interested in setting up VS Code to work for you locally with Python, you can follow these instructions. This local setup section summarizes the official VS Code tutorial. For more detailed instructions and screenshots, see the [source material.](https://code.visualstudio.com/docs/python/python-tutorial) If you already use VS Code for Python you can skip this.
+We are going to be working on the server exclusively, but if you are interested in setting up VS Code to work for you locally with Python, you can follow these instructions. This local setup section summarizes the official VS Code tutorial. For more detailed instructions and screenshots, see the [source material.](https://code.visualstudio.com/docs/python/python-tutorial) This step is 100% optional, if you already have an IDE set up to work locally that you like, or already have VS code set up to work locally, you are welcome to skip this.
 
 Locally (not connected to the server), check to make sure you have Python installed if you aren't sure you do. File > New Window will open up a new VS Code window locally. 
 
