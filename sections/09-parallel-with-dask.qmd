@@ -15,18 +15,14 @@ In this lesson, we will get acquainted with some of Dask's most commonly used ob
     - What are the client, scheduler, workers, and cluster
     - Understand delayed computations and "lazy" evaluation
     - Obtain information about computations via the Dask dashboard
-    - https://www.youtube.com/watch?v=N_GqzcuGLCY
     
 - Learn basics of `dask.arrays` and `dask.dataframes`:
-    - Load data and specifying chunk sizes
+    - Load data and specifying partition/chunk sizes
     - Interpret a task graph
 
-- Integrate `xarray` with Dask:
+- Integrate `xarray` with Dask for geospatial computations
     
 - Share best practices and resources for a deeper dive
-    - https://docs.dask.org/en/stable/best-practices.html#load-data-with-dask
-    - https://coiled.io/blog/common-dask-mistakes/
-
 
 ## Dask Cluster
 We can deploy a Dask cluster on a single machine or an actual cluster with multiple machines. 
@@ -67,6 +63,10 @@ And then we create a client to connect to our cluster:
 
 [Read more about Dask clusters](https://docs.dask.org/en/latest/deploying.html)
 
+### Dask Dashboard
+
+https://www.youtube.com/watch?v=N_GqzcuGLCY
+
 ## `dask.dataframes`
 When we analyze tabular data, we usually start our analysis by loading it into memory as a Pandas DataFrame. 
 But, what if this data does not fit in memory? 
@@ -74,8 +74,7 @@ Or maybe our analyzes crash because we run out of memory.
 These scenarios are typical entry points into parallel computing. 
 In such cases, Dask’s scalable alternative to a Pandas DataFrame is the `dask.dataframe`. 
 A `dask.dataframe` is made up of many `pd.DataFrames`, each containing a subset of rows of the original dataset.
-We call each of these pandas pieces a *partition* of the `dask.dataframe`.
-
+We call each of these pandas pieces a **partition** of the `dask.dataframe`.
 
 
 ![ Dask Array design ([dask documentation](https://docs.dask.org/en/latest/dataframe.html))](../images/dask_dataframe.png)
@@ -84,7 +83,7 @@ We call each of these pandas pieces a *partition* of the `dask.dataframe`.
 ### Reading a csv
 To get familiar with `dask.dataframes` we will use tabular data of soil mositure measurements at six forest stands in northeastern Siberia. 
 The data has been collected since 2014 and is archived at the Arctic Data Center ([Loranty & Alexander, doi:10.18739/A24B2X59C](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA24B2X59C)).
-Just as we did on the previous lesson, we download the data using the `requests` package and the url to the data obtained from the Arctic Data Center website. 
+Just as we did on the previous lesson, we download the data using the `requests` package and the data's url obtained from the Arctic Data Center. 
 
 ```{python}
 import os              
@@ -100,7 +99,7 @@ open("dg_soil_moisture.csv", "wb").write(response.content)
 ```
 
 In the Arctic Data Center metadata we can see this file is 115MB. 
-To import this data as `dask.dataframe` with more than one partition we need to specify the size of each partition with the `blocksize` parameter. 
+To import this file as `a dask.dataframe` with more than one partition we need to specify the size of each partition with the `blocksize` parameter. 
 In this example we will split the data frame into six partitions, which would mean a blocksize of approximately 20 MB.
 
 :::{.callout-note collapse=True}
@@ -133,21 +132,24 @@ However, we can still do `df.head()`, it's not costly for memory to just access 
 df.head()
 ```
 
-### Lazy Computations & Task Graph
+### Lazy Computations  
 The application programming interface (API) of a `dask.dataframe` is a subset of the `pd.DataFrame` API.
-So if you are familiar with pandas, many of the core `pd.DataFrame` methods directly translate to `dask.dataframes`. 
+So if you are familiar with pandas, many of the core `pandas.DataFrame` methods directly translate to `dask.dataframes`. 
 
-A major difference between both objects is that `dask.dataframes` are *lazy*, meaning that they do not evaluate until we explicitly ask for a result using the `compute` method.
-This is the case with most Dask workloads, they do **lazy computations**.
+```{python}
+# an example of a simple df transformation
+```
 
+Notice that XXXX.
+A major difference between  `pandas.DataFrames` and `dask.dataframes`and  is that `dask.dataframes` are *lazy*.
+This means that an object will queue transformations and calculations without executing them, up until we explicitly ask for the result of that chain of computations using the `compute` method.
+Once we run `compute`, the scheduler can allocate memory and workers to execute the computations in parallel.
+This kind of **lazy computations** is how most Dask workloads work.
+This varies from **eager evaluation** methods and functions, which start computing results right when they are executed.
 
+### Task Graph
 
-*This means that your framework will queue up sets of transformations or calculations so that they are ready to run later, in parallel. 
-
-This differs from “eager” evaluation functions, which compute instantly upon being called.*
-https://saturncloud.io/blog/a-data-scientist-s-guide-to-lazy-evaluation-with-dask/
-
-Lead into task graphs. 
+Lead into task graphs: XXX
 ```{python}
 ### THIS IS AN EXAMPLE OF TASK GRAPH
 
@@ -160,8 +162,6 @@ Lead into task graphs.
 # See:
 #https://stackoverflow.com/questions/42014458/dask-not-installing-graphviz-dependency
 ```
-
-
 
 
 ## `dask.arrays`
@@ -211,7 +211,7 @@ In this case it can be useful to use the `xarray` module together with Dask.
 It is simple to wrap Dask around `xarray` objetcs, we only need to specify the number of chunks argument as an argument when we are reading in a dataset (see also [[1]](https://docs.xarray.dev/en/stable/user-guide/dask.html)).
 
 ### Open .tif file
-As an example, let's do an NDVI calculation using remote sensing imagery collected by aerial vehicles at a series of fire perimeters in larch forests in northeastern Siberia (Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. Uncrewed aerial vehicle remote sensing imagery of postfire vegetation in Siberian larch forests 2018-2019. [Arctic Data Center. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
+As an example, let's do an NDVI calculation using remote sensing imagery collected by aerial vehicles over northeastern Siberia (Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. Uncrewed aerial vehicle remote sensing imagery of postfire vegetation in Siberian larch forests 2018-2019. [Arctic Data Center. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
 
 First we download the data for the near-infrared (NIR) and red bands:
 
@@ -228,9 +228,9 @@ open("RU_ANS_TR2_FL005M_nir.tif", "wb").write(response.content)
 ```
 
 
-Because these are .tif files, we will use `xarray.open_rasterio` to read them.
-To indicate we will open these files with `dask.arrays` as the underlying object to the `xarray.DataArray` (instead of a `numpy.array`) we need to specify either a shape or the size in bytes for each chunk. 
-Both files are 76 MB, so let us have chunks of 15 MB to have roughly 6 chunks.
+Because these are .tif files and have geospatial metadata, we will use `xarray.open_rasterio` to read them.
+We need to specify either a shape or the size in bytes for each chunk to indicate we will open these files with `dask.arrays` as the underlying object to the `xarray.DataArray` (instead of a `numpy.array`). 
+Both files are 76 MB, so let's have chunks of 15 MB to have roughly six chunks.
 
 
 ```{python}
@@ -245,35 +245,38 @@ red = xr.open_rasterio(fp_red, chunks = '15MB')
 
 We can see a lot of useful information here:
 
-- There are 8 chunks in the array. We were aiming for six, but this often happens with the way Dask distributes the memory (76MB is not exactly divisible by 6).
-- Geospatial information (transformation, CRS, resolution) and no-data values.
-- There is an unnecessary dimension because as a constant value for the band. So our next step is to squeeze the array to flatten it.
+- There are eight chunks in the array. We were aiming for six, but this often happens with the way Dask distributes the memory (76MB is not divisible by 6).
+- There is geospatial information (transformation, CRS, resolution) and no-data values.
+- There is an unnecessary dimension: a constant value for the band. So our next step is to squeeze the array to flatten it.
 
 ```{python}
 # getting rid of unnecessary dimension
 red = red.squeeze()
 ```
 
-Next we read in the NIR band and do the same pre-processing:
+Next we read in the NIR band and do the same pre-processing. 
+
 ```{python}
 fp_nir = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_nir.tif")
 nir = xr.open_rasterio(fp_nir, chunks = '15MB')
 print('shape before squeeze:', nir.shape)
+print('chunks before squeeze:', nir.chunks )
 nir = nir.squeeze()
 print('shape after squeeze:', nir.shape)
-print('chunks:', nir.chunks )
+print('chunk after squeeze:', nir.chunks )
 ```
 
 ### Calculating NDVI
-Next we set up the NDVI calculation, this step is ease because we can handle xarrays and dask arrays as numpy arrays for arithmetic operations. 
-Also, both bandas have values of type float32, so we won't have trouble with the division. 
+Next we set up the NDVI calculation. 
+This step is easy because we can handle xarrays and Dask arrays as numpy arrays for arithmetic operations. 
+Also, both bands have values of type float32, so we won't have trouble with the division. 
 
 ```{python}
 ndvi = (nir - red) / (nir + red)
 ```
 
 When we look at the ndvi we can see the result is another `dask.array`, nothing has been computed yet. 
-We need to call `compute()` to actually bring the results to memory. 
+Remember Dask computations are lazy, so we need to call `compute()` to actually bring the results to memory. 
 
 ```{python}
 ndvi_values = ndvi.compute()
@@ -281,7 +284,8 @@ ndvi_values = ndvi.compute()
 
 And finally we can see how these look like. 
 Notice that `xarray` uses the value of the dimensions as labels along the x and y axes. 
-We use `robust=True` to ignore the nodatavalues when plotting.
+We use `robust=True` to ignore the no-data values when plotting.
+
 ```{python}
 #| eval: false
 ndvi_values.plot(robust=True)
@@ -297,6 +301,9 @@ For data that fits into RAM, Pandas can often be faster and easier to use than D
 While “Big Data” tools can be exciting, they are almost always worse than normal data tools while those remain appropriate.
 https://docs.dask.org/en/stable/dataframe-best-practices.html
 :::
+
+    - https://docs.dask.org/en/stable/best-practices.html#load-data-with-dask
+    - https://coiled.io/blog/common-dask-mistakes/
 
 Overhead
 
