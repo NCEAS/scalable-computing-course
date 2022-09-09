@@ -24,7 +24,7 @@ SAM NOTES, DELETE LATER
 <br>
 So why should we be excited about GEE? As data have gotten larger, the typical download-data-work-locally workflow is no longer always feasible. GEE offers web access to an extensive catalog of analysis-ready geospatial data and scalable computing power via their cloud service, making global-scale analyses and visualizations possible for anyone with an account ([sign up here](https://signup.earthengine.google.com)!)
 
-Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellites ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)).
+Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellite ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)).
 
 
 ## Getting started with Google Earth Engine (GEE) on your own machine (40 min)
