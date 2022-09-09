@@ -27,37 +27,24 @@ So why should we be excited about GEE? As data have gotten larger, the typical d
 Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellite ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)).
 
 
-## Getting started with Google Earth Engine (GEE) on your own machine (40 min)
+## Exercise 1: Getting started with Google Earth Engine (GEE) -- mapping 
 
-SAM NOTES, DELETE LATER
+1. Create a Google Earth Engine account (if you haven't already done so)
 
-- remove `#| eval: false` once code actually runs to embed outputs
-- don't really have time to actually do this in class? include instructions for those who want to try it out on their own later?
-- Content borrowed from Dr. Samantha Stevenson's [guide to installling Jupyter/Google Earth Engine onyour personal laptop](https://docs.google.com/document/d/1P1c6Ef7D1OoGaTaOrPDO0m5LBN1okpGlU0OXKKzsoi0/edit).
-- PREREQUISITE: need conda (see Earth Engine API installion instructions [here](https://developers.google.com/earth-engine/guides/python_install-conda)) -- haven't added these instructions below yet
-- also, not working on my machine at the moment. issue with library installs? starts with `earthengine authenticate`
+-  Find instructions on how to do so [here]()
 
+::: {.callout-important}
+## Move this to course setup
 
-1. Install the Google Earth Engine API
+1. Sign up for a GEE Account
 
-SAM NOTES, DELETE LATER 
-- MOVE MOST OF THIS TO COURSE SETUP (not using conda) BUT KEEP GEE ACTIVATION STEP HERE
+-  GEE is currently free for educational use. Sign up for an account at <https://signup.earthengine.google.com>, which will take you to a form that looks like this:
 
-- Create an environment where the Google Earth Engine API will live. This ensures that it and it's dependent packages will not cause versioning issues with your base environment (or other environments). We'll call our environment `gee_env`.
+<center><img src="../images/gee_signup.png" alt="" width="400"/></center>
 
-```{bash}
-#| eval: false
-conda create --name gee_env
-```
+-  You'll receive an email with some helpful links and a message that it may take a few days for your account to be up and running. **Be sure to do this a few days ahead of needing to use GEE.**
+:::
 
-- Activate your environment so your machine knows where to store subsequent installs.
-
-```{bash}
-#| eval: false
-conda activate gee_env
-```
-
-You'll know your environment is activated successfully when `(gee_env)` appears before the prompt in your terminal window (as opposed to `(base)`, for example).
 
 - Install the Google Earth Engine API in your `gee_env`
 
