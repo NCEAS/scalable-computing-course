@@ -26,18 +26,24 @@ So why should we be excited about GEE? As data have gotten larger, the typical d
 
 Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellite ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)).
 
-We'll start with a shorter
-## Exercise 1: Getting started with Google Earth Engine (GEE) 
+## Exercise 1.1: Getting started with Google Earth Engine (GEE) 
 
 ::: {.callout-note}
 ## GEE libraries were installed when you set up your `scomp` virtual environment
 
-We'll be using a few different libraries that should already be installed if you successfully set up your `scomp` virtual environment.
+We'll be using a few different libraries in the next exercises/demos that should already be installed if you successfully set up your `scomp` virtual environment. If you eventually find yourself working outside our virtual environment, you'll want need to install the following libraries: 
+
+```{.bash}
+#| eval: false
+pip install earthengine-api 
+pip install ee # Earth Engine API package
+pip install geemap # package for interactive maping with GEE 
+```
 :::
 
 1. Create a Google Earth Engine account (if you haven't already done so)
 
--  Find instructions on how to do so [here]()
+-  Find instructions on how to do so [here](https://learning.nceas.ucsb.edu/2022-09-arctic/#create-a-free-google-earth-engine-gee-account)
 
 2. Set up GEE Authentication
 
@@ -45,31 +51,21 @@ We'll be using a few different libraries that should already be installed if you
 
 - On the command line, type:
 
-```{bash}
+```{.bash}
 #| eval: false
 earthengine authenticate
 ```
 
-This should launch a browser window where you can login with your Google account to the Google Earth Engine Authenticator. Following the prompts will generate a code, which you'll then need to copy and paste back onto the command line. This will be saved as an authentication token so you won't need to go through this process again until the next time you start a new session.
+-  This should launch a browser window where you can login with your Google account to the Google Earth Engine Authenticator. Following the prompts will generate a code, which you'll then need to copy and paste back onto the command line. This will be saved as an authentication token so you won't need to go through this process again until the next time you start a new session.
 
-4. Install necessary packages (if you don't already have them)
-
-```{bash}
-#| eval: false
-pip install ee # Earth Engine API package
-pip install geemap # package for interactive maping with GEE 
-pip install pandas # contains useful tools for data manipulation (may not need this)
-```
-
-## Visualize global precipitation data using Google Earth Engine 
+## Exercise 1.2: Visualize global precipitation data using Google Earth Engine 
 
 *Content for this section was adapted from Dr. Sam Stevenson's [Visualizing global precipitation using Google Earth Engine](https://github.com/samanthastevenson/EDS220_Fall2021/blob/main/Week1_ERA5Maps_GEE.ipynb) lesson, given in her [EDS 220 course](https://samanthastevenson.github.io/EDS220_site/) in Fall 2021.*
 
 1. Import necessary packages
-
 ```{python}
 #| eval: false
-import ee # MODULENOTFOUNDERROR
+import ee 
 import geemap
 import pandas as pd
 ```
