@@ -26,40 +26,22 @@ So why should we be excited about GEE? As data have gotten larger, the typical d
 
 Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellite ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)).
 
+We'll start with a shorter
+## Exercise 1: Getting started with Google Earth Engine (GEE) 
 
-## Exercise 1: Getting started with Google Earth Engine (GEE) -- mapping 
+::: {.callout-note}
+## GEE libraries were installed when you set up your `scomp` virtual environment
+
+We'll be using a few different libraries that should already be installed if you successfully set up your `scomp` virtual environment.
+:::
 
 1. Create a Google Earth Engine account (if you haven't already done so)
 
 -  Find instructions on how to do so [here]()
 
-::: {.callout-important}
-## Move this to course setup
+2. Set up GEE Authentication
 
-1. Sign up for a GEE Account
-
--  GEE is currently free for educational use. Sign up for an account at <https://signup.earthengine.google.com>, which will take you to a form that looks like this:
-
-<center><img src="../images/gee_signup.png" alt="" width="400"/></center>
-
--  You'll receive an email with some helpful links and a message that it may take a few days for your account to be up and running. **Be sure to do this a few days ahead of needing to use GEE.**
-:::
-
-
-- Install the Google Earth Engine API in your `gee_env`
-
-```{bash}
-#| eval: false
-conda install -c conda-forge earthengine-api
-```
-
-2. Sign up for a GEE Account
-
-GEE is currently free for educational use. Sign up for an account at https://signup.earthengine.google.com (you'll need this to authenticate in the next step).
-
-3. Set up GEE Authentication
-
-In order to begin using GEE, you'll need to connect your GEE envionment (`gee_env`) to the authentication credentials associated with your Google account. This will need to be done each time you connect to GEE, but should only be done once per session. 
+-  In order to begin using GEE, you'll need to connect your envionment (`scomp`) to the authentication credentials associated with your Google account. This will need to be done each time you connect to GEE, (but only be done once per session). 
 
 - On the command line, type:
 
@@ -167,7 +149,7 @@ Finally, plot our filtered data, `precip_filtered` on top of our basemap using t
 Map.addLayer(precip_filtered, precip_palette, 'total precipitation', opacity = 0.3)
 ```
 
-## INGMAR'S DEMONSTRATION HERE?(30-40 min)
+## Ingmar's Demo
 
 ## Conclusion/Summary 
 
