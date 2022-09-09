@@ -4,7 +4,7 @@ title: "Parallelization with Dask"
 ## Introduction
 Dask is a library for parallel computing in Python. 
 It can scale up code to use the full capacity of your personal computer or to distribute work in a cloud cluster. 
-By mirroring APIs of other commonly used Python libraries such as Pandas, NumPy, and Scikit-learn, Dask provides a familiar interface that makes it easier to parallelize your code. 
+By mirroring APIs of other commonly used Python libraries such as Pandas and NumPy, Dask provides a familiar interface that makes it easier to parallelize your code. 
 In this lesson, we will get acquainted with some of Dask's most commonly used objects and Dask's way of distributing and evaluating computations. 
 
 ![ ](../images/dask_logo.png)
@@ -17,16 +17,16 @@ In this lesson, we will get acquainted with some of Dask's most commonly used ob
     - Obtain information about computations via the Dask dashboard
     
 - Learn basics of `dask.arrays` and `dask.dataframes`:
-    - Load data and specifying partition/chunk sizes
+    - Load data and specify partition/chunk sizes
     - Interpret a task graph
 
 - Integrate `xarray` with Dask for geospatial computations
     
-- Share best practices and resources for a deeper dive
+- Share best practices and resources for further reading
 
 ## Dask Cluster
 We can deploy a Dask cluster on a single machine or an actual cluster with multiple machines. 
-Here we have chosen to use the Dask cluster instead of the default Dask scheduler to take advantage of the *cluster dashboard*, which keeps track of the performance and progress of our computations. 
+We chose to use the Dask cluster in this lesson instead of the default Dask scheduler to take advantage of the *cluster dashboard*, which keeps track of the performance and progress of our computations. 
 
 Dask clusters have three main components for processing computations in parallel. These are the *client*, the *scheduler* and the *workers*.
 
@@ -46,26 +46,45 @@ We can create a local cluster as follows:
 
 ```{python}
 from dask.distributed import LocalCluster, Client
-# https://distributed.dask.org/en/stable/install.html
 ```
 
 ```{python}
-# cluster = LocalCluster()
-# cluster
+#| eval: false
+cluster = LocalCluster(n_workers=5, memory_limit=0.1, processes=False)
+cluster
 ```
+
+![](../images/dask_cluster_panel.png)
 
 And then we create a client to connect to our cluster:
 
 ```{python}
-# client = Client(cluster)
-# client
+#| eval: false
+client = Client(cluster)
+client
 ```
+![](../images/dask_client.png)
 
-[Read more about Dask clusters](https://docs.dask.org/en/latest/deploying.html)
+Learn more about:
+    - [Dask clusters](https://docs.dask.org/en/latest/deploying.html)
+    - [Threads and processes](https://towardsdatascience.com/which-is-faster-python-threads-or-processes-some-insightful-examples-26074e90848f)
+
 
 ### Dask Dashboard
+When we set up a cluster we can see the **Dask dashboard** address by looking at either the client or the cluster. 
+This dashboard offers live monitoring of all the Dask computations. 
+The dashboard's main page shows diagnostics about:
 
-https://www.youtube.com/watch?v=N_GqzcuGLCY
+    - the cluster's and individual worker's memory usage
+    - number of tasks being processed by each worker
+    - individual tasks being processed across workers
+    - progress towards completion of each individual task
+
+There's a lot to talk about how to interpret the diagnostics in the Dask dashboard. We recommend this part of the documentation to understand the [basics of the dashboard diagnostics](https://docs.dask.org/en/latest/dashboard.html#dashboard-memory)
+, and this video as a [deeper dive on the dashboard's functions.
+
+![View of Dask dashboard](../images/dask_dashboard.png)
+
 
 ## `dask.dataframes`
 When we analyze tabular data, we usually start our analysis by loading it into memory as a Pandas DataFrame. 
@@ -91,6 +110,7 @@ import requests
 ```
 
 ```{python}
+#| eval: false
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A27e4043d-75eb-4c4f-9427-0d442526c154'
 
 response = requests.get(url)
@@ -108,11 +128,12 @@ If we try to import the file directly we will obtain the error `UnicodeDecodeErr
 This means XXXX.
 To find the encoding of the file and add the appropiate encodign to `dask.dataframe.read_csv` we can run the following code.
 ```{python}
-# import chardet
-# fp = os.path.join(os.getcwd(),'dg_soil_moisture.csv')
-# with open(fp, 'rb') as rawdata:
-#     result = chardet.detect(rawdata.read(100000))
-# result
+#| eval: false
+import chardet
+fp = os.path.join(os.getcwd(),'dg_soil_moisture.csv')
+with open(fp, 'rb') as rawdata:
+    result = chardet.detect(rawdata.read(100000))
+result
 
 ```
 :::
@@ -129,7 +150,7 @@ This is because Dask has not really loaded the data, it will wait until we expli
 However, we can still do `df.head()`, it's not costly for memory to just access a few rows of the data frame. 
 
 ```{python}
-df.head()
+df.head(2)
 ```
 
 ### Lazy Computations  
@@ -216,6 +237,7 @@ As an example, let's do an NDVI calculation using remote sensing imagery collect
 First we download the data for the near-infrared (NIR) and red bands:
 
 ```{python}
+#| eval: false
 # download red band
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Aac25a399-b174-41c1-b6d3-09974b161e5a'
 response = requests.get(url)
@@ -291,6 +313,7 @@ We use `robust=True` to ignore the no-data values when plotting.
 ndvi_values.plot(robust=True)
 ```
 
+![](../images/dask_ndvi_graph.png)
 ## Best Practices
 
 It is important to remember that, while APIs may be similar, some differences do exist. Additionally, the performance of some algorithms may differ from their in-memory counterparts due to the advantages and disadvantages of parallel programming. Some thought and attention is still required when using Dask.
