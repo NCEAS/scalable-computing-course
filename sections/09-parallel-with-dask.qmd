@@ -243,15 +243,15 @@ a.mean()
 a.mean().compute()
 ```
 
-## Dask and xarray
-Going forward, it might be more common having to read some big array-like dataset (like a high-resolution multiband raster) than creating one from scratch from a NumPy array. 
+## Dask and `xarray`
+Going forward, it might be more common having to read some big array-like dataset (like a high-resolution multiband raster) than creating one from scratch using NumPy. 
 In this case it can be useful to use the `xarray` module together with Dask. 
-It is simple to wrap Dask around `xarray` objetcs, we only need to specify the number of chunks argument as an argument when we are reading in a dataset (see also [[1]](https://docs.xarray.dev/en/stable/user-guide/dask.html)).
+It is simple to wrap Dask around `xarray` objetcs, we only need to specify the number of chunks as an argument when we are reading in a dataset (see also [[1]](https://docs.xarray.dev/en/stable/user-guide/dask.html)).
 
 ### Open .tif file
-As an example, let's do an NDVI calculation using remote sensing imagery collected by aerial vehicles over northeastern Siberia (Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. Uncrewed aerial vehicle remote sensing imagery of postfire vegetation in Siberian larch forests 2018-2019. [Arctic Data Center. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
+As an example, let's do an NDVI calculation using remote sensing imagery collected by aerial vehicles over northeastern Siberia (Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. [doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
 
-First we download the data for the near-infrared (NIR) and red bands:
+First we download the data for the near-infrared (NIR) and red bands from the Arctic Data Center:
 
 ```{python}
 #| eval: false
