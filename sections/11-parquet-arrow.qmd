@@ -159,6 +159,8 @@ First read in the survey dataset.
 survey = ds.dataset("/home/jclark/deltafish/survey", format="parquet", partitioning=["Source"])
 ```
 
+Take a look at the columns again:
+
 ```{python}
 #| eval: false
 survey.schema.to_string()
