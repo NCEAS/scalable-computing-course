@@ -12,7 +12,6 @@ beautifulsoup4==4.11.1
 black==22.6.0
 bleach==5.0.1
 blessings==1.7
-bokeh==2.4.3
 bqplot==0.12.36
 branca==0.5.0
 cachetools==5.2.0
@@ -65,12 +64,10 @@ google-cloud-storage==2.5.0
 google-crc32c==1.5.0
 google-resumable-media==2.3.3
 googleapis-common-protos==1.56.4
-graphviz==0.20.1
 HeapDict==1.0.1
 httplib2==0.20.4
 httplib2shim==0.0.3
 idna==3.3
-importlib-metadata==4.12.0
 ipyevents==2.0.1
 ipyfilechooser==0.6.0
 ipykernel==6.15.1
@@ -199,4 +196,3 @@ widgetsnbextension==3.6.1
 xarray==2022.6.0
 xyzservices==2022.6.0
 zict==2.2.0
-zipp==3.8.1

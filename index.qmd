@@ -71,7 +71,7 @@ Locally (not connected to the server), check to make sure you have Python instal
 
 To check your python, from the terminal run:
 
-```
+```{.bash}
 python3 --version
 ```
 
@@ -87,7 +87,7 @@ Next, install the [Python extension for VS Code](https://marketplace.visualstudi
 
 Open a terminal window in VS Code from the Terminal drop down in the main window. Run the following commands to initialize a project workspace in a directory called `training`. This example will show you how to do this locally. Later, we will show you how to set it up on the remote server with only one additional step.
 
-```
+```{.bash} 
 mkdir training
 cd training
 code .
@@ -100,7 +100,7 @@ To make sure you can write and execute code in your project, [create a Hello Wor
 * From the File Explorer toolbar, or using the terminal, create a file called `hello.py`
 * Add some test code to the file, and save
 
-```
+```{.bash}
 msg = "Hello World"
 print(msg)
 ```
@@ -113,6 +113,15 @@ Finally, to test Jupyter, download the [Jupyter extension](https://marketplace.v
 
 You can create a test Jupyter Notebook document from the command pallete by typing "Create: New Jupyter Notebook" and selecting the command. This will open up a code editor pane with a notebook that you can test.
 
+### Create a (free) Google Earth Engine (GEE) account
+
+In order to code along during the Google Earth Engine lesson ([Ch 15]()) on Thursday, you'll need to sign up for an account at <https://signup.earthengine.google.com>. Following the link above will take you to a form that looks like this: 
+<br>
+
+<center><img src="../images/gee_signup.png" alt="" width="400"/></center>
+
+<br>
+Once submitted, you'll receive an email with some helpful links and a message that it may take a few days for your account to be up and running. **Please be sure to do this a few days ahead of needing to use GEE.**
 
 ## About this book
 

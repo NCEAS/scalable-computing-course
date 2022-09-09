@@ -16,65 +16,32 @@ SAM NOTES, DELETE LATER
 
 ## Introduction (15-20min)
 
-SAM NOTES, DELETE LATER 
-- have Ingmar help frame utility of GEE in intro
+[Google Earth Engine](https://earthengine.google.com/) (GEE) is a geospatial processing platform powered by Google Cloud Platform. It contains over 30 years (and petabytes) of satellite imagery and geospatial datasets that are continually updated and available instantly. Users can process data using Google Cloud Platform and built-in algorithms or by using the Earth Engine API, which is available in Python (and JavaScript) for anyone with an account (a free tier service is available). 
+<br> 
 
-[Google Earth Engine](https://earthengine.google.com/) is a geospatial processing platform powered by Google Cloud Platform. It contains over 30 years of satellite imagery and geospatial datasets that are continually updated and available instantly. The Earth Engine API is available in Python (and JavaScript) for anyone with an account to access and analyze data.
+<center><img src="../images/gee.gif" alt="" width="600"/></center>
 
-ADD SOME COOL IMAGERY HERE
+<br>
+So why should we be excited about GEE? As data have gotten larger, the typical download-data-work-locally workflow is no longer always feasible. GEE offers web access to an extensive catalog of analysis-ready geospatial data and scalable computing power via their cloud service, making global-scale analyses and visualizations possible for anyone with an account ([sign up here](https://signup.earthengine.google.com)!)
 
-Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellites ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)).
+Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellite ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)).
 
-SAM NOTES, DELETE LATER
-- typical: download data and work locally
-- new way:"Moving compute to data" -- GEE is a great example of this
+We'll start with a shorter
+## Exercise 1: Getting started with Google Earth Engine (GEE) 
 
-## Getting started with Google Earth Engine (GEE) on your own machine (40 min)
+::: {.callout-note}
+## GEE libraries were installed when you set up your `scomp` virtual environment
 
-SAM NOTES, DELETE LATER
+We'll be using a few different libraries that should already be installed if you successfully set up your `scomp` virtual environment.
+:::
 
-- remove `#| eval: false` once code actually runs to embed outputs
-- don't really have time to actually do this in class? include instructions for those who want to try it out on their own later?
-- Content borrowed from Dr. Samantha Stevenson's [guide to installling Jupyter/Google Earth Engine onyour personal laptop](https://docs.google.com/document/d/1P1c6Ef7D1OoGaTaOrPDO0m5LBN1okpGlU0OXKKzsoi0/edit).
-- PREREQUISITE: need conda (see Earth Engine API installion instructions [here](https://developers.google.com/earth-engine/guides/python_install-conda)) -- haven't added these instructions below yet
-- also, not working on my machine at the moment. issue with library installs? starts with `earthengine authenticate`
+1. Create a Google Earth Engine account (if you haven't already done so)
 
+-  Find instructions on how to do so [here]()
 
-1. Install the Google Earth Engine API
+2. Set up GEE Authentication
 
-SAM NOTES, DELETE LATER 
-- MOVE MOST OF THIS TO COURSE SETUP (not using conda) BUT KEEP GEE ACTIVATION STEP HERE
-
-- Create an environment where the Google Earth Engine API will live. This ensures that it and it's dependent packages will not cause versioning issues with your base environment (or other environments). We'll call our environment `gee_env`.
-
-```{bash}
-#| eval: false
-conda create --name gee_env
-```
-
-- Activate your environment so your machine knows where to store subsequent installs.
-
-```{bash}
-#| eval: false
-conda activate gee_env
-```
-
-You'll know your environment is activated successfully when `(gee_env)` appears before the prompt in your terminal window (as opposed to `(base)`, for example).
-
-- Install the Google Earth Engine API in your `gee_env`
-
-```{bash}
-#| eval: false
-conda install -c conda-forge earthengine-api
-```
-
-2. Sign up for a GEE Account
-
-GEE is currently free for educational use. Sign up for an account at https://signup.earthengine.google.com (you'll need this to authenticate in the next step).
-
-3. Set up GEE Authentication
-
-In order to begin using GEE, you'll need to connect your GEE envionment (`gee_env`) to the authentication credentials associated with your Google account. This will need to be done each time you connect to GEE, but should only be done once per session. 
+-  In order to begin using GEE, you'll need to connect your envionment (`scomp`) to the authentication credentials associated with your Google account. This will need to be done each time you connect to GEE, (but only be done once per session). 
 
 - On the command line, type:
 
@@ -182,7 +149,7 @@ Finally, plot our filtered data, `precip_filtered` on top of our basemap using t
 Map.addLayer(precip_filtered, precip_palette, 'total precipitation', opacity = 0.3)
 ```
 
-## INGMAR'S DEMONSTRATION HERE?(30-40 min)
+## Ingmar's Demo
 
 ## Conclusion/Summary 
 
