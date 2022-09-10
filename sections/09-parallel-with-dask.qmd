@@ -112,7 +112,6 @@ import requests
 ```
 
 ```{python}
-#| eval: false
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A27e4043d-75eb-4c4f-9427-0d442526c154'
 
 response = requests.get(url)
@@ -271,12 +270,15 @@ Because these are .tif files and have geospatial metadata, we will use `xarray.o
 We need to specify either a shape or the size in bytes for each chunk to indicate we will open these files with `dask.arrays` as the underlying object to the `xarray.DataArray` (instead of a `numpy.array`). 
 Both files are 76 MB, so let's have chunks of 15 MB to have roughly six chunks.
 
+** CHANGE THIS TO RUN WITH rioxarray **
 
 ```{python}
 import xarray as xr
 ```
 
 ```{python}
+#raster = rioxr.open_rasterio(href, chunks={"x": int(x_n/workers_sqrt), "y":int(y_n/workers_sqrt)})       
+
 # read in the file
 fp_red = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_red.tif")
 red = xr.open_rasterio(fp_red, chunks = '15MB')
@@ -334,19 +336,28 @@ ndvi_values.plot(robust=True)
 
 ## Best Practices
 
-It is important to remember that, while APIs may be similar, some differences do exist. Additionally, the performance of some algorithms may differ from their in-memory counterparts due to the advantages and disadvantages of parallel programming. Some thought and attention is still required when using Dask.
-https://docs.dask.org/en/latest/user-interfaces.html
+Dask is an exciting tool for parallel computing, but it may take a while to fully understand its nuances to make the most of it. 
+There are many best pratices and recommendations, these are some of the basic ones to take into consideration:
 
-:::{.callout-warning}
-For data that fits into RAM, Pandas can often be faster and easier to use than Dask DataFrame. 
-While “Big Data” tools can be exciting, they are almost always worse than normal data tools while those remain appropriate.
-https://docs.dask.org/en/stable/dataframe-best-practices.html
-:::
+- For data that fits into RAM, pandas and NumPy can often be faster and easier to use than Dask workflows. 
+The simplest solution can often be the best.
 
-    - https://docs.dask.org/en/stable/best-practices.html#load-data-with-dask
-    - https://coiled.io/blog/common-dask-mistakes/
 
-Overhead
+-  While Dask may have similar APIs to pandas and NumPy, there are differences, and not all the methods for the `pandas.DataFrames` and `numpy.arrays` translate in the same way (or with the same efficiency) to Dask objects. When in doubt, always read the documentation. 
 
-Choosing chunking
- and [best practices](https://docs.dask.org/en/latest/array-best-practices.html).
+- Choose appropiate chunk and partition sizes and layouts. This is crucial to make the best use of how the scheduler distributes work. You can read here about [best practices for chunking](https://docs.dask.org/en/latest/array-best-practices.html).
+
+- Avoid calling compute repeatedly. It is best to group similar computations together and then compute once.
+
+
+Further reading:
+
+- A friendly article about [common dask mistakes](https://coiled.io/blog/common-dask-mistakes/)
+
+- [General Dask best practices](https://docs.dask.org/en/stable/best-practices.html)
+
+- [`dask.dataframe best practices](https://docs.dask.org/en/stable/dataframe-best-practices.html)
+
+- [`dask.array` best practices](https://docs.dask.org/en/stable/array-best-practices.html)
+
+
