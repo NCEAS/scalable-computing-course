@@ -253,7 +253,6 @@ As an example, let's do an NDVI calculation using remote sensing imagery collect
 First we download the data for the near-infrared (NIR) and red bands from the Arctic Data Center:
 
 ```{python}
-#| eval: false
 # download red band
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Aac25a399-b174-41c1-b6d3-09974b161e5a'
 response = requests.get(url)
