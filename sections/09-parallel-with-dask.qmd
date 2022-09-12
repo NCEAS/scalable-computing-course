@@ -245,8 +245,11 @@ open("RU_ANS_TR2_FL005M_nir.tif", "wb").write(response.content)
 ```
 
 
-Because these are .tif files and have geospatial metadata, we will use `xarray.open_rasterio` to read them.
-We need to specify either a shape or the size in bytes for each chunk to indicate we will open these files with `dask.arrays` as the underlying object to the `xarray.DataArray` (instead of a `numpy.array`). 
+Because these are .tif files and have geospatial metadata, we will use `rioxarray` to read them. 
+`rioxarray` extends `xarray` with the *rio* accessor, which stands for "raster input and output". 
+You can find more information about `rioxarray` [here](https://corteva.github.io/rioxarray/stable/getting_started/getting_started.html). 
+
+To indicate we will open these .tif files with `dask.arrays` as the underlying object to the `xarray.DataArray` (instead of a `numpy.array`), we need to specify either a shape or the size in bytes for each chunk. 
 Both files are 76 MB, so let's have chunks of 15 MB to have roughly six chunks.
 
 ```{python}
