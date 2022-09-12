@@ -18,7 +18,6 @@ In this lesson, we will get acquainted with some of Dask's most commonly used ob
     
 - Learn to load data and specify partition/chunk sizes of `dask.arrays`/`dask.dataframes`.
 <!--
-    - Load data and specify partition/chunk sizes
     - Interpret a task graph
 -->
 - Integrate `xarray` with Dask for geospatial computations
@@ -46,6 +45,7 @@ In this lesson we will see examples of how to use `dask.dataframes` and `dask.ar
 We can create a **local cluster** as follows:
 
 ```{python}
+#| eval: false
 from dask.distributed import LocalCluster, Client
 ```
 
@@ -106,12 +106,14 @@ To get familiar with `dask.dataframes` we will use tabular data of soil mositure
 The data has been collected since 2014 and is archived at the Arctic Data Center ([Loranty & Alexander, doi:10.18739/A24B2X59C](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA24B2X59C)).
 Just as we did on the previous lesson, we download the data using the `requests` package and the data's url obtained from the Arctic Data Center. 
 
+
 ```{python}
 import os              
 import requests 
 ```
 
 ```{python}
+#| eval: false
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A27e4043d-75eb-4c4f-9427-0d442526c154'
 
 response = requests.get(url)
@@ -124,6 +126,7 @@ To import this file as a `dask.dataframe` with more than one partition we need t
 In this example we will split the data frame into six partitions, which would mean a blocksize of approximately 20 MB.
 
 ```{python}
+#| eval: false
 import dask.dataframe as dd
 
 fp = os.path.join(os.getcwd(),'dg_soil_moisture.csv')
@@ -152,6 +155,7 @@ This is because Dask has not really loaded the data, it will wait until we expli
 However, we can still do `df.head()`, it's not costly for memory to just access a few rows of the data frame. 
 
 ```{python}
+#| eval: false
 df.head(2)
 ```
 
@@ -160,6 +164,7 @@ The application programming interface (API) of a `dask.dataframe` is a subset of
 So if you are familiar with pandas, many of the core `pandas.DataFrame` methods directly translate to `dask.dataframes`. 
 
 ```{python}
+#| eval: false
 averages = df.groupby('year').mean()
 averages
 ```
@@ -178,25 +183,8 @@ Before calling `compute` on an object be sure to open the Dask dashboard to see 
 averages.compute()
 ```
 
-![](../images/dask_mean_df.png)
-
 <!--
-### Task Graph
-https://stackoverflow.com/questions/35064304/runtimeerror-make-sure-the-graphviz-executables-are-on-your-systems-path-aft
-Lead into task graphs: XXX
-```{python}
-### THIS IS AN EXAMPLE OF TASK GRAPH
-
-##!! cannot run graph after installing graphviz with
-#pip install graphviz
-
-# Error:
-# ExecutableNotFound: failed to execute PosixPath('dot'), make sure the Graphviz executables are on your systems' PATH
-
-# See:
-#https://stackoverflow.com/questions/42014458/dask-not-installing-graphviz-dependency
-```
-
+![](../images/dask_mean_df.png)
 -->
 
 ## `dask.arrays`
@@ -220,25 +208,17 @@ import numpy as np
 ```{python}
 data = np.arange(100_000).reshape(200, 500)
 a = da.from_array(data, chunks=(100, 100))
-a
 ```
-
-<!--
-Indexing Dask collections feels just like slicing NumPy arrays:
-
-```{python}
-#| eval: false
-a[:2, 2]
-```
--->
 
 Computations for `dask.arrays` also work lazily, we need to call `compute` to trigger computations and bring the result to memory.
 
 ```{python}
+#| eval: false
 a.mean()
 ```
 
 ```{python}
+#| eval: false
 a.mean().compute()
 ```
 
@@ -253,6 +233,7 @@ As an example, let's do an NDVI calculation using remote sensing imagery collect
 First we download the data for the near-infrared (NIR) and red bands from the Arctic Data Center:
 
 ```{python}
+#| eval: false
 # download red band
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Aac25a399-b174-41c1-b6d3-09974b161e5a'
 response = requests.get(url)
@@ -272,10 +253,12 @@ Both files are 76 MB, so let's have chunks of 15 MB to have roughly six chunks.
 ** CHANGE THIS TO RUN WITH rioxarray **
 
 ```{python}
+#| eval: false
 import xarray as xr
 ```
 
 ```{python}
+#| eval: false
 #raster = rioxr.open_rasterio(href, chunks={"x": int(x_n/workers_sqrt), "y":int(y_n/workers_sqrt)})       
 
 # read in the file
@@ -290,6 +273,7 @@ We can see a lot of useful information here:
 - There is an unnecessary dimension: a constant value for the band. So our next step is to squeeze the array to flatten it.
 
 ```{python}
+#| eval: false
 # getting rid of unnecessary dimension
 red = red.squeeze()
 ```
@@ -297,6 +281,7 @@ red = red.squeeze()
 Next we read in the NIR band and do the same pre-processing. 
 
 ```{python}
+#| eval: false
 fp_nir = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_nir.tif")
 nir = xr.open_rasterio(fp_nir, chunks = '15MB')
 print('shape before squeeze:', nir.shape)
@@ -312,6 +297,7 @@ This step is easy because we can handle xarrays and Dask arrays as numpy arrays 
 Also, both bands have values of type float32, so we won't have trouble with the division. 
 
 ```{python}
+#| eval: false
 ndvi = (nir - red) / (nir + red)
 ```
 
@@ -319,6 +305,7 @@ When we look at the ndvi we can see the result is another `dask.array`, nothing 
 Remember Dask computations are lazy, so we need to call `compute()` to actually bring the results to memory. 
 
 ```{python}
+#| eval: false
 ndvi_values = ndvi.compute()
 ```
 
@@ -331,7 +318,7 @@ We use `robust=True` to ignore the no-data values when plotting.
 ndvi_values.plot(robust=True)
 ```
 
-![](../images/dask_ndvi_graph.png)
+
 
 ## Best Practices
 
@@ -358,5 +345,3 @@ Further reading:
 - [`dask.dataframe best practices](https://docs.dask.org/en/stable/dataframe-best-practices.html)
 
 - [`dask.array` best practices](https://docs.dask.org/en/stable/array-best-practices.html)
-
-
