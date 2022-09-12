@@ -233,7 +233,6 @@ As an example, let's do an NDVI calculation using remote sensing imagery collect
 First we download the data for the near-infrared (NIR) and red bands from the Arctic Data Center:
 
 ```{python}
-#| eval: false
 # download red band
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Aac25a399-b174-41c1-b6d3-09974b161e5a'
 response = requests.get(url)
@@ -250,20 +249,16 @@ Because these are .tif files and have geospatial metadata, we will use `xarray.o
 We need to specify either a shape or the size in bytes for each chunk to indicate we will open these files with `dask.arrays` as the underlying object to the `xarray.DataArray` (instead of a `numpy.array`). 
 Both files are 76 MB, so let's have chunks of 15 MB to have roughly six chunks.
 
-** CHANGE THIS TO RUN WITH rioxarray **
-
 ```{python}
-#| eval: false
-import xarray as xr
+import rioxarray as rioxr
 ```
 
 ```{python}
-#| eval: false
 #raster = rioxr.open_rasterio(href, chunks={"x": int(x_n/workers_sqrt), "y":int(y_n/workers_sqrt)})       
 
 # read in the file
 fp_red = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_red.tif")
-red = xr.open_rasterio(fp_red, chunks = '15MB')
+red = rioxr.open_rasterio(fp_red, chunks = '15MB')
 ```
 
 We can see a lot of useful information here:
@@ -273,7 +268,6 @@ We can see a lot of useful information here:
 - There is an unnecessary dimension: a constant value for the band. So our next step is to squeeze the array to flatten it.
 
 ```{python}
-#| eval: false
 # getting rid of unnecessary dimension
 red = red.squeeze()
 ```
@@ -281,12 +275,18 @@ red = red.squeeze()
 Next we read in the NIR band and do the same pre-processing. 
 
 ```{python}
-#| eval: false
+# open data
 fp_nir = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_nir.tif")
-nir = xr.open_rasterio(fp_nir, chunks = '15MB')
+nir = rioxr.open_rasterio(fp_nir, chunks = '15MB')
+
+# print current shape
 print('shape before squeeze:', nir.shape)
 print('chunks before squeeze:', nir.chunks )
+
+#squeeze
 nir = nir.squeeze()
+
+# print squeezed shape
 print('shape after squeeze:', nir.shape)
 print('chunk after squeeze:', nir.chunks )
 ```
@@ -297,7 +297,6 @@ This step is easy because we can handle xarrays and Dask arrays as numpy arrays 
 Also, both bands have values of type float32, so we won't have trouble with the division. 
 
 ```{python}
-#| eval: false
 ndvi = (nir - red) / (nir + red)
 ```
 
@@ -305,7 +304,6 @@ When we look at the ndvi we can see the result is another `dask.array`, nothing 
 Remember Dask computations are lazy, so we need to call `compute()` to actually bring the results to memory. 
 
 ```{python}
-#| eval: false
 ndvi_values = ndvi.compute()
 ```
 
@@ -342,6 +340,6 @@ Further reading:
 
 - [General Dask best practices](https://docs.dask.org/en/stable/best-practices.html)
 
-- [`dask.dataframe best practices](https://docs.dask.org/en/stable/dataframe-best-practices.html)
+- [`dask.dataframe` best practices](https://docs.dask.org/en/stable/dataframe-best-practices.html)
 
 - [`dask.array` best practices](https://docs.dask.org/en/stable/array-best-practices.html)
