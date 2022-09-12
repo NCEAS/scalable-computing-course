@@ -3,9 +3,9 @@ title: "Parallelization with Dask"
 ---
 ## Introduction
 Dask is a library for parallel computing in Python. 
-It can scale up code to use the full capacity of your personal computer or to distribute work in a cloud cluster. 
-By mirroring APIs of other commonly used Python libraries such as Pandas and NumPy, Dask provides a familiar interface that makes it easier to parallelize your code. 
-In this lesson, we will get acquainted with some of Dask's most commonly used objects and Dask's way of distributing and evaluating computations. 
+It can scale up code to use your personal computer's full capacity or distribute work in a cloud cluster. 
+By mirroring APIs of other commonly used Python libraries, such as Pandas and NumPy, Dask provides a familiar interface that makes it easier to parallelize your code. 
+In this lesson, we will get acquainted with some of Dask's most commonly used objects and Dask's way of distributing and evaluating computations.
 
 ![ ](../images/dask_logo.png)
 
@@ -26,7 +26,8 @@ In this lesson, we will get acquainted with some of Dask's most commonly used ob
 
 ## Dask Cluster
 We can deploy a **Dask cluster** on a single machine or an actual cluster with multiple machines. 
-The clusters has three main components for processing computations in parallel. These are the *client*, the *scheduler* and the *workers*.
+The cluster has three main components for processing computations in parallel. 
+These are the *client*, the *scheduler* and the *workers*.
 
 - When we code, we communicate directly with the **client**, which is responsible for submitting tasks to be executed to the scheduler.
 
@@ -35,8 +36,8 @@ The clusters has three main components for processing computations in parallel. 
 - Finally, the **workers** are threads, processes, or separate machines in a cluster. They compute tasks and store and return computations results. 
 You can read more about [threads and processes here](https://towardsdatascience.com/which-is-faster-python-threads-or-processes-some-insightful-examples-26074e90848f).
 
-In order to interact with the client and generate tasks that can be processed in parallel we need to use Dasks' objects to read our data. 
-In this lesson we will see examples of how to use `dask.dataframes` and `dask.arrays`. There are [more Dask objects](https://docs.dask.org/en/stable/api.html) that can be used to parallelize your workflow.
+To interact with the client and generate tasks that can be processed in parallel we need to use Dasks' objects to read our data. 
+In this lesson, we will see examples of how to use `dask.dataframes` and `dask.arrays`. Apart from data frames and arrays, [other Dask objects](https://docs.dask.org/en/stable/api.html) can be used to parallelize your workflow.
 
 ![From: https://www.datarevenue.com/en-blog/understanding-dask-architecture-client-scheduler-workers Make this into a collored graph, add cluster envelope ](../images/dask_cluster.png)
 
@@ -71,30 +72,30 @@ This is a good place to learn more about different [Dask clusters](https://docs.
 
 ### Dask Dashboard
 We chose to use the Dask cluster in this lesson instead of the default Dask scheduler to take advantage of the **cluster dashboard**, which offers live monitoring of the performance and progress of our computations. 
-When we set up a cluster we can see the dashboard's address by looking at either the client or the cluster. 
+When we set up a cluster, we can see the dashboard's address by looking at either the client or the cluster. 
 The dashboard's main page shows diagnostics about:
 
-- the cluster's and individual worker's memory usage
+- the cluster's and individual worker's memory usage,
 
-- number of tasks being processed by each worker
+- number of tasks being processed by each worker,
 
-- individual tasks being processed across workers
+- individual tasks being processed across workers, and
     
-- progress towards completion of each individual task
+- progress towards completion of individual tasks.
 
-There's a lot to talk about how to interpret the diagnostics in the Dask dashboard. 
-We recommend this documentation to understand the [basics of the dashboard diagnostics](https://docs.dask.org/en/latest/dashboard.html#dashboard-memory), and [this video](https://www.youtube.com/watch?v=N_GqzcuGLCY) as a deeper dive into the dashboard's functions.
+There's much to talk about interpreting the Dask dashboard's diagnostics. 
+We recommend this documentation to understand the [basics of the dashboard diagnostics](https://docs.dask.org/en/latest/dashboard.html#dashboard-memory) and [this video](https://www.youtube.com/watch?v=N_GqzcuGLCY) as a deeper dive into the dashboard's functions.
 
 ![A Dask dashboard.](../images/dask_dashboard.png)
 
 
 ## `dask.dataframes`
 When we analyze tabular data, we usually start our analysis by loading it into memory as a Pandas DataFrame. 
-But, what if this data does not fit in memory? 
+But what if this data does not fit in memory? 
 Or maybe our analyzes crash because we run out of memory. 
 These scenarios are typical entry points into parallel computing. 
 In such cases, Dask’s scalable alternative to a Pandas DataFrame is the `dask.dataframe`. 
-A `dask.dataframe` is made up of many `pd.DataFrames`, each containing a subset of rows of the original dataset.
+A `dask.dataframe` comprises many `pd.DataFrames`, each containing a subset of rows of the original dataset.
 We call each of these pandas pieces a **partition** of the `dask.dataframe`.
 
 
@@ -102,9 +103,9 @@ We call each of these pandas pieces a **partition** of the `dask.dataframe`.
 
 
 ### Reading a csv
-To get familiar with `dask.dataframes` we will use tabular data of soil mositure measurements at six forest stands in northeastern Siberia. 
+To get familiar with `dask.dataframes`, we will use tabular data of soil moisture measurements at six forest stands in northeastern Siberia. 
 The data has been collected since 2014 and is archived at the Arctic Data Center ([Loranty & Alexander, doi:10.18739/A24B2X59C](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA24B2X59C)).
-Just as we did on the previous lesson, we download the data using the `requests` package and the data's url obtained from the Arctic Data Center. 
+Just as we did in the previous lesson, we will download the data using the `requests` package and the data's URL obtained from the Arctic Data Center. 
 
 
 ```{python}
@@ -121,9 +122,9 @@ open("dg_soil_moisture.csv", "wb").write(response.content)
 
 ```
 
-In the Arctic Data Center metadata we can see this file is 115MB. 
-To import this file as a `dask.dataframe` with more than one partition we need to specify the size of each partition with the `blocksize` parameter. 
-In this example we will split the data frame into six partitions, which would mean a blocksize of approximately 20 MB.
+In the Arctic Data Center metadata we can see this file is 115 MB. 
+To import this file as a `dask.dataframe` with more than one partition, we need to specify the size of each partition with the `blocksize` parameter. 
+In this example, we will split the data frame into six partitions, meaning a block size of approximately 20 MB.
 
 ```{python}
 #| eval: false
@@ -136,9 +137,8 @@ df
 
 
 :::{.callout-note collapse=True}
-*About the encoding parameter:*  
-If we try to import the file directly we will an `UnicodeDecodeError`. 
-To find the encoding of the file and add the appropiate encodign to `dask.dataframe.read_csv` we can run the following code.
+*About the encoding parameter:* If we try to import the file directly, we will receive an `UnicodeDecodeError`. 
+We can run the following code to find the file's encoding and add the appropriate encoding to `dask.dataframe.read_csv`.
 ```{python}
 #| eval: false
 import chardet
@@ -151,8 +151,8 @@ result
 :::
 
 Notice that we cannot see any values in the data frame. 
-This is because Dask has not really loaded the data, it will wait until we explicitely ask it to print or compute something to do so. 
-However, we can still do `df.head()`, it's not costly for memory to just access a few rows of the data frame. 
+This is because Dask has not really loaded the data. It will wait until we explicitly ask it to print or compute something to do so. 
+However, we can still do `df.head()`. It's not costly for memory to access a few data frame rows. 
 
 ```{python}
 #| eval: false
@@ -169,14 +169,14 @@ averages = df.groupby('year').mean()
 averages
 ```
 
-Notice that we cannot see any values in the resulting dataframe.
-A major difference between  `pandas.DataFrames` and `dask.dataframes` is that `dask.dataframes` are "lazy".
-This means that an object will queue transformations and calculations without executing them, up until we explicitly ask for the result of that chain of computations using the `compute` method.
-Once we run `compute`, the scheduler can allocate memory and workers to execute the computations in parallel.
-This kind of **lazy evaluation** (or **delayerd computation**) is how most Dask workloads work.
+Notice that we cannot see any values in the resulting data frame.
+A major difference between `pandas.DataFrames` and `dask.dataframes` is that `dask.dataframes` are "lazy".
+This means an object will queue transformations and calculations without executing them until we explicitly ask for the result of that chain of computations using the `compute` method.
+Once we run `compute,` the scheduler can allocate memory and workers to execute the computations in parallel.
+This kind of **lazy evaluation** (or **delayed computation**) is how most Dask workloads work.
 This varies from **eager evaluation** methods and functions, which start computing results right when they are executed.
 
-Before calling `compute` on an object be sure to open the Dask dashboard to see how the parallel computation is happening.
+Before calling `compute` on an object, open the Dask dashboard to see how the parallel computation is happening.
 
 ```{python}
 #| eval: false
@@ -210,7 +210,7 @@ data = np.arange(100_000).reshape(200, 500)
 a = da.from_array(data, chunks=(100, 100))
 ```
 
-Computations for `dask.arrays` also work lazily, we need to call `compute` to trigger computations and bring the result to memory.
+Computations for `dask.arrays` also work lazily. We need to call `compute` to trigger computations and bring the result to memory.
 
 ```{python}
 #| eval: false
@@ -223,14 +223,14 @@ a.mean().compute()
 ```
 
 ## Dask and `xarray`
-Going forward, it might be more common having to read some big array-like dataset (like a high-resolution multiband raster) than creating one from scratch using NumPy. 
-In this case it can be useful to use the `xarray` module together with Dask. 
-It is simple to wrap Dask around `xarray` objetcs, we only need to specify the number of chunks as an argument when we are reading in a dataset (see also [[1]](https://docs.xarray.dev/en/stable/user-guide/dask.html)).
+In the future, it might be more common having to read some big array-like dataset (like a high-resolution multiband raster) than creating one from scratch using NumPy. 
+In this case, it can be useful to use the `xarray` module together with Dask. 
+It is simple to wrap Dask around `xarray` objects. We only need to specify the number of chunks as an argument when we are reading in a dataset (see also [[1]](https://docs.xarray.dev/en/stable/user-guide/dask.html)).
 
 ### Open .tif file
 As an example, let's do an NDVI calculation using remote sensing imagery collected by aerial vehicles over northeastern Siberia (Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. [doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
 
-First we download the data for the near-infrared (NIR) and red bands from the Arctic Data Center:
+First, we download the data for the near-infrared (NIR) and red bands from the Arctic Data Center:
 
 ```{python}
 # download red band
@@ -263,7 +263,7 @@ red = rioxr.open_rasterio(fp_red, chunks = '15MB')
 
 We can see a lot of useful information here:
 
-- There are eight chunks in the array. We were aiming for six, but this often happens with the way Dask distributes the memory (76MB is not divisible by 6).
+- There are eight chunks in the array. We were aiming for six, but this often happens with how Dask distributes the memory (76MB is not divisible by 6).
 - There is geospatial information (transformation, CRS, resolution) and no-data values.
 - There is an unnecessary dimension: a constant value for the band. So our next step is to squeeze the array to flatten it.
 
@@ -272,7 +272,7 @@ We can see a lot of useful information here:
 red = red.squeeze()
 ```
 
-Next we read in the NIR band and do the same pre-processing. 
+Next, we read in the NIR band and do the same pre-processing:
 
 ```{python}
 # open data
@@ -292,22 +292,22 @@ print('chunk after squeeze:', nir.chunks )
 ```
 
 ### Calculating NDVI
-Next we set up the NDVI calculation. 
-This step is easy because we can handle xarrays and Dask arrays as numpy arrays for arithmetic operations. 
+Now we set up the NDVI calculation. 
+This step is easy because we can handle xarrays and Dask arrays as NumPy arrays for arithmetic operations. 
 Also, both bands have values of type float32, so we won't have trouble with the division. 
 
 ```{python}
 ndvi = (nir - red) / (nir + red)
 ```
 
-When we look at the ndvi we can see the result is another `dask.array`, nothing has been computed yet. 
-Remember Dask computations are lazy, so we need to call `compute()` to actually bring the results to memory. 
+When we look at the NDVI we can see the result is another `dask.array`, nothing has been computed yet. 
+Remember, Dask computations are lazy, so we need to call `compute()` to bring the results to memory. 
 
 ```{python}
 ndvi_values = ndvi.compute()
 ```
 
-And finally we can see how these look like. 
+And finally, we can see what these look like. 
 Notice that `xarray` uses the value of the dimensions as labels along the x and y axes. 
 We use `robust=True` to ignore the no-data values when plotting.
 
@@ -320,16 +320,16 @@ ndvi_values.plot(robust=True)
 
 ## Best Practices
 
-Dask is an exciting tool for parallel computing, but it may take a while to fully understand its nuances to make the most of it. 
-There are many best pratices and recommendations, these are some of the basic ones to take into consideration:
+Dask is an exciting tool for parallel computing, but it may take a while to understand its nuances to make the most of it. 
+There are many best practices and recommendations. These are some of the basic ones to take into consideration:
 
-- For data that fits into RAM, pandas and NumPy can often be faster and easier to use than Dask workflows. 
+- For data that fits into RAM, pandas, and NumPy can often be faster and easier to use than Dask workflows. 
 The simplest solution can often be the best.
 
 
--  While Dask may have similar APIs to pandas and NumPy, there are differences, and not all the methods for the `pandas.DataFrames` and `numpy.arrays` translate in the same way (or with the same efficiency) to Dask objects. When in doubt, always read the documentation. 
+- While Dask may have similar APIs to pandas and NumPy, there are differences, and not all the methods for the `pandas.DataFrames` and `numpy.arrays` translate in the same way (or with the same efficiency) to Dask objects. When in doubt, always read the documentation. 
 
-- Choose appropiate chunk and partition sizes and layouts. This is crucial to make the best use of how the scheduler distributes work. You can read here about [best practices for chunking](https://docs.dask.org/en/latest/array-best-practices.html).
+- Choose appropriate chunk and partition sizes and layouts. This is crucial to best use how the scheduler distributes work. You can read here about [best practices for chunking](https://docs.dask.org/en/latest/array-best-practices.html).
 
 - Avoid calling compute repeatedly. It is best to group similar computations together and then compute once.
 
