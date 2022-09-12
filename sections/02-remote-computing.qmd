@@ -155,19 +155,6 @@ yourusername@included-crab:~$
 You won't see anything appear as you type or paste your password -- this is a security feature! Type or paste your password and press enter/return when done to finish connecting to the server.
 :::
 
-::: {.callout-warning} 
-DO WE NEED THIS SECTION?  
-
-3. Change your password
-```{.bash}
-yourusername@included-crab:~$ passwd
-Changing password for yourusername.
-(current) UNIX password: 
-Enter new UNIX password: 
-Retype new UNIX password: 
-```
-:::
-
 ::: {.callout-note}
 To log out of the server, type `exit` -- it should look something like this:
 
