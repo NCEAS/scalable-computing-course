@@ -6,8 +6,8 @@ title: 'Workflows for data staging and publishing'
 
 - NSF archival policies for large datasets
 - Data transfer tools
-- How to manage co-locating data and code
 - Uploading large datasets to the Arctic Data Center
+- Workflow tools
 
 ## NSF policy for large datasets
 
@@ -27,19 +27,17 @@ The Arctic Data Center is committed to archiving data of any volume, and our cur
 
 ## Data transfer tools
 
-Now that we've talked about what types of large datasets you might have that need to get published on the Arctic Data Center, let's discuss how to actually get the data there. If you have even on the order of only 50GB, or more than 500 files, it will likely be more expedient for you to transfer your files via a command line tool than uploading them via our webform. As a scenario: after getting the credentials, you use `scp` to start the transfer. You know this transfer typically takes around 12 hours so you start it at 5pm right when you leave the office expecting it to be done when you get back. When you arrive, you see there was a short network outage in the middle of the night. The whole job failed so you have to start it again...only for another network outage to happen.
-
-There is a better way!
+Now that we've talked about what types of large datasets you might have that need to get published on the Arctic Data Center, let's discuss how to actually get the data there. If you have even on the order of only 50GB, or more than 500 files, it will likely be more expedient for you to transfer your files via a command line tool than uploading them via our webform. So you know that you need to move a lot of data, how are you going to do it? More importantly, how can you do it in an efficient way?
 
 There are three key elements to data transfer efficiency:
 
-    - endpoints
-    - network
-    - transfer tool
+- endpoints
+- network
+- transfer tool
 
 #### Endpoints {-}
 
-The from and to locations of the transfer, an endpoint is a remote computing device that can communicate back and forth with the network to which it is connected. The speed with which an endpoint can communicate with the network varies depending on how it is configured. Performance depends on the CPU, RAM, OS, and disk configuration. One key element to endpoints that affects data transfer speed is how quickly that machine can write data to disk. Slow write speeds will throttle a data transfer on even the fastest internet connection with the most streamlined transfer tool. Examples of endpoints could be:
+The from and to locations of the transfer, an endpoint is a remote computing device that can communicate back and forth with the network to which it is connected. The speed with which an endpoint can communicate with the network varies depending on how it is configured. Performance depends on the CPU, RAM, OS, and disk configuration. One key factor that affects data transfer speed is how quickly that machine can write data to disk. Slow write speeds will throttle a data transfer on even the fastest internet connection with the most streamlined transfer tool. Examples of endpoints could be:
 
 - NCEAS `included-crab` server
 - Your standard laptop
@@ -51,13 +49,15 @@ Network speed determines how quickly information can be sent between endpoints. 
 
 #### Transfer tools {-}
 
+Poll: what data transfer tools do you use regularly?
+
 Finally, the tool or software that you use to transfer data can also significantly affect your transfer speed. There are a lot of tools out there that can move data around, both GUI driven and command line. We'll discuss a few here, and their pros and cons.
 
 ##### `scp` {-}
 
-`scp` or secure copy uses `ssh` for authentication and transfer, and it is included with both unix and linux. It requires no setup (unless you are on a Windows machine and need to install), and if you can `ssh` to a server, you can probably use `scp` to move files without any other setup. `scp` copies all files linearly and simply. if a transfer fails in the middle, it is difficult to know exactly what files didn't make it, so you might have to start the whole thing over and re-transfer all the files. This, obviously, would not be ideal for large data transfers. For a file or two, `scp` is a fine tool to use.
+`scp` or secure copy uses `ssh` for authentication and transfer, and it is included with both unix and linux. It requires no setup (unless you are on a Windows machine and need to install), and if you can `ssh` to a server, you can probably use `scp` to move files without any other setup. `scp` copies all files linearly and simply. If a transfer fails in the middle, it is difficult to know exactly what files didn't make it, so you might have to start the whole thing over and re-transfer all the files. This, obviously, would not be ideal for large data transfers. For a file or two, `scp` is a fine tool to use.
 
-##### rsync {-}
+##### `rsync` {-}
 
 `rsync` is similar to `scp`, but syncs files/directories as opposed to copying. This means that `rsync` checks the destination to see if that file (with the same size and modified date) already exists. If it does, `rsync` will skip the file. This means that if an `rsync` transfer fails, it can be restarted again and will pick up where it left off, essentially. Neat!
 
@@ -69,8 +69,18 @@ Globus is a software that uses multiple network sockets simultaneously on endpoi
 
 The Arctic Data Center works hard to support datasets regardless of size, but we have performance considerations as well, and large datasets sometimes need special handling and require more processing time from our curation team. To help streamline a large dataset submission we have the following reccommendations:
 
-    - use self documenting file formats, for metadata efficiency
-        - netcdf
-        - geotiff, geopackage
-    - regular, parseable filenames and consistent file formatting
-    - communicate early and often with the Arctic Data Center staff, preferably before you start a submission and well before your final report is due
+- use self documenting file formats, for metadata efficiency
+    - netcdf
+    - geotiff, geopackage
+- regular, parseable filenames and consistent file formatting
+- communicate early and often with the Arctic Data Center staff, preferably before you start a submission and well before your final report is due
+
+## Workflow tools
+
+Why use a workflow tool? Answer this here
+
+What is snakemake?
+
+The simplest workflow
+
+A more realistic workflow: https://github.com/NCEAS/scalable-computing-examples/tree/main/workflows
