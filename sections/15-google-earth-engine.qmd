@@ -45,6 +45,9 @@ pip install geemap # package for interactive maping with GEE
 
 -  Find instructions on how to do so [here](https://learning.nceas.ucsb.edu/2022-09-arctic/#create-a-free-google-earth-engine-gee-account)
 
+::: {.callout-note}
+## Combine this step with importing libraries below??
+
 2. Set up GEE Authentication
 
 -  In order to begin using GEE, you'll need to connect your envionment (`scomp`) to the authentication credentials associated with your Google account. This will need to be done each time you connect to GEE, (but only be done once per session). 
@@ -53,10 +56,11 @@ pip install geemap # package for interactive maping with GEE
 
 ```{.bash}
 #| eval: false
-earthengine authenticate
+# earthengine authenticate
 ```
 
 -  This should launch a browser window where you can login with your Google account to the Google Earth Engine Authenticator. Following the prompts will generate a code, which you'll then need to copy and paste back onto the command line. This will be saved as an authentication token so you won't need to go through this process again until the next time you start a new session.
+:::
 
 ## Exercise 1.2: Visualize global precipitation data using Google Earth Engine 
 
@@ -67,7 +71,7 @@ earthengine authenticate
 #| eval: false
 import ee 
 import geemap
-import pandas as pd
+# import pandas as pd
 ```
 
 2. Create an interactive basemap
@@ -82,11 +86,16 @@ myMap
 
 3. Load ERA5 Image Collections from GEE
 
+SAM NOTE DELETE LATER
 * NOTE: ADC has worked with these data -- took 3 weeks to download
 * EE colleciton is all you need to load and analyze imgage collection
 * precursor to Ingmar's stuff
 
-We'll be using the ERA5 daily aggregates reanalysis dataset, produced by the European Centre for Medium-Range Weather Forecasts (ECMWF), found [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY), which models atmospheric weather observations. We'll load the `total_precipitation` field (check out the dataset metadata on [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#bands)).
+We'll be using the ERA5 daily aggregates reanalysis dataset, produced by the European Centre for Medium-Range Weather Forecasts (ECMWF), found [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY), which models atmospheric weather observations. We'll load the `total_precipitation` field (check out the metadata on [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#bands)).
+
+::: {.column-margin}
+Reanalysis combines observations with model data to provide the most complete picture of past weather and climate. To read more about reanalyses, check out the [European Centre for Medium-Range Weather Forecasts' webites](https://www.ecmwf.int/en/about/media-centre/focus/2020/fact-sheet-reanalysis#:~:text=What%20is%20reanalysis%3F,with%20modern%20weather%20forecasting%20models.)
+:::
 
 The `ImageCollection` method extracts a set of individual images that satisfies some criterion that you pass to GEE through the `ee` package. This is stored as an **ImageCollection** object which can be filtered and processed in various ways. We can pass the `ImageCollction` method agruments to tell GEE which data we want to retrieve. Below, we retrieve all daily ERA5 data (so we can see individual rain events).
 
