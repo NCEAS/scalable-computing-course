@@ -203,6 +203,43 @@ def timethis(func):
     return wrapped_method
 ```
 
+## Simple task parallelization
+
+Start with a task that is a little expensive:
+
+```{python}
+#| eval: true
+def task(x):
+    import numpy as np
+    result = np.arange(x*10**9).sum()
+    return result
+```
+
+```{python}
+#| eval: true
+
+@timethis
+def run_tasks_s(task_list):
+    result = [task(x) for x in task_list]
+    return result
+
+results = run_tasks_s([1.0, 1.1, 1.2, 1.3])
+[x for x in results]
+```
+
+```{python}
+#| eval: true
+from concurrent.futures import ThreadPoolExecutor
+
+@timethis
+def run_tasks_p(task_list):
+    with ThreadPoolExecutor(max_workers=5) as cf_executor:
+        return cf_executor.map(task, task_list)
+
+results = run_tasks_p([1.0, 1.1, 1.2, 1.3])
+[x for x in results]
+```
+
 ```{python}
 #| eval: true
 
@@ -222,9 +259,7 @@ def download_file(row):
 @timethis
 def download_list(dl_list):
     return [download_file(row) for row in dl_list.itertuples()]
-    results = map(download_file, dl_list.itertuples())
-    return(results)
-
+    
 results = download_list(id_list[0:5])
 print(results)
 ```
