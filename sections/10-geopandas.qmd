@@ -38,40 +38,25 @@ The high level steps will be
 
 ## Pre-processing raster data
 
-First we need to load in our libraries. We'll use `geopandas` for vector manipulation, `rasterio` for raster maniupulation, and `shapely` for manipulating geospatial data generally.
-
-```{python}
-import geopandas as gpd
-
-import rasterio
-import rasterio.mask
-import rasterio.warp
-import rasterio.plot
-from rasterio import features
-
-from shapely.geometry import box
-
-import requests
-
-import matplotlib.pyplot as plt
-import matplotlib.ticker
-
-import pandas as pd
-import numpy as np
-```
+First we need to load in our libraries. We'll use `geopandas` for vector manipulation, `rasterio` for raster maniupulation.
 
 First, we'll use `requests` to download the ship traffic raster from [Kapsar et al.](https://doi.org/10.18739/A2SQ8QJ9S). We grab a one month slice from August, 2020 of a coastal subset of data with 1km resolution. To get the URL in the code chunk below, you can right click the download button for the file of interest and select "copy link address."
 
 ```{python}
+import requests
+
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A6b847ab0-9a3d-4534-bf28-3a96c5fa8d72'
 
 response = requests.get(url)
 open("Coastal_2020_08.tif", "wb").write(response.content)
 ```
 
-Open the raster file, plot it, and look at the metadata. We use the `with` here as a context manager. This ensures that the connection to the raster file is closed and cleaned up when we are done with it.
+Using `rasterio`, open the raster file, plot it, and look at the metadata. We use the `with` here as a context manager. This ensures that the connection to the raster file is closed and cleaned up when we are done with it.
 
 ```{python}
+import rasterio
+import matplotlib.pyplot as plt
+
 with rasterio.open("Coastal_2020_08.tif") as ship_con:
     # read in raster (1st band)
     ships = ship_con.read(1)
@@ -81,8 +66,44 @@ plt.imshow(ships)
 print(ships_meta)
 ```
 
-Now download a vector shapefile of commercial fishing districts in Alaska.
+You'll notice that we are saving two objects here, `ships` and `ships_meta`. Looking at the types of these two objects is useful to understand what `rasterio` is doing.
 
+```{python}
+type(ships)
+type(ships_meta)
+```
+
+The `ships` object is a `numpy` array, while the `ships_meta` is a special `rasterio` class called `Profile`. To understand why the raster data is represented as an array, and what that profile object is, let's look into what raster data are, exactly.
+
+![](https://raw.githubusercontent.com/NEONScience/NEON-Data-Skills/dev-aten/graphics/raster-general/raster_concept.png)
+
+Source: [Leah A. Wasser, Megan A. Jones, Zack Brym, Kristina Riemer, Jason Williams, Jeff Hollister, Mike Smorul. Raster 00: Intro to Raster Data in R. National Evologial Observatory Network (NEON).](https://www.neonscience.org/resources/learning-hub/tutorials/dc-raster-data-r)
+
+The upper left panel of the figure above shows some satellite imagery data. These data are in raster format, which when you zoom in, really consist of regularly gridded pixels, each of which contails a value. When we plot these data, we can assign a color map to the pixel values, which generates the image we see. The data themselves, though, are just a two dimensional grid of numbers. Another way we might describe this is...an array! So, this is why raster data is represented in python using a `numpy` array.
+
+This is all great, and the array of values is a lot of information, but there are some key items that are missing. This array isn't imaginary, it represents a physical space on this earth, so where is all of that contextual information? The answer is in the `rasterio` profile object. This object contains all of the metadata needed to interpret the raster array. Here is what our `ships_meta` contains:
+
+```
+'driver': 'GTiff',
+'dtype': 'float32',
+'nodata': -3.3999999521443642e+38,
+'width': 3087,
+'height': 2308,
+'count': 1,
+'crs': CRS.from_epsg(3338),
+'transform': Affine(999.7994153462766, 0.0, -2550153.29233849, 0.0, -999.9687691991521, 2711703.104608573),
+'tiled': False,
+'compress': 'lzw',
+'interleave': 'band'}
+```
+
+This object gives us critical information, like the CRS of the data, the no data value, and the transform. The transform is what allows us to move from image pixel (row, col) coordinates to and from geographic/projected (x, y) coordinates. The transform and the CRS are crititally important, and related. If the CRS are instructions for how the coordinates can be represented in space and on a flat surface (in the case of projected coordinate systems), then the transform describes how to locate the raster array positions in the correct coordinates given by the CRS.
+
+Note that since the array and the profile are in separate objects it is easy to lose track of one of them, accidentally overwrite it, etc. Try to adopt a naming convention that works for you because they usually need to work together in geospatial operations.
+
+## Pre-processing vector data
+
+Now download a vector shapefile of commercial fishing districts in Alaska.
 
 ```{python}
 url = 'https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3A7c942c45-1539-4d47-b429-205499f0f3e4'
@@ -92,26 +113,73 @@ open("Alaska_Commercial_Salmon_Boundaries.gpkg", "wb").write(response.content)
 
 ```
 
-Read in the data
+Read in the data using `geopandas`.
 
 ```{python}
-comm = gpd.read_file("Alaska_Commercial_Salmon_Boundaries.gpkg")
+import geopandas as gpd
 
+comm = gpd.read_file("Alaska_Commercial_Salmon_Boundaries.gpkg")
+```
+
+Note the "pandas" in the library name "geopandas." Our `comm` object is really just a special type of pandas data frame called a geodataframe. This means that in addition to any geospatial stuff we need to do, we can also just do regular `pandas` things on this data frame.
+
+For example, we can get a list of column names (there are a lot!)
+
+```{python}
+comm.columns.values
+```
+
+We can also look at the head of the data frame:
+
+```{python}
+comm.head
+```
+
+Note the existence of the `geometry` column. This is where the actual geospatial points that comprise the vector data are stored, and this brings up the important difference between raster and vector data - while raster data is regularly gridded at a specific resolution, vector data are just points in space.
+
+![](https://raw.githubusercontent.com/NEONScience/NEON-Data-Skills/dev-aten/graphics/vector-general/pnt_line_poly.png)
+
+Source: [Leah A. Wasser, Megan A. Jones, Zack Brym, Kristina Riemer, Jason Williams, Jeff Hollister, Mike Smorul. Raster 00: Intro to Raster Data in R. National Evologial Observatory Network (NEON).](https://www.neonscience.org/resources/learning-hub/tutorials/dc-raster-data-r)
+
+The diagram above shows the three different types of geometries that geospatial vector data can take, points, lines or polygons. Whatever the geometry type, the geometry information (the x,y points) is stored in the column named `geometry` in the geopandas data frame. In this example, we have a dataset containing polygons of fishing districts. Each row in the dataset corresonds to a district, with unique attributes (the other columns in the dataset), and it's own set of points defining the boundaries of the district, contained in the `geometry` column.
+
+```{python}
+comm['geometry'][:5]
+```
+
+So, now we know where our x,y points are, where is all of the other information like the `crs`? With vector data, all of this information is contained within the geodataframe. We can access the `crs` attribute on the data frame and print it like so:
+
+```{python}
 comm.crs
 ```
 
-The raster data is in 3338, so we need to reproject this. We use the `to_crs` method on the `comm` object to transform it from 4326 (WGS 84) to 3338 (Alaska Albers).
+
+Now that we know a little about what we are working with, let's get this data ready to work with. First, we can make a plot of it just to see what we have.
 
 ```{python}
-comm.crs
+comm.plot()
+```
+
+
+This plot doesn't look so good. Turns out, these data are in WGS 84 (EPSG 4326), as opposed to Alaska Albers (EPSG 3338), which is what our raster data is in. To make pretty plots, and allow our raster data and vector data to be analyzed together, we'll need to reproject the vector data into 3338. To to this, we'll use the `to_crs` method on our `comm` object, and specify as an argument the projection we want to transform to.
+
+```{python}
 comm_3338 = comm.to_crs("EPSG:3338")
 
 comm_3338.plot()
 ```
 
-We can create a bounding box for the area of interest, and use that to clip the original raster data to just the extent we need. We use the `box` function from `shapely` to create the bounding box, then create a `geoDataFrame` from the points, and convert the WGS 84 coordinates to the Alaska Albers projection.
+Much better!
+
+## Crop data to area of interest
+
+For this example, we are only interested in south central Alaska, encompassing Prince William Sound, Cook Inlet, and Kodiak. Our raster data is significantly larger than that, and the vector data is statewide. So, as a first step we might want to crop our data to the area of interest.
+
+First, we'll need to create a bounding box. We use the `box` function from `shapely` to create the bounding box, then create a `geoDataFrame` from the points, and convert the WGS 84 coordinates to the Alaska Albers projection.
 
 ```{python}
+from shapely.geometry import box
+
 coord_box = box(-159.5, 55, -144.5, 62)
 
 coord_box_df = gpd.GeoDataFrame(
@@ -119,54 +187,54 @@ coord_box_df = gpd.GeoDataFrame(
     geometry = [coord_box]).to_crs("EPSG:3338")
 ```
 
-Now, we can read in raster again cropped to bounding box. We use the `mask` function from `rasterio.mask`. Note that we apply this to the connection to the raster file (`with rasterio.open(...)`), update the metadata associated with the raster, and then write it back out again.
+Now, we can read in raster again cropped to bounding box. We use the `mask` function from `rasterio.mask`. Note that we apply this to the connection to the raster file (`with rasterio.open(...)`), then update the metadata associated with the raster.
 
 
 ```{python}
+import rasterio.mask
+
 with rasterio.open("Coastal_2020_08.tif") as ship_con:
-    out_image, out_transform = rasterio.mask.mask(ship_con, coord_box_df["geometry"], crop=True)
-    out_meta = ship_con.meta
+    shipc_arr, shipc_transform = rasterio.mask.mask(ship_con, coord_box_df["geometry"], crop=True)
+    shipc_meta = ship_con.meta
+    # select just the 2-D array (by default a 3-D array with 1 band is returned)
+    shipc_arr = shipc_arr[0,:,:]
+    # turn the no-data values into NaNs.
+    shipc_arr[shipc_arr == ship_con.nodata] = np.nan
 ```
 
 ```{python}
-out_meta.update({"driver": "GTiff",
-                 "height": out_image.shape[1],
-                 "width": out_image.shape[2],
-                 "transform": out_transform,
+shipc_meta.update({"driver": "GTiff",
+                 "height": shipc_arr.shape[0],
+                 "width": shipc_arr.shape[1],
+                 "transform": shipc_transform,
                  "compress": "lzw"})
-
-with rasterio.open("Coastal_2020_08_masked.tif", "w", **out_meta) as dest:
-    dest.write(out_image)
 ```
+
+Next, we'll use a spatial inner join for the vector data to select polygons that are within the bounding box.
+
+```{python}
+comm_clip = gpd.sjoin(comm_3338, coord_box_df, how='inner', predicate='within')
+```
+
 
 ### Check extents
 
-Let's read in the clipped raster data, and make a quick plot to ensure they line up the way they should.
-
-First we read in the cropped data again, since we'll need it later. We also save the `shape` and `transform` attributes of the raster into their own attributes.
-
-```{python}
-with rasterio.open('Coastal_2020_08_masked.tif') as ship_con:
-    shape = ship_con.shape
-    transform = ship_con.transform
-    # read in the cropped raster (1st band only)
-    ship_arr = ship_con.read(1)
-    # turn no data values into actual NaNs
-    ship_arr[ship_arr == ship_con.nodata] = np.nan
-```
+Now let's look at the two cropped datasets overlayed on each other to ensure that the extents look right.
 
 
 ```{python}
+import rasterio.plot
+
 # set up plot
 fig, ax = plt.subplots(figsize=(15, 15))
 # plot the raster
-rasterio.plot.show(ship_arr,
+rasterio.plot.show(shipc_arr,
                    ax=ax,
                    vmin = 0,
                    vmax = 50000,
-                   transform = transform)
+                   transform = shipc_transform)
 # plot the vector
-comm_3338.plot(ax=ax, facecolor='none', edgecolor='red')
+comm_clip.plot(ax=ax, facecolor='none', edgecolor='white')
 ```
 
 
@@ -184,9 +252,11 @@ Here is a simplified diagram of the process:
 Let's look at how this works over just one fishing area first. We use the `rasterize` method from the `features` module in `rasterio`. This takes as arguments the data to rasterize (in this case the 40th row of our dataset), the shape and transform the output raster will take (these were extracted from our raster data when we read it in). We alo set the `all_touched` argument to true, which means any pixel that touches a boundary of our vector will be burned into the mask. 
 
 ```{python}
-r40 = features.rasterize(comm_3338['geometry'][40].geoms,
-                                    out_shape=shape,
-                                    transform=transform,
+from rasterio import features
+
+r40 = features.rasterize(comm_clip['geometry'][40].geoms,
+                                    out_shape=shipc_arr.shape,
+                                    transform=shipc_meta['transform'],
                                     all_touched=True)
 ```
 
@@ -200,9 +270,9 @@ rasterio.plot.show(r40,
                    ax=ax,
                    vmin = 0,
                    vmax = 1,
-                   transform = transform)
+                   transform = shipc_meta['transform'])
 # plot the vector
-comm_3338.plot(ax=ax, facecolor='none', edgecolor='red')
+comm_clip.plot(ax=ax, facecolor='none', edgecolor='white')
 ```
 
 A quick call to `np.unique` shows our unique values are 0 or 1, which is what we expect.
@@ -221,30 +291,31 @@ print(r40_index)
 In the last step, we'll using these indices to extract the values of the data from the fishing raster, and sum them to get a total distance travelled.
 
 ```{python}
-np.nansum(ship_arr[r40_index])
+np.nansum(shipc_arr[r40_index])
 ```
 
 Now that we know the individual steps, let's run this over all of the districts. First we'll create an `id` column in the vector data frame. This will help us track unique fishing districts later.
 
 ```{python}
-comm_3338['id'] = range(0,len(comm_3338))
+comm_clip['id'] = range(0,len(comm_clip))
 ```
 
  For each district (with `geometry` and `id`), we run the `features.rasterize` function. If any values equal 1 (some of the districts are outside the bounds of the raster), we calculate the sum of the values of the shipping raster `r_array` based on the indicies in the raster where the district is located.
 
 ```{python}
 #| results: false
+import numpy as np
 
 distance_dict = {}
-for geom, idx in zip(comm_3338['geometry'], comm_3338['id']):
+for geom, idx in zip(comm_clip['geometry'], comm_clip['id']):
     rasterized = features.rasterize(geom.geoms,
-                                    out_shape=shape,
-                                    transform=transform,
+                                    out_shape=shipc_arr.shape,
+                                    transform=shipc_meta['transform'],
                                     all_touched=True)
     # only save polygons that have a non-zero value
     if any(np.unique(rasterized)) == 1:
         r_index = np.where(rasterized == 1)
-        distance_dict[idx] = np.nansum(ship_arr[r_index])
+        distance_dict[idx] = np.nansum(shipc_arr[r_index])
 
 ```
 
@@ -252,6 +323,8 @@ Now we just create a data frame from that dictionary, and join it to the vector 
 
 
 ```{python}
+import pandas as pd
+
 # create a data frame from the result
 distance_df = pd.DataFrame.from_dict(distance_dict,
     orient='index',
@@ -266,13 +339,14 @@ Now we join the result to the original geodataframe.
 
 ```{python}
 # join the sums to the original data frame
-res_full = comm_3338.merge(distance_df, on = "id", how = 'inner')
+res_full = comm_clip.merge(distance_df, on = "id", how = 'inner')
 ```
 
 
 Finally, we can plot our result!
 
 ```{python}
+import matplotlib.ticker
 fig, ax = plt.subplots(figsize=(7, 7))
 
 ax = res_full.plot(column = "distance", legend = True, ax = ax)
@@ -312,3 +386,12 @@ ax.set_axis_off()
 ax.set_title("Distance Traveled by Ships in Kilometers")
 plt.show()
 ```
+
+## Summary
+
+We covered a lot of ground here, so let's recap some of the high level points:
+
+- Raster data consists of regularly gridded values, and can be represented in python as an array
+- Vector data consists of any number of points, that might be connected, and is represented in python as a geodataframe
+- We can do geospatial operations like changing the projection or cropping the data to a particular extent on both raster and vector data
+- You can use vector data to help analyze raster data (and vice versa!) by rasterizing the vector data and using numpy operations on the resulting array.
