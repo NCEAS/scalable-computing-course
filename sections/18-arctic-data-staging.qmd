@@ -65,6 +65,14 @@ Finally, the tool or software that you use to transfer data can also significant
 
 Globus is a software that uses multiple network sockets simultaneously on endpoints, such that data transfers can run in parallel. As you can imagine, that parallelization can dramatically speed up data transfers. Globus, like `rsync` can also fail gracefully, and even restart itself. Globus does require that each endpoint be configured as a Globus node, which is more setup than is required of either `scp` or `rsync`. Many instituions computing resources may have endpoints already configured as Globus endpoints, so it is always worth checking in with any existing resources that might already be set up before setting up your own. Although Globus is a free software, there are [paid options](https://www.globus.org/subscriptions) which provide support for configuring your local workstation as a Globus node. Globus is a fantastic tool, but remember the other two factors controlling data transfer, it can only help so much in overcoming slow network or write speeds. 
 
+#### AWS `sync`
+
+Amazon Web Services (AWS) has a Command Line Interface (CLI) that includes a `sync` utility. This works much like `rsync` does in that it only copies new or updated files to the destination. The difference, of course, is that AWS `sync` is specifically built to work with interacting with the AWS cloud, and is compatible with S3 buckets.
+
+#### `nc`
+
+`nc` (or netcat) is a low level file transfer utility that is extremely efficient when moving files around on nodes in a cluster. It is not the easiest of these tools to use, however, in certain situations it might be the best option because it has the least overhead, and therefore can run extremely efficiently.
+
 ## Documenting large datasets
 
 The Arctic Data Center works hard to support datasets regardless of size, but we have performance considerations as well, and large datasets sometimes need special handling and require more processing time from our curation team. To help streamline a large dataset submission we have the following reccommendations:
@@ -77,10 +85,39 @@ The Arctic Data Center works hard to support datasets regardless of size, but we
 
 ## Workflow tools
 
-Why use a workflow tool? Answer this here
+Preparing data for running analysis, models, and visualization processes can be complex, with many dependencies among datasets, as well as complex needs for data cleaning, munging, and integration that need to occur before "analysis" can begin.
 
-What is snakemake?
+Many research projects would benefit from a structured approach to organizing these processes into workflows. A research workflow is an ordered sequence of steps in which the outputs of one process are connected to the inputs of the next in a formal way. Steps are then chained together to typically create a directed, acyclic graph that represents the entire data processing pipeline.
 
-The simplest workflow
+This hypothetical workflow shows three processing stages for downloading, integrating, and mapping the data, along with the outputs of each step. This is a simplified rendition of what is normally a much more complex process.
+
+![](../images/workflow.png)
+
+Whether simple or complex, it is helpful to conceptualize your entire workflow as a directed graph, which helps to identify the explicit and implicit dependencies, and to plan work collaboratively.
+
+### Workflow dependencies and encapsulation
+
+While there are many thousands of details in any given analysis, the reason to create a workflow is to structure all of those details so that they are understandable and traceable. Being explicit about dependencies and building a hierarchical workflow that encapsulates the steps of the work as independent modules. So the idea is to focus the workflow on the major steps in the pipeline, and to articulate each of their dependencies.
+
+Workflows can be implemented in many ways, with various benefits:
+
+- as a conceptual diagram
+- as a series of functions that perform each step through a controlling script
+- as a series functions managed by a workflow tool like `parsl`, `snakemake`, or `ray`
+- many others…
+
+### DAGs
+
+While managing workflows solely as linked functions works, the presence of side-effects in a workflow can make it more difficult to efficiently run only the parts of the workflow where items have changed. Many workflow systems have been created to provide a structured way to specify, analyze, and track dependencies, and to execute only the parts of the workflow that are needed. 
+
+A Directed Acyclic Graph (DAG) is a diagram that shows the dependencies of a workflow, whether they are data dependencies or process dependencies. Below is an example of a simplified DAG of the first step of the group project:
+
+![](../images/group-project-dag.png)
+
+This graph only shows data dependencies, but process dependencies can also exist. 
+
+In your groups, draw out a simplified version of the rest of the workflow. What dependencies, both data and process based, exist?
+
+
 
 A more realistic workflow: https://github.com/NCEAS/scalable-computing-examples/tree/main/workflows
