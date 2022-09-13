@@ -210,30 +210,24 @@ import requests
 import urllib
 
 def download_file(row):
-    """
-    Downloads the data based on its identifier
-    """
     service = "https://arcticdata.io/metacat/d1/mn/v2/object/"
     pid = getattr(row, 'identifier')
     filename = getattr(row, 'filename')
     url = service + pid
     print("Downloading: " + filename)
-    #msg = urllib.request.urlretrieve(url, filename)
-    # r = requests.get(url, stream=False)
-    # with open(filename, 'wb') as fd:
-    #     for chunk in r.iter_content(chunk_size=2048):
-    #         fd.write(chunk)
-    time.sleep(3)
+    # msg = urllib.request.urlretrieve(url, filename)
+    r = requests.get(url, stream=False)
+    with open(filename, 'wb') as fd:
+        for chunk in r.iter_content(chunk_size=2048):
+            fd.write(chunk)
+    #time.sleep(3)
     return filename
 
 @timethis
 def download_list(dl_list):
-    """
-    Download data files using a serial loop
-    """
     return [download_file(row) for row in dl_list.itertuples()]
 
-results = download_list(id_list[0:10])
+results = download_list(id_list[0:5])
 print(results)
 ```
 
@@ -251,13 +245,10 @@ from concurrent.futures import ThreadPoolExecutor
 
 @timethis
 def download_list(dl_list):
-    """
-    Download data files using a thread pool
-    """
     with ThreadPoolExecutor(max_workers=15) as cf_executor:
         return cf_executor.map(download_file, dl_list.itertuples(), timeout=60)
 
-results = download_list(id_list[0:10])
+results = download_list(id_list[0:5])
 for result in results:
 	print(result)
 ```
@@ -282,7 +273,7 @@ activate_env = 'workon scomp'
 htex_local = Config(
     executors=[
         HighThroughputExecutor(
-            max_workers=32,
+            max_workers=15,
             provider=LocalProvider(
                 worker_init=activate_env
             )
@@ -298,17 +289,19 @@ def download_parsl(row):
     """
     Downloads the data based on its identifier
     """
+    #import urllib
+    import requests
     service = "https://arcticdata.io/metacat/d1/mn/v2/object/"
     pid = getattr(row, 'identifier')
     filename = getattr(row, 'filename')
     url = service + pid
     print("Downloading: " + filename)
-    #msg = urllib.request.urlretrieve(url, filename)
-    # r = requests.get(url, stream=False)
-    # with open(filename, 'wb') as fd:
-    #     for chunk in r.iter_content(chunk_size=2048):
-    #         fd.write(chunk)
-    time.sleep(3)
+    # msg = urllib.request.urlretrieve(url, filename)
+    r = requests.get(url, stream=False)
+    with open(filename, 'wb') as fd:
+        for chunk in r.iter_content(chunk_size=2048):
+            fd.write(chunk)
+    #time.sleep(3)
     return filename
 
 @timethis
@@ -324,7 +317,7 @@ def download_list(dl_list):
 
 @timethis
 def wait_for_futures():
-    results = download_list(id_list[0:10])
+    results = download_list(id_list[0:5])
     done = [app_future.result() for app_future in results]
     print(done)
 
