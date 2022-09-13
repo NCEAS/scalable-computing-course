@@ -247,8 +247,8 @@ import urllib
 
 def download_file(row):
     service = "https://arcticdata.io/metacat/d1/mn/v2/object/"
-    pid = getattr(row, 'identifier')
-    filename = getattr(row, 'filename')
+    pid = row[1]['identifier']
+    filename = row[1]['filename']
     url = service + pid
     print("Downloading: " + filename)
     msg = urllib.request.urlretrieve(url, filename)
@@ -256,7 +256,7 @@ def download_file(row):
 
 @timethis
 def download_list(dl_list):
-    return [download_file(row) for row in dl_list.itertuples()]
+    return [download_file(row) for row in dl_list.iterrows()]
     
 results = download_list(id_list[0:5])
 print(results)
@@ -277,7 +277,21 @@ from concurrent.futures import ThreadPoolExecutor
 @timethis
 def download_list(dl_list):
     with ThreadPoolExecutor(max_workers=15) as cf_executor:
-        return cf_executor.map(download_file, dl_list.itertuples(), timeout=60)
+        return cf_executor.map(download_file, dl_list.iterrows(), timeout=60)
+
+results = download_list(id_list[0:5])
+for result in results:
+	print(result)
+```
+
+```{python}
+#| eval: true
+from concurrent.futures import ProcessPoolExecutor
+
+@timethis
+def download_list(dl_list):
+    with ProcessPoolExecutor(max_workers=15) as cf_executor:
+        return cf_executor.map(download_file, dl_list.iterrows(), timeout=60)
 
 results = download_list(id_list[0:5])
 for result in results:
@@ -318,8 +332,8 @@ parsl.load(htex_local)
 def download_parsl(row):
     import urllib
     service = "https://arcticdata.io/metacat/d1/mn/v2/object/"
-    pid = getattr(row, 'identifier')
-    filename = getattr(row, 'filename')
+    pid = row[1]['identifier']
+    filename = row[1]['filename']
     url = service + pid
     print("Downloading: " + filename)
     msg = urllib.request.urlretrieve(url, filename)
@@ -328,7 +342,7 @@ def download_parsl(row):
 @timethis
 def download_list(dl_list):
     results = []
-    for row in dl_list.itertuples():
+    for row in dl_list.iterrows():
         result = download_parsl(row)
         results.append(result)
     return(results)
