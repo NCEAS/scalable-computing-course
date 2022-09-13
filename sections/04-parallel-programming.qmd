@@ -127,11 +127,21 @@ Cluster parallel
 
 ## Setup -- downloading data for staging
 
-```{python}
-    # list of data files
-    # curl https://arcticdata.io/metacat/d1/mn/v2/query/solr/?q=id:*A2NK3665N+AND+formatType:METADATA\&fl=documents\&wt=json | jq .response.docs[].documents[]
+In this exercise, we're going to parallelize a simple task that is often very time consuming -- downloading data. And we'll compare performance of simple downloads using first a serial loop, and then using two parallel execution libraries: `concurrent.futures` and `parsl`. More on those later. But note that parallel execution won't always speed up this task, as this is likely an I/O bound task if you're downloading a lot of data. But we still should be able to speed things up a lot until we hit the limits of our disk arrays.
 
-    # curl -s https://arcticdata.io/metacat/d1/mn/v2/query/solr/?q=id:*A2NK3665N+AND+formatType:METADATA\&fl=identifier,title,documents\&wt=json | jq .response.docs[].documents[] | sed -e 's/urn:uuid:/\*/' -e 's/doi:/*/' | xargs -I {} -n 1 curl -s https://arcticdata.io/metacat/d1/mn/v2/query/solr/?fl=identifier,fileName\&wt=json\&q=id:{} |jq -r ".response.docs[] | [.fileName, .identifier  | @csv"
+The data we are downloading is a pan-Arctic time series of TIF images containing rasterized Arctic surface water indices from:
+
+> Elizabeth Webb. 2022. Pan-Arctic surface water (yearly and trend over time) 2000-2022. Arctic Data Center [doi:10.18739/A2NK3665N](https://doi.org/doi:10.18739/A2NK3665N). 
+
+![Webb water data](../images/webb-surface-water.png)
+
+First, let's download the data serially to set a benchmark. The data files are listed in a table with their filename and identifier, and can be downloaded directly from the Arctic Data Center using the identifier:
+
+```{python}
+#| echo: false
+
+# list of data files
+# curl -s https://arcticdata.io/metacat/d1/mn/v2/query/solr/?q=id:*A2NK3665N+AND+formatType:METADATA\&fl=identifier,title,documents\&wt=json | jq .response.docs[].documents[] | sed -e 's/urn:uuid:/\*/' -e 's/doi:/*/' | xargs -I {} -n 1 curl -s https://arcticdata.io/metacat/d1/mn/v2/query/solr/?fl=identifier,fileName\&wt=json\&q=id:{} |jq -r ".response.docs[] | [.fileName, .identifier  | @csv"
 
 import pandas as pd
 import io   
@@ -167,13 +177,16 @@ TESTDATA="""filename,identifier
 """
 
 id_list = pd.read_csv(io.StringIO(TESTDATA), sep=",")
+id_list
 ```
 
-## Task parallelism with `concurrent.futures`
+## Task parallelism: serial downloads
 
 When you have a list of repetitive tasks, you may be able to speed it up by adding more computing power.  If each task is completely independent of the others, then it is a prime candidate for executing those tasks in parallel, each on its own core.  For example, let's build a simple loop that downloads the data files that we need for an analysis. First, we start with the serial implementation. 
 
 ```{python}
+#| echo: false
+
 import time
 from functools import wraps
 
@@ -191,7 +204,7 @@ def timethis(func):
 ```
 
 ```{python}
-#| eval: false
+#| eval: true
 
 import requests
 import urllib
@@ -205,48 +218,48 @@ def download_file(row):
     filename = getattr(row, 'filename')
     url = service + pid
     print("Downloading: " + filename)
-    msg = urllib.request.urlretrieve(url, filename)
-    # r = requests.get(url, stream=True)
+    #msg = urllib.request.urlretrieve(url, filename)
+    # r = requests.get(url, stream=False)
     # with open(filename, 'wb') as fd:
     #     for chunk in r.iter_content(chunk_size=2048):
     #         fd.write(chunk)
+    time.sleep(3)
     return filename
 
 @timethis
 def download_list(dl_list):
+    """
+    Download data files using a serial loop
+    """
     return [download_file(row) for row in dl_list.itertuples()]
 
-results = download_list(id_list[0:3])
+results = download_list(id_list[0:10])
+print(results)
 ```
 
-The issue with this loop is that we execute each trial sequentially, which means that only one of our 8 processors on this machine are in use.  In order to exploit parallelism, we need to be able to dispatch our tasks as functions, with one task
-going to each processor.  To do that, we need to convert our task to a function, and then use the `map()` function to apply that function to all of the members of a set.  Here's the same code rewritten to use `map()`, which applies a function to each of the members of a list (in this case the files we want to download):
+In this code, I have one function (`download_file`) that downloads a single data file and saves it to disk. It is called iteratively from the function `download_list`. The serial execution takes about 15.2 seconds, but can vary by a few seconds.
+
+The issue with this loop is that we execute each trial sequentially, which means that only one of our processors on this machine is in use.  In order to exploit parallelism, we need to be able to dispatch our tasks and allow each to run at the same time, with one task going to each core.  To do that, we can use one of the many parallelization libraries in python to help us out.
+
+## Task parallelism with `concurrent.futures`
+
+In this case, we'll use the same `download_file` function from previously, but will switch up the `download_list` to use `concurrent.futures.
 
 ```{python}
-#| eval: false
-# Use `map` for serial execution of tasks
+#| eval: true
+from concurrent.futures import ThreadPoolExecutor
 
-# Tasks are to download data from a dataset
-```
+@timethis
+def download_list(dl_list):
+    """
+    Download data files using a thread pool
+    """
+    with ThreadPoolExecutor(max_workers=15) as cf_executor:
+        return cf_executor.map(download_file, dl_list.itertuples(), timeout=60)
 
-## Approaches to parallelization
-When parallelizing jobs, one can:
-
-- Use the multiple cores on a local computer through `mclapply`
-- Use multiple processors on local (and remote) machines using `makeCluster` and `clusterApply`
-
-    - In this approach, one has to manually copy data and code to each cluster member using `clusterExport`
-    - This is extra work, but sometimes gaining access to a large cluster is worth it
-
-## concurrent.futures
-
-```{python}
-#| eval: false
-# Loop versus map for parallel execution of tasks
-
-# Using concurrent.futures and ThreadPool
-
-# Tasks are to download data from a dataset
+results = download_list(id_list[0:10])
+for result in results:
+	print(result)
 ```
 
 ## parsl
@@ -254,25 +267,74 @@ When parallelizing jobs, one can:
 - Overview of parsl and it's use of python decorators.
 
 ```{python}
-#| eval: false
-# Loop versus map for parallel execution of tasks
+#| eval: true
 
-# Using parsl decorators and ThreadPool
+# Required packages
+import parsl
+from parsl import python_app
+from parsl.config import Config
+from parsl.channels import LocalChannel
+from parsl.executors import HighThroughputExecutor
+from parsl.providers import LocalProvider
+
+# Configure the parsl executor
+activate_env = 'workon scomp'
+htex_local = Config(
+    executors=[
+        HighThroughputExecutor(
+            max_workers=32,
+            provider=LocalProvider(
+                worker_init=activate_env
+            )
+        )
+    ],
+)
+parsl.clear()
+parsl.load(htex_local)
+
+# Define a parsl_app for our download function using a decorator
+@python_app
+def download_parsl(row):
+    """
+    Downloads the data based on its identifier
+    """
+    service = "https://arcticdata.io/metacat/d1/mn/v2/object/"
+    pid = getattr(row, 'identifier')
+    filename = getattr(row, 'filename')
+    url = service + pid
+    print("Downloading: " + filename)
+    #msg = urllib.request.urlretrieve(url, filename)
+    # r = requests.get(url, stream=False)
+    # with open(filename, 'wb') as fd:
+    #     for chunk in r.iter_content(chunk_size=2048):
+    #         fd.write(chunk)
+    time.sleep(3)
+    return filename
+
+@timethis
+def download_list(dl_list):
+    """
+    Download data files using parsl
+    """
+    results = []
+    for row in dl_list.itertuples():
+        result = download_parsl(row)
+        results.append(result)
+    return(results)
+
+@timethis
+def wait_for_futures():
+    results = download_list(id_list[0:10])
+    done = [app_future.result() for app_future in results]
+    print(done)
+
+wait_for_futures()
+htex_local.executors[0].shutdown()
+parsl.clear()
 
 # Tasks are to download data from a dataset
 ```
 
-- Configurable Executors in parsl
-  - HighThroughputExecutor for cluster jobs
-
-```{python}
-#| eval: false
-# Loop versus map for parallel execution of tasks
-
-# Using parsl decorators and ThreadPool
-
-# Tasks are to download data from a dataset
-```
 
 ## When to parallelize
 
