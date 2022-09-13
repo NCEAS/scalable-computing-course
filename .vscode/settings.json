@@ -1,5 +1,7 @@
 {
     "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,
-    "editor.hover.enabled": true
+    "editor.hover.enabled": true,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.defaultInterpreterPath": "~/.virtualenvs/scomp/bin/python"
 }
