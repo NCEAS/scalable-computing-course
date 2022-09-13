@@ -36,12 +36,12 @@ We'll be using a few different libraries in the next exercises/demos that should
 ```{.bash}
 #| eval: false
 pip install earthengine-api 
-pip install ee # Earth Engine API package
+pip install ee # Google Earth Engine interface
 pip install geemap # package for interactive maping with GEE 
 ```
 :::
 
-1. Create a Google Earth Engine account (if you haven't already done so)
+1. Create a Google Earth Engine account (if you haven't already done so) -- it's best to use a personal gmail address.
 
 -  Find instructions on how to do so [here](https://learning.nceas.ucsb.edu/2022-09-arctic/#create-a-free-google-earth-engine-gee-account)
 
@@ -70,7 +70,7 @@ pip install geemap # package for interactive maping with GEE
 ```{python}
 #| eval: false
 import ee 
-import geemap
+import geemap 
 # import pandas as pd
 ```
 
