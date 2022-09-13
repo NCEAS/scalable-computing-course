@@ -131,34 +131,42 @@ Cluster parallel
     # list of data files
     # curl https://arcticdata.io/metacat/d1/mn/v2/query/solr/?q=id:*A2NK3665N+AND+formatType:METADATA\&fl=documents\&wt=json | jq .response.docs[].documents[]
 
-    id_list = (
-      "urn:uuid:5ee72c9c-789d-4a1c-95d8-cb2b24a20662",
-      "urn:uuid:9cd1cdc3-0792-4e61-afff-c11f86d3a9be",
-      "urn:uuid:14e1e509-77c0-4646-9cc3-d05f8d84977c",
-      "urn:uuid:1ba473ff-8f03-470b-90d1-7be667995ea1",
-      "urn:uuid:85150557-05fd-4f52-8bbd-ec5a2c27e23d",
-      "urn:uuid:ea99e31b-572a-4175-92d2-0a4a9cdd8366",
-      "urn:uuid:c45e3d93-e908-4f44-85c6-82c4c002a259",
-      "urn:uuid:a0aa394e-b0df-4daf-9011-09bba3c3d0b5",
-      "urn:uuid:5634766f-af81-46f8-acc5-e15f9cd2e3fb",
-      "urn:uuid:94a3fae2-f2f2-4e28-b51b-4a66b7b42331",
-      "urn:uuid:c7aac289-e2be-4be7-85df-6d2fdb5293d5",
-      "urn:uuid:07b9ca95-1463-414a-a3e0-7f466772d891",
-      "urn:uuid:695b949c-339d-4f51-a593-4d332aa86748",
-      "urn:uuid:e54142ed-dbb3-4b27-9756-d2262c6c069a",
-      "urn:uuid:57dcf9f5-2f25-4d37-a793-821edb2dda19",
-      "urn:uuid:75f20002-f4bf-4721-b480-d115d4042e79",
-      "doi:10.18739/A2NK3665N",
-      "urn:uuid:fe73a6b1-86af-495f-9292-ad22e86a4aa0",
-      "urn:uuid:938856af-d78d-4580-ab63-bb2ce8484c77",
-      "urn:uuid:705a3af3-fe5b-42d3-851f-e6093c15ee5c",
-      "urn:uuid:6c1ea229-8bfa-4e0f-bf6b-cff8e03865fb",
-      "urn:uuid:801e617c-4464-431d-b5c2-a8c16b543e7b",
-      "urn:uuid:bdf983fc-9864-4e08-9d3a-768afe36bf5f",
-      "urn:uuid:e1d9eb59-6e2b-4c0f-b048-206badd03fd1",
-      "urn:uuid:5bf32df3-83bf-4985-b682-560936247516",
-      "urn:uuid:7c1a1730-f1dc-43a7-96c2-fe99d480c87e"
-    )
+    # curl -s https://arcticdata.io/metacat/d1/mn/v2/query/solr/?q=id:*A2NK3665N+AND+formatType:METADATA\&fl=identifier,title,documents\&wt=json | jq .response.docs[].documents[] | sed -e 's/urn:uuid:/\*/' -e 's/doi:/*/' | xargs -I {} -n 1 curl -s https://arcticdata.io/metacat/d1/mn/v2/query/solr/?fl=identifier,fileName\&wt=json\&q=id:{} |jq -r ".response.docs[] | [.fileName, .identifier  | @csv"
+
+import pandas as pd
+import io   
+
+TESTDATA="""filename,identifier
+"SWI_2007.tif","urn:uuid:5ee72c9c-789d-4a1c-95d8-cb2b24a20662"
+"SWI_2019.tif","urn:uuid:9cd1cdc3-0792-4e61-afff-c11f86d3a9be"
+"SWI_2021.tif","urn:uuid:14e1e509-77c0-4646-9cc3-d05f8d84977c"
+"SWI_2020.tif","urn:uuid:1ba473ff-8f03-470b-90d1-7be667995ea1"
+"SWI_2001.tif","urn:uuid:85150557-05fd-4f52-8bbd-ec5a2c27e23d"
+"SWI_trend_2000_2021.tif","urn:uuid:ea99e31b-572a-4175-92d2-0a4a9cdd8366"
+"SWI_2011.tif","urn:uuid:c45e3d93-e908-4f44-85c6-82c4c002a259"
+"SWI_trend_2000_2022.tif","urn:uuid:a0aa394e-b0df-4daf-9011-09bba3c3d0b5"
+"SWI_2015.tif","urn:uuid:5634766f-af81-46f8-acc5-e15f9cd2e3fb"
+"SWI_2017.tif","urn:uuid:94a3fae2-f2f2-4e28-b51b-4a66b7b42331"
+"SWI_2000.tif","urn:uuid:c7aac289-e2be-4be7-85df-6d2fdb5293d5"
+"SWI_2018.tif","urn:uuid:07b9ca95-1463-414a-a3e0-7f466772d891"
+"SWI_2014.tif","urn:uuid:695b949c-339d-4f51-a593-4d332aa86748"
+"SWI_2005.tif","urn:uuid:e54142ed-dbb3-4b27-9756-d2262c6c069a"
+"SWI_2012.tif","urn:uuid:57dcf9f5-2f25-4d37-a793-821edb2dda19"
+"SWI_2008.tif","urn:uuid:75f20002-f4bf-4721-b480-d115d4042e79"
+"resource_map_doi:10.18739_A2NK3665N.rdf","resource_map_doi:10.18739/A2NK3665N"
+"Pan_Arctic_surface_water_yearly_and_trend_over.xml","doi:10.18739/A2NK3665N"
+"SWI_2002.tif","urn:uuid:fe73a6b1-86af-495f-9292-ad22e86a4aa0"
+"SWI_2013.tif","urn:uuid:938856af-d78d-4580-ab63-bb2ce8484c77"
+"SWI_2006.tif","urn:uuid:705a3af3-fe5b-42d3-851f-e6093c15ee5c"
+"SWI_2022.tif","urn:uuid:6c1ea229-8bfa-4e0f-bf6b-cff8e03865fb"
+"SWI_2003.tif","urn:uuid:801e617c-4464-431d-b5c2-a8c16b543e7b"
+"SWI_2016.tif","urn:uuid:bdf983fc-9864-4e08-9d3a-768afe36bf5f"
+"SWI_2009.tif","urn:uuid:e1d9eb59-6e2b-4c0f-b048-206badd03fd1"
+"SWI_2010.tif","urn:uuid:5bf32df3-83bf-4985-b682-560936247516"
+"SWI_2004.tif","urn:uuid:7c1a1730-f1dc-43a7-96c2-fe99d480c87e"
+"""
+
+id_list = pd.read_csv(io.StringIO(TESTDATA), sep=",")
 ```
 
 ## Task parallelism with `concurrent.futures`
@@ -185,22 +193,28 @@ def timethis(func):
 ```{python}
 #| eval: false
 
-from pathlib import Path
-import urllib.request
+import requests
+import urllib
 
-def download_file(pid):
+def download_file(row):
     """
     Downloads the data based on its identifier
     """
     service = "https://arcticdata.io/metacat/d1/mn/v2/object/"
+    pid = getattr(row, 'identifier')
+    filename = getattr(row, 'filename')
     url = service + pid
-    print("Downloading: " + pid)
-    msg = urllib.request.urlretrieve(url, pid)
-    return msg
+    print("Downloading: " + filename)
+    msg = urllib.request.urlretrieve(url, filename)
+    # r = requests.get(url, stream=True)
+    # with open(filename, 'wb') as fd:
+    #     for chunk in r.iter_content(chunk_size=2048):
+    #         fd.write(chunk)
+    return filename
 
 @timethis
 def download_list(dl_list):
-    return [download_file(pid) for pid in dl_list]
+    return [download_file(row) for row in dl_list.itertuples()]
 
 results = download_list(id_list[0:3])
 ```
