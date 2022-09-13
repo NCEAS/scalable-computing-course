@@ -319,31 +319,32 @@ echo "1, 2, 3" >> mydata.csv
 
 IDEs commonly have helper buttons for cloning (i.e. creating a copy of) remote repositories to your local computer (or in this case, a server), but using git commands in a terminal can be just as easy. We can practice that now, following the steps below: 
 
-1. Go to the **scalable-computing-exercises** repository on GitHub at <https://github.com/NCEAS/scalable-computing-examples> -- this repo contains example files for you to edit and practice in throughout this course. Fork (make your own copy of the repository) this repo by clicking on the **Fork** button (top right corner of the repository's page).
+1. Go to the **`scalable-computing-exercises`** repository on GitHub at <https://github.com/NCEAS/scalable-computing-examples> -- this repo contains example files for you to edit and practice in throughout this course. Fork (make your own copy of the repository) this repo by clicking on the **Fork** button (top right corner of the repository's page).
 
-<center><img src="../images/fork.png" alt="The top menu bar of a GitHub repo showing the 'Fork' button." width="700" height="40"/></center>
+<center><img src="../images/fork.png" alt="The top menu bar of a GitHub repo showing the 'Fork' button." width="500" height="45"/></center>
 
 <br>
 
-2. Once forked, click on the green **Code** button and copy the URL to your clipboard.
+2. Once forked, click on the green **Code** button (from the *forked* version of the GitHub repo) and copy the URL to your clipboard.
 
 <center><img src="../images/clone.png" alt="A green button with the text, 'Code' is clicked and a popup box containing the URL of the GitHub repository is open below it" width="475" height="230"/></center>
 
 <br>
 
-3. In the VS Code terminal, use the `git clone` command to create a copy of the bash-babynames repository on the server. 
+3. In the VS Code terminal, use the `git clone` command to create a copy of the `scalable-computing-examples` repository in the top level of your user directory (i.e. your home directory) on the server (**Note:** use `pwd` to check where you are; use `cd ~/` to navigate back to your home directory if you find that you're somewhere else). 
 
 ```{.bash}
-git clone <url>
+git clone <url-of-forked-repo>
 ```
+4. To open the project, open the folder into your workpace using `File` > `Open Folder`. Enter your password, if prompted. 
 
-4. You should now have a copy of the **bash-babynames** repository to work on on the server. Use the `tree` command to see the structure of the repo (you need to be in the `scalable-computing-examples` directory for this to work) -- there should be a subdirectory called `bash-babynames` that contains (i) a `README.MD` file, (ii) a `KEY.sh` file (this is a functioning bash script available for reference; we'll be recreating it together in the next exercise) and (iii) a `namesbystate` folder containing 51 `.TXT` files and a `StateReadMe.pdf` file with some metadata. 
+5. You should now have a copy of the `scalable-computing-examples` repository to work on on the server. Use the `tree` command to see the structure of the repo (you need to be in the `scalable-computing-examples` directory for this to work) -- there should be a subdirectory called `bash-babynames` that contains (i) a `README.MD` file, (ii) a `KEY.sh` file (this is a functioning bash script available for reference; we'll be recreating it together in the next exercise) and (iii) a `namesbystate` folder containing 51 `.TXT` files and a `StateReadMe.pdf` file with some metadata. 
 
 ### **Bonus Exercise:** Automate data processing with a Bash script
 
 As we just demonstrated, we can use bash commands in the terminal to accomplish a variety of tasks like navigating our computer's directories, manipulating/creating/adding files, and much more. However, writing a bash *script* allows us to gather and save our code for automated execusion. 
 
-We just cloned the `scalable-computing-examples` GitHub repository to the server in **Exercise 3** above. This contains a `bash-babynames` folder with 51 `.TXT` files (one for each of the 50 US states + The District of Columbia), each with the top 1000 most popular baby names in that state. We're going to use some of the bash commands we learned in **Exercise 2** to concatenate all rows of data from these 51 files into a single `babynames_allstates.csv` file.
+We just cloned the `scalable-computing-examples` GitHub repository to the server in [**Exercise 3**](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/02-remote-computing.html#exercise-3-clone-a-github-repository-to-the-server) above. This contains a `bash-babynames` folder with 51 `.TXT` files (one for each of the 50 US states + The District of Columbia), each with the top 1000 most popular baby names in that state. We're going to use some of the bash commands we learned in [**Exercise 2**](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/02-remote-computing.html#exercise-2-practice-using-some-common-bash-commands) to concatenate all rows of data from these 51 files into a single `babynames_allstates.csv` file.
 
 Let's begin by creating a simple bash script that when executed, will print out the message, "Hello, World!" This simple script will help us determine whether or not things are working as expected before writing some more complex (and interesting) code. 
 

@@ -17,7 +17,7 @@ Other aspects of VS Code that we like: it supports all languages thanks to the e
 
 We will also be working quite a bit in Jupyter notebooks in this course. Notebooks are great ways to interleave rich text (markdown formatted text, equations, images, links) and code in a way that a 'literate analysis' is generated. Although Jupyter notebooks are not subsitutes for python scripts, they can be great communication tools, and can also be convenient for code development.
 
-## Starting a project
+## Connect to the server (if you aren't already connected)
 
 To get set up for the course, let's connect to the server again. If you were able to work through the setup for the lesson without difficulty, follow these steps to connect:
 
@@ -26,14 +26,9 @@ To get set up for the course, let's connect to the server again. If you were abl
 - select `included-crab`
 - enter your password in the dialog box that pops up
 
-Now we can get set up with a project to work in for the course. Head over to the `scalable-computing-examples` [github repository](http://github.com/NCEAS/scalable-computing-examples) and fork it to your account.
+Alternatively, you may see a popup window that says **"Cannot reconnect. Please reload the window"**. Choose the blue **Reload Window** button and enter your password, if prompted.
 
-Back in VS Code, in the terminal clone your fork of the `scalable-computing-examples` repo (`git clone <url-to-forked-repo-here>`) into the top level of your user directory. Run `cd ~/` if you are in some other directory.
-
-To open the project, open the folder into your workspace
-
-- File > Open Folder
-- Enter password again if prompted
+Once connected, use the `pwd` command to make sure you're in your home directory (`/home/yourusername`). Use the `ls` command to list out the contents of your home directory and ensure that you have a clone of the `scalable-computing-examples` respository (this should have been completed during [Exercise 3](http://localhost:6226/sections/02-remote-computing.html#exercise-3-clone-a-github-repository-to-the-server) in the [Remote Computing](http://localhost:6226/sections/02-remote-computing.html) session).
 
 ## Virtual Environments
 
