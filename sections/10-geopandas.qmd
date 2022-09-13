@@ -192,6 +192,7 @@ Now, we can read in raster again cropped to bounding box. We use the `mask` func
 
 ```{python}
 import rasterio.mask
+import numpy as np
 
 with rasterio.open("Coastal_2020_08.tif") as ship_con:
     shipc_arr, shipc_transform = rasterio.mask.mask(ship_con, coord_box_df["geometry"], crop=True)
@@ -304,7 +305,6 @@ comm_clip['id'] = range(0,len(comm_clip))
 
 ```{python}
 #| results: false
-import numpy as np
 
 distance_dict = {}
 for geom, idx in zip(comm_clip['geometry'], comm_clip['id']):

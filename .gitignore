@@ -153,3 +153,7 @@ sections/*nc
 
 # csv in sections
 sections/*.csv
+
+# runinfo?
+
+sections/runinfo
