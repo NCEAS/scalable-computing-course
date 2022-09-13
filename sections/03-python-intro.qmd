@@ -374,7 +374,7 @@ def myplot(df, var):
 ```
 
 
-* load myplot into jupyter notebook (`from myplot.py import myplot`)
+* load myplot into jupyter notebook (`from myplot import myplot`)
 * replace old plot method with new function
 
 ```{python}
