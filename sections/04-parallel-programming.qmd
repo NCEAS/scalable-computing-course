@@ -168,16 +168,16 @@ run_tasks_s(np.arange(10))
 ```
 
 ```{python}
-#| eval: true
+#| eval: false
 from concurrent.futures import ThreadPoolExecutor
 
 @timethis
 def run_tasks_p(task_list):
-    with ThreadPoolExecutor(max_workers=2) as cf_executor:
+    with ThreadPoolExecutor(max_workers=20) as cf_executor:
         return cf_executor.map(task, task_list)
 
 results = run_tasks_p(np.arange(10))
-y = [x for x in results]
+[x for x in results]
 ```
 
 
