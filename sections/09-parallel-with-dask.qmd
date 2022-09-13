@@ -1,17 +1,10 @@
 ---
 title: "Parallelization with Dask"
 ---
-## Introduction
-Dask is a library for parallel computing in Python. 
-It can scale up code to use your personal computer's full capacity or distribute work in a cloud cluster. 
-By mirroring APIs of other commonly used Python libraries, such as Pandas and NumPy, Dask provides a familiar interface that makes it easier to parallelize your code. 
-In this lesson, we will get acquainted with some of Dask's most commonly used objects and Dask's way of distributing and evaluating computations.
 
-![ ](../images/dask_logo.png)
+## Learning Objectives
 
-## Objectives
-
-- Become familiar with Dask processing workflow:
+- Become familiar with the Dask processing workflow:
     - What are the client, scheduler, workers, and cluster
     - Understand delayed computations and "lazy" evaluation
     - Obtain information about computations via the Dask dashboard
@@ -20,9 +13,18 @@ In this lesson, we will get acquainted with some of Dask's most commonly used ob
 <!--
     - Interpret a task graph
 -->
-- Integrate `xarray` with Dask for geospatial computations
+- Integrate `xarray` and `rioxarray` with Dask for geospatial computations
     
 - Share best practices and resources for further reading
+
+## Introduction
+Dask is a library for parallel computing in Python. 
+It can scale up code to use your personal computer's full capacity or distribute work in a cloud cluster. 
+By mirroring APIs of other commonly used Python libraries, such as Pandas and NumPy, Dask provides a familiar interface that makes it easier to parallelize your code. 
+In this lesson, we will get acquainted with some of Dask's most commonly used objects and Dask's way of distributing and evaluating computations.
+
+![ ](../images/dask_logo.png)
+
 
 ## Dask Cluster
 We can deploy a **Dask cluster** on a single machine or an actual cluster with multiple machines. 
@@ -228,7 +230,7 @@ In this case, it can be useful to use the `xarray` module together with Dask.
 It is simple to wrap Dask around `xarray` objects. We only need to specify the number of chunks as an argument when we are reading in a dataset (see also [[1]](https://docs.xarray.dev/en/stable/user-guide/dask.html)).
 
 ### Open .tif file
-As an example, let's do an NDVI calculation using remote sensing imagery collected by aerial vehicles over northeastern Siberia (Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. [doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
+As an example, let's do an NDVI calculation using remote sensing imagery collected by aerial vehicles over northeastern Siberia ([Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
 
 First, we download the data for the near-infrared (NIR) and red bands from the Arctic Data Center:
 
