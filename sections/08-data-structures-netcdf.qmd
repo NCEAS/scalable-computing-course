@@ -82,10 +82,16 @@ are small notes or supplementary metadata to annotate a variable or the file as 
 
 ### Metadata Standards
 
-*The most commonly used metadata standard for geospatial data is the Climate and Forecast metadata standard, also called the [CF conventions](https://cfconventions.org).*
-*These standards are specifically designed to promote the processing and sharing of files created with the NetCDF API.* 
-*Principles of CF include self-describing data (no external tables needed for understanding), metadata equally readable by humans and software, minimum redundancy, and maximum simplicity.* 
+The most commonly used metadata standard for geospatial data is the **Climate and Forecast metadata standard**, also called the [**CF conventions**](https://cfconventions.org). 
 
+>The CF conventions are specifically designed to promote the processing and sharing of files created with the NetCDF API.
+>Principles of CF include self-describing data (no external tables needed for understanding), metadata equally readable by humans and software, minimum redundancy, and maximum simplicity. [(CF conventions FAQ)](http://cfconventions.org/faq.html)
+
+The CF conventions provide a unique standardized name and precise description of over 1,000 physical variables. 
+To maximize the reusability of our data, it is best to include a variable's standardized name as an attribute called `standard_name` . 
+You can find all of the CF convention's standard names [in this table](http://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html).
+Variables should also include a `units` attribute. This should be a string that can be recognized by UNIDATA’s Udunits package [UDUNITS](https://www.unidata.ucar.edu/software/udunits/).
+The North Carolina Institute for Climate Studies holds a [list of the units found in the UDUNITS database](https://ncics.org/portfolio/other-resources/udunits2/#degree_N).
 
 ### Exercise
 
@@ -108,16 +114,19 @@ Latitude has values 30, 40, 50, 60, and 70, measured in degrees North. Longitude
 **Attributes**: Let’s divide these into attributes for the variable, the dimensions, and the whole dataset:
 
 * Temperature attributes: 
-    + units: degrees Celsius
+    + standard_name: air_temperature
+    + units: degree_C
 
 * Time attributes:
     + description: date of measurement
 
 * Latitude attributes:
-    + units: degrees North
+    + standard_name: grid_latitude
+    + units: degrees_N
 
 * Longitude attributes:
-    + units: degrees East
+    + satandard_name: grid_longitude
+    + units: degree_E
 
 * Dataset attributes:
     + title: Temperature at Weather Stations
@@ -207,7 +216,8 @@ coords = {'time' : pd.date_range("2022-09-01", "2022-09-03"),
 
 # attributes (metadata) of the data array 
 attrs = { 'title' : 'temperature across weather stations',
-          'units' : 'degrees_celsius'}
+          'standard_name' : 'air_temperature',
+          'units' : 'degree_c'}
 
 # initialize xarray.DataArray
 temp = xr.DataArray(data = temp_data, 
@@ -225,13 +235,13 @@ Notice that each of the coordinates is also an `xarray.DataArray`, so we can add
 temp.attrs['description'] = 'simple example of an xarray.DataArray'
 
 # add attributes to coordinates 
-temp.time.attrs = {'standard_name':'date of collection'}
+temp.time.attrs = {'description':'date of measurement'}
 
-temp.lat.attrs['standard_name']= 'latitude'
-temp.lat.attrs['units'] = 'degrees_north'
+temp.lat.attrs['standard_name']= 'grid_latitude'
+temp.lat.attrs['units'] = 'degree_N'
 
-temp.lon.attrs['standard_name']= 'longitude'
-temp.lon.attrs['units'] = 'degrees_east'
+temp.lon.attrs['standard_name']= 'grid_longitude'
+temp.lon.attrs['units'] = 'degree_E'
 temp
 ```
 
@@ -294,8 +304,7 @@ We also add some attributes that now describe the whole dataset, not only each v
 data_vars = {'avg_temp': avg_temp,
             'temp': temp}
 
-attrs = {'creator_name':'CGG',
-        'title':'temperature data at weather stations: daily and and average',
+attrs = {'title':'temperature data at weather stations: daily and and average',
         'description':'simple example of an xarray.Dataset'}
 
 # create xarray.Dataset
@@ -303,7 +312,7 @@ temp_dataset = xr.Dataset( data_vars = data_vars,
                         attrs = attrs)
 ```
 
-Take some time to click through the data viewer and notice the variables and metadata in the dataset. 
+Take some time to click through the data viewer and read through the variables and metadata in the dataset. 
 Notice the following: 
 
 + `temp_dataset` is a dataset with three dimensions (time, latitude, and longitude), 
