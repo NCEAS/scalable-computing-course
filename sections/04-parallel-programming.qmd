@@ -125,6 +125,62 @@ Cluster parallel
 
 - TODO: Should we also include figure with data or functional dependencies?
 
+## Simple task parallelization
+
+```{python}
+#| echo: false
+
+import time
+from functools import wraps
+
+def timethis(func):
+    @wraps(func)
+    def wrapped_method(*args, **kwargs):
+        time_start = time.time()
+        output = func(*args, **kwargs)
+        time_end = time.time()
+        print(f"{func.__name__}: {(time_end-time_start)*1000} ms")
+
+        return output
+
+    return wrapped_method
+```
+
+Start with a task that is a little expensive:
+
+```{python}
+#| eval: true
+def task(x):
+    import numpy as np
+    result = np.arange(x*10**8).sum()
+    return result
+```
+
+```{python}
+#| eval: true
+import numpy as np
+
+@timethis
+def run_tasks_s(task_list):
+    return [task(x) for x in task_list]
+
+run_tasks_s(np.arange(10))
+```
+
+```{python}
+#| eval: true
+from concurrent.futures import ThreadPoolExecutor
+
+@timethis
+def run_tasks_p(task_list):
+    with ThreadPoolExecutor(max_workers=20) as cf_executor:
+        return cf_executor.map(task, task_list)
+
+results = run_tasks_p(np.arange(10))
+[x for x in results]
+```
+
+
 ## Setup -- downloading data for staging
 
 In this exercise, we're going to parallelize a simple task that is often very time consuming -- downloading data. And we'll compare performance of simple downloads using first a serial loop, and then using two parallel execution libraries: `concurrent.futures` and `parsl`. More on those later. But note that parallel execution won't always speed up this task, as this is likely an I/O bound task if you're downloading a lot of data. But we still should be able to speed things up a lot until we hit the limits of our disk arrays.
@@ -177,69 +233,12 @@ TESTDATA="""filename,identifier
 """
 
 id_list = pd.read_csv(io.StringIO(TESTDATA), sep=",")
-id_list
+id_list.head()
 ```
 
 ## Task parallelism: serial downloads
 
 When you have a list of repetitive tasks, you may be able to speed it up by adding more computing power.  If each task is completely independent of the others, then it is a prime candidate for executing those tasks in parallel, each on its own core.  For example, let's build a simple loop that downloads the data files that we need for an analysis. First, we start with the serial implementation. 
-
-```{python}
-#| echo: false
-
-import time
-from functools import wraps
-
-def timethis(func):
-    @wraps(func)
-    def wrapped_method(*args, **kwargs):
-        time_start = time.time()
-        output = func(*args, **kwargs)
-        time_end = time.time()
-        print(f"{func.__name__}: {(time_end-time_start)*1000} ms")
-
-        return output
-
-    return wrapped_method
-```
-
-## Simple task parallelization
-
-Start with a task that is a little expensive:
-
-```{python}
-#| eval: true
-def task(x):
-    import numpy as np
-    result = np.arange(x*10**8).sum()
-    return result
-```
-
-```{python}
-#| eval: true
-import numpy as np
-
-@timethis
-def run_tasks_s(task_list):
-    return [task(x) for x in task_list]
-
-run_tasks_s(np.arange(10))
-```
-
-```{python}
-#| eval: true
-from concurrent.futures import ThreadPoolExecutor
-
-@timethis
-def run_tasks_p(task_list):
-    with ThreadPoolExecutor(max_workers=20) as cf_executor:
-        return cf_executor.map(task, task_list)
-
-results = run_tasks_p(np.arange(10))
-[x for x in results]
-```
-
-## Serialization 
 
 ```{python}
 #| eval: true
@@ -252,9 +251,7 @@ def download_file(row):
     filename = getattr(row, 'filename')
     url = service + pid
     print("Downloading: " + filename)
-    # msg = urllib.request.urlretrieve(url, filename)
-    import numpy as np
-    result = np.arange(10**9).sum()
+    msg = urllib.request.urlretrieve(url, filename)
     return filename
 
 @timethis
@@ -319,25 +316,17 @@ parsl.load(htex_local)
 # Define a parsl_app for our download function using a decorator
 @python_app
 def download_parsl(row):
-    """
-    Downloads the data based on its identifier
-    """
     import urllib
     service = "https://arcticdata.io/metacat/d1/mn/v2/object/"
     pid = getattr(row, 'identifier')
     filename = getattr(row, 'filename')
     url = service + pid
     print("Downloading: " + filename)
-    # msg = urllib.request.urlretrieve(url, filename)
-    import numpy as np
-    result = np.arange(10**9).sum()
+    msg = urllib.request.urlretrieve(url, filename)
     return filename
 
 @timethis
 def download_list(dl_list):
-    """
-    Download data files using parsl
-    """
     results = []
     for row in dl_list.itertuples():
         result = download_parsl(row)
@@ -353,8 +342,6 @@ def wait_for_futures():
 wait_for_futures()
 htex_local.executors[0].shutdown()
 parsl.clear()
-
-# Tasks are to download data from a dataset
 ```
 
 
