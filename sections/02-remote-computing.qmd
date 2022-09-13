@@ -24,16 +24,9 @@ Remote computing typically involves communication between two or more "host" com
 <center><img src="../images/remote-comp-configs.png" alt="Examples of ifferent remote computing configurations." width="700"/></center>
 
 
-<span style = 'font-size: 85%; color: #6e6d6d;'>**Fig 1.** Examples of different remote computing configurations. (a) A client uses secure shell protocol (SSH) to login/connect to a server over the internet. The client and the server exist in the physical world, but in different locations. (b) A client uses SSH to login/connect to a computing cluster (i.e. a set of computers (nodes) that work together so that they can be viewed as a single system) over the internet. The connection is first made through a gateway node (i.e. a computer that routes traffic from one network to another). The client and the cluster (server) exist in the physical world, but in different locations. (c) A client uses SSH to login/connect to a computing cluser where each node is a virtual machine (VM) hosted by a cloud computing service (e.g. Amazon Web Services, Google Cloud, Microsoft Azure, etc.). The connection is first made through a gateway node. The client and the gateway are located in the physical world, while the VM nodes are hosted in the cloud.</span>
+<span style = 'font-size: 85%; color: #6e6d6d;'>**Fig 1.** Examples of different remote computing configurations. (a) A client uses secure shell protocol (SSH) to login/connect to a server over the internet. (b) A client uses SSH to login/connect to a computing cluster (i.e. a set of computers (nodes) that work together so that they can be viewed as a single system) over the internet. In this example, servers A - I are each nodes on this single cluster. The connection is first made through a gateway node (i.e. a computer that routes traffic from one network to another). (c) A client uses SSH to login/connect to a computing cluser where each node is a virtual machine (VM). In this example, the cluster comprises three servers (A, B, and C). VM1 (i.e. node 1) runs on server A while VM4 runs on server B, etc. The connection is first made through a gateway node.</span>
 
 ## IP addressing
-
-::: {.callout-important}
-## TODO
-- elaborate on localhost in note below
-- (https://github.com/NCEAS/scalable-computing-examples/blob/main/group-project/solutions/session-06-solution.ipynb) - example if you're using a highthroughput executor through a gateway, need IP
-- we'll need IP addresses to connect to remote clusters; IP address lets you connect to a vm
-:::
 
 Hosts are assigned a **unique numerical address** used for all communication and routing called an [Internet Protocol Address (IP Address)](https://en.wikipedia.org/wiki/IP_address). They look something like this: **128.111.220.7**. Each IP Address can be used to communicate over various "[ports](https://en.wikipedia.org/wiki/Port_(computer_networking))", which allow multiple applications to communicate with a host without mixing up traffic. 
 
@@ -56,9 +49,10 @@ Hosts are assigned a **unique numerical address** used for all communication and
 Because IP addresses can be difficult to remember, they are also assigned **hostnames**, which are handled through the global [Domain Name System (DNS)](https://en.wikipedia.org/wiki/Domain_Name_System). Clients first look up a hostname in the DNS to find the IP address, then open a connection to the IP address.
     
 ::: {.callout-note} 
-## A couple important IP addresses
+## In order to connect to remote servers, computing clusters, virtual machines, etc., you need to know their IP address (or hostname)
+A couple important ones:
 1. Throughout this course, we'll be working on a server with the hostname, **included-crab** and IP address, 128.111.85.1 (in just a little bit, we'll learn how to connect to **included-crab** using SSH)
-2. **localhost** is a hostname that refers to your local device with an IP address 127.0.0.1
+2. **localhost** is a hostname that refers to your local computer and is assigned the IP address 127.0.0.1 -- the concept of localhost is important for tasks such as website testing and also is important to understand when provisioning local execution resources (e.g. we'll practice this in during the [section 6 exercise](https://github.com/NCEAS/scalable-computing-examples/blob/main/group-project/solutions/session-06-solution.ipynb) when working with `Parsl`.)
 :::
 
 ## Bash Shell Programming
@@ -94,17 +88,13 @@ Below are just a few bash commands that you're likely to use. Some may be extend
 |      `cp`        | copy a file(s) or directory(ies)                                              |
 |      `touch`     | create a new empty file                                                       |
 |      `mkdir`     | create a new directory                                                        |
-|      `rm`/`rmdir`| remove a file/ empty directory (be careful -- there is no "trash" folder!)   |
+|      `rm`/`rmdir`| remove a file/ empty directory (be careful -- there is no "trash" folder!)    | 
 |      `grep`      | searches a given file(s) for lines containing a match to a given pattern list |
+|      `awk`       | a text processing language that can be used in shell scripts or at a shell prompt for actions like pattern matching, printing specified fields, etc. |
 |      `sed`       | stands for **S**tream **Ed**itor; a versatile command for editing files       |
 |      `cut`       | extract a specific portion of text in a file                                  |
 |      `join`      | join two files based on a key field present in both                           |
 |   `top`, `htop`  | view running processes in a Linux system  (press `Q` to quit)                 |
-
-::: {.callout-important}
-## TODO:
-`awk` 
-:::
 
 ### General command syntax
 
@@ -329,7 +319,7 @@ echo "1, 2, 3" >> mydata.csv
 
 IDEs commonly have helper buttons for cloning (i.e. creating a copy of) remote repositories to your local computer (or in this case, a server), but using git commands in a terminal can be just as easy. We can practice that now, following the steps below: 
 
-1. Go to the **bash-babynames** repository on GitHub at [https://github.com/samanthacsik/bash-babynames](https://github.com/samanthacsik/bash-babynames) and Fork (make your own copy of the repository) it by clicking on the **Fork** button (top right corner of the repository's page).
+1. Go to the **scalable-computing-exercises** repository on GitHub at <https://github.com/NCEAS/scalable-computing-examples> -- this repo contains example files for you to edit and practice in throughout this course. Fork (make your own copy of the repository) this repo by clicking on the **Fork** button (top right corner of the repository's page).
 
 <center><img src="../images/fork.png" alt="The top menu bar of a GitHub repo showing the 'Fork' button." width="700" height="40"/></center>
 
@@ -347,17 +337,17 @@ IDEs commonly have helper buttons for cloning (i.e. creating a copy of) remote r
 git clone <url>
 ```
 
-4. You should now have a copy of the **bash-babynames** repository to work on on the server. Use the `tree` command to see the structure of the repo (you need to be in the `bash-babynames` directory for this to work) -- there should be a respository `README.MD` file, a `KEY.sh` file (this is a functioning bash script available for reference; we'll be recreating it together in the next exercise) and a `namesbystate` folder containing 51 `.TXT` files and a `StateReadMe.pdf` file with some metadata. 
+4. You should now have a copy of the **bash-babynames** repository to work on on the server. Use the `tree` command to see the structure of the repo (you need to be in the `scalable-computing-examples` directory for this to work) -- there should be a subdirectory called `bash-babynames` that contains (i) a `README.MD` file, (ii) a `KEY.sh` file (this is a functioning bash script available for reference; we'll be recreating it together in the next exercise) and (iii) a `namesbystate` folder containing 51 `.TXT` files and a `StateReadMe.pdf` file with some metadata. 
 
 ### **Bonus Exercise:** Automate data processing with a Bash script
 
 As we just demonstrated, we can use bash commands in the terminal to accomplish a variety of tasks like navigating our computer's directories, manipulating/creating/adding files, and much more. However, writing a bash *script* allows us to gather and save our code for automated execusion. 
 
-We just cloned the `bash-babynames` GitHub repository to the server in **Exercise 3** above. This contains 51 `.TXT` files (one for each of the 50 US states + The District of Columbia), each with the top 1000 most popular baby names in that state. We're going to use some of the bash commands we learned in **Exercise 2** to concatenate all rows of data from these 51 files into a single `babynames_allstates.csv` file.
+We just cloned the `scalable-computing-examples` GitHub repository to the server in **Exercise 3** above. This contains a `bash-babynames` folder with 51 `.TXT` files (one for each of the 50 US states + The District of Columbia), each with the top 1000 most popular baby names in that state. We're going to use some of the bash commands we learned in **Exercise 2** to concatenate all rows of data from these 51 files into a single `babynames_allstates.csv` file.
 
 Let's begin by creating a simple bash script that when executed, will print out the message, "Hello, World!" This simple script will help us determine whether or not things are working as expected before writing some more complex (and interesting) code. 
 
-1. Open a terminal window and determine where you are by using the `pwd` command -- we want to be in our `bash-babynames` repository. If necessary, navigate here using the `cd` command. 
+1. Open a terminal window and determine where you are by using the `pwd` command -- we want to be in `scalable-computing-examples/bash-babynames`. If necessary, navigate here using the `cd` command. 
 
 2. Next, we'll create a shell script called `mybash.sh` using the `touch` command:
 
@@ -406,9 +396,9 @@ bash mybash.sh
 - prints the last 10 rows of data from the `CA.TXT` file (HINT: use the `tail` command)
 - creates an empty `babynames_allstates.csv` file in the `namesbystate` subdirectory (this is where the concatenated data will be saved to)
 - adds the column names, `state`, `gender`, `year`, `firstname`, `count`, in that order, to the `babynames_allstates.csv` file
-- concatenates data from all `.TXT` files in the `namesbystate` subdirectory and appends those data to the `babynames_allstates.csv` file (HINT: use the `cat` function to concatenate files)
+- concatenates data from all `.TXT` files in the `namesbystate` subdirectory and appends those data to the `babynames_allstates.csv` file (HINT: use the `cat` command to concatenate files)
 
-Here's a script outline to fill in (**Note:** The `echo` statements below are not necessary but can be included as progress indicators for when the bash script is executed -- these also make it easier to diagnose where any errors occur during execution.):
+Here's a script outline to fill in (**Note:** The `echo` statements below are not necessary but can be included as progress indicators for when the bash script is executed -- these also make it easier to diagnose where any errors occur during execution):
 
 ```{.bash}
 #!bin/bash
