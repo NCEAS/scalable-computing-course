@@ -58,24 +58,22 @@ You can think of this as allowing 16 computations to happen at the same time. Th
 
 Historically, R has only utilized one processor, which makes it single-threaded.  Which is a shame, because the 2017 MacBook Pro that I am writing this on is much more powerful than that:
 
-```{bash eval=FALSE}
+```bash
 jones@powder:~$ sysctl hw.ncpu hw.physicalcpu
-hw.ncpu: 8
-hw.physicalcpu: 4
+hw.ncpu: 12
+hw.physicalcpu: 6
 ```
 
-To interpret that output, this machine `powder` has 4 physical CPUs, each of which has
-two processing cores, for a total of 8 cores for computation.  I'd sure like my R computations to use all of that processing power.  Because its all on one machine, we can easily use *multicore* processing tools to make use of those cores. Now let's look at
-the computational server `aurora` at NCEAS:
+To interpret that output, this machine `powder` has 6 physical CPUs, each of which has
+two processing cores, for a total of 12 cores for computation.  I'd sure like my computations to use all of that processing power.  Because its all on one machine, we can easily use *multicore* processing tools to make use of those cores. Now let's look at the computational server `included-crab` at NCEAS:
 
-```{bash eval=FALSE}
+```bash
 jones@included-crab:~$ lscpu | egrep 'CPU\(s\)|per core|per socket'
-CPU(s):                88
-On-line CPU(s) list:   0-87
-Thread(s) per core:    2
-Core(s) per socket:    22
-NUMA node0 CPU(s):     0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86
-NUMA node1 CPU(s):     1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87
+CPU(s):                          88
+On-line CPU(s) list:             0-87
+Thread(s) per core:              1
+Core(s) per socket:              1
+NUMA node0 CPU(s):               0-87
 ```
 
 Now that's more compute power!  `included-crab` has 384 GB of RAM, and ample storage. All still under the control of a single operating system.
@@ -84,10 +82,11 @@ However, maybe one of these NSF-sponsored high performance computing clusters (H
 
 - [JetStream](https://jetstream-cloud.org/)
     - 640 nodes, 15,360 cores, 80TB RAM
-- [Stampede2]() at TACC is coming online in 2017
-    - 4200 nodes, 285,600 cores
-
-- TODO: update with modern cluster sizes
+- [Stampede2](https://www.tacc.utexas.edu/systems/stampede2) at TACC
+    - 4200 KNL nodes: 285,600 cores
+    - 1736 SKX nodes: 83,328 cores
+    - 224 ICX nodes: 17,920 cores
+    - TOTAL: 386,848 cores
 
 Note that these clusters have multiple nodes (hosts), and each host has multiple cores. So this is really multiple computers clustered together to act in a coordinated fashion, but each node runs its own copy of the operating system, and is in many ways independent of the other nodes in the cluster.  One way to use such a cluster would be to use just one of the nodes, and use a multi-core approach to parallelization to use all of the cores on that single machine.  But to truly make use of the whole cluster, one must use parallelization tools that let us spread out our computations across multiple host nodes in the cluster.
 
@@ -126,46 +125,177 @@ Cluster parallel
 
 - TODO: Should we also include figure with data or functional dependencies?
 
+## Simple task parallelization
 
-## Task parallelism with `concurrent.futures`
+```{python}
+#| echo: false
+
+import time
+from functools import wraps
+
+def timethis(func):
+    @wraps(func)
+    def wrapped_method(*args, **kwargs):
+        time_start = time.time()
+        output = func(*args, **kwargs)
+        time_end = time.time()
+        print(f"{func.__name__}: {(time_end-time_start)*1000} ms")
+
+        return output
+
+    return wrapped_method
+```
+
+Start with a task that is a little expensive:
+
+```{python}
+#| eval: true
+def task(x):
+    import numpy as np
+    result = np.arange(x*10**8).sum()
+    return result
+```
+
+```{python}
+#| eval: true
+import numpy as np
+
+@timethis
+def run_tasks_s(task_list):
+    return [task(x) for x in task_list]
+
+run_tasks_s(np.arange(10))
+```
+
+```{python}
+#| eval: true
+from concurrent.futures import ThreadPoolExecutor
+
+@timethis
+def run_tasks_p(task_list):
+    with ThreadPoolExecutor(max_workers=20) as cf_executor:
+        return cf_executor.map(task, task_list)
+
+results = run_tasks_p(np.arange(10))
+[x for x in results]
+```
+
+
+## Setup -- downloading data for staging
+
+In this exercise, we're going to parallelize a simple task that is often very time consuming -- downloading data. And we'll compare performance of simple downloads using first a serial loop, and then using two parallel execution libraries: `concurrent.futures` and `parsl`. More on those later. But note that parallel execution won't always speed up this task, as this is likely an I/O bound task if you're downloading a lot of data. But we still should be able to speed things up a lot until we hit the limits of our disk arrays.
+
+The data we are downloading is a pan-Arctic time series of TIF images containing rasterized Arctic surface water indices from:
+
+> Elizabeth Webb. 2022. Pan-Arctic surface water (yearly and trend over time) 2000-2022. Arctic Data Center [doi:10.18739/A2NK3665N](https://doi.org/doi:10.18739/A2NK3665N). 
+
+![Webb water data](../images/webb-surface-water.png)
+
+First, let's download the data serially to set a benchmark. The data files are listed in a table with their filename and identifier, and can be downloaded directly from the Arctic Data Center using the identifier:
+
+```{python}
+#| echo: false
+
+# list of data files
+# curl -s https://arcticdata.io/metacat/d1/mn/v2/query/solr/?q=id:*A2NK3665N+AND+formatType:METADATA\&fl=identifier,title,documents\&wt=json | jq .response.docs[].documents[] | sed -e 's/urn:uuid:/\*/' -e 's/doi:/*/' | xargs -I {} -n 1 curl -s https://arcticdata.io/metacat/d1/mn/v2/query/solr/?fl=identifier,fileName\&wt=json\&q=id:{} |jq -r ".response.docs[] | [.fileName, .identifier  | @csv"
+
+import pandas as pd
+import io   
+
+TESTDATA="""filename,identifier
+"SWI_2007.tif","urn:uuid:5ee72c9c-789d-4a1c-95d8-cb2b24a20662"
+"SWI_2019.tif","urn:uuid:9cd1cdc3-0792-4e61-afff-c11f86d3a9be"
+"SWI_2021.tif","urn:uuid:14e1e509-77c0-4646-9cc3-d05f8d84977c"
+"SWI_2020.tif","urn:uuid:1ba473ff-8f03-470b-90d1-7be667995ea1"
+"SWI_2001.tif","urn:uuid:85150557-05fd-4f52-8bbd-ec5a2c27e23d"
+"SWI_trend_2000_2021.tif","urn:uuid:ea99e31b-572a-4175-92d2-0a4a9cdd8366"
+"SWI_2011.tif","urn:uuid:c45e3d93-e908-4f44-85c6-82c4c002a259"
+"SWI_trend_2000_2022.tif","urn:uuid:a0aa394e-b0df-4daf-9011-09bba3c3d0b5"
+"SWI_2015.tif","urn:uuid:5634766f-af81-46f8-acc5-e15f9cd2e3fb"
+"SWI_2017.tif","urn:uuid:94a3fae2-f2f2-4e28-b51b-4a66b7b42331"
+"SWI_2000.tif","urn:uuid:c7aac289-e2be-4be7-85df-6d2fdb5293d5"
+"SWI_2018.tif","urn:uuid:07b9ca95-1463-414a-a3e0-7f466772d891"
+"SWI_2014.tif","urn:uuid:695b949c-339d-4f51-a593-4d332aa86748"
+"SWI_2005.tif","urn:uuid:e54142ed-dbb3-4b27-9756-d2262c6c069a"
+"SWI_2012.tif","urn:uuid:57dcf9f5-2f25-4d37-a793-821edb2dda19"
+"SWI_2008.tif","urn:uuid:75f20002-f4bf-4721-b480-d115d4042e79"
+"resource_map_doi:10.18739_A2NK3665N.rdf","resource_map_doi:10.18739/A2NK3665N"
+"Pan_Arctic_surface_water_yearly_and_trend_over.xml","doi:10.18739/A2NK3665N"
+"SWI_2002.tif","urn:uuid:fe73a6b1-86af-495f-9292-ad22e86a4aa0"
+"SWI_2013.tif","urn:uuid:938856af-d78d-4580-ab63-bb2ce8484c77"
+"SWI_2006.tif","urn:uuid:705a3af3-fe5b-42d3-851f-e6093c15ee5c"
+"SWI_2022.tif","urn:uuid:6c1ea229-8bfa-4e0f-bf6b-cff8e03865fb"
+"SWI_2003.tif","urn:uuid:801e617c-4464-431d-b5c2-a8c16b543e7b"
+"SWI_2016.tif","urn:uuid:bdf983fc-9864-4e08-9d3a-768afe36bf5f"
+"SWI_2009.tif","urn:uuid:e1d9eb59-6e2b-4c0f-b048-206badd03fd1"
+"SWI_2010.tif","urn:uuid:5bf32df3-83bf-4985-b682-560936247516"
+"SWI_2004.tif","urn:uuid:7c1a1730-f1dc-43a7-96c2-fe99d480c87e"
+"""
+
+id_list = pd.read_csv(io.StringIO(TESTDATA), sep=",")
+id_list.head()
+```
+
+## Task parallelism: serial downloads
 
 When you have a list of repetitive tasks, you may be able to speed it up by adding more computing power.  If each task is completely independent of the others, then it is a prime candidate for executing those tasks in parallel, each on its own core.  For example, let's build a simple loop that downloads the data files that we need for an analysis. First, we start with the serial implementation. 
 
 ```{python}
-#| eval: false
-# Use loop for serial execution of tasks
+#| eval: true
 
-# Tasks are to download data from a dataset
+import urllib
+
+def download_file(row):
+    service = "https://arcticdata.io/metacat/d1/mn/v2/object/"
+    pid = row[1]['identifier']
+    filename = row[1]['filename']
+    url = service + pid
+    print("Downloading: " + filename)
+    msg = urllib.request.urlretrieve(url, filename)
+    return filename
+
+@timethis
+def download_list(dl_list):
+    return [download_file(row) for row in dl_list.iterrows()]
+    
+results = download_list(id_list[0:5])
+print(results)
 ```
 
-The issue with this loop is that we execute each trial sequentially, which means that only one of our 8 processors on this machine are in use.  In order to exploit parallelism, we need to be able to dispatch our tasks as functions, with one task
-going to each processor.  To do that, we need to convert our task to a function, and then use the `map()` function to apply that function to all of the members of a set.  Here's the same code rewritten to use `map()`, which applies a function to each of the members of a list (in this case the files we want to download):
+In this code, I have one function (`download_file`) that downloads a single data file and saves it to disk. It is called iteratively from the function `download_list`. The serial execution takes about 15.2 seconds, but can vary by a few seconds.
+
+The issue with this loop is that we execute each trial sequentially, which means that only one of our processors on this machine is in use.  In order to exploit parallelism, we need to be able to dispatch our tasks and allow each to run at the same time, with one task going to each core.  To do that, we can use one of the many parallelization libraries in python to help us out.
+
+## Task parallelism with `concurrent.futures`
+
+In this case, we'll use the same `download_file` function from previously, but will switch up the `download_list` to use `concurrent.futures`.
 
 ```{python}
-#| eval: false
-# Use `map` for serial execution of tasks
+#| eval: true
+from concurrent.futures import ThreadPoolExecutor
 
-# Tasks are to download data from a dataset
+@timethis
+def download_list(dl_list):
+    with ThreadPoolExecutor(max_workers=15) as cf_executor:
+        return cf_executor.map(download_file, dl_list.iterrows(), timeout=60)
+
+results = download_list(id_list[0:5])
+for result in results:
+	print(result)
 ```
 
-## Approaches to parallelization
-When parallelizing jobs, one can:
-
-- Use the multiple cores on a local computer through `mclapply`
-- Use multiple processors on local (and remote) machines using `makeCluster` and `clusterApply`
-
-    - In this approach, one has to manually copy data and code to each cluster member using `clusterExport`
-    - This is extra work, but sometimes gaining access to a large cluster is worth it
-
-## concurrent.futures
-
 ```{python}
-#| eval: false
-# Loop versus map for parallel execution of tasks
+#| eval: true
+from concurrent.futures import ProcessPoolExecutor
 
-# Using concurrent.futures and ThreadPool
+@timethis
+def download_list(dl_list):
+    with ProcessPoolExecutor(max_workers=15) as cf_executor:
+        return cf_executor.map(download_file, dl_list.iterrows(), timeout=60)
 
-# Tasks are to download data from a dataset
+results = download_list(id_list[0:5])
+for result in results:
+	print(result)
 ```
 
 ## parsl
@@ -173,25 +303,61 @@ When parallelizing jobs, one can:
 - Overview of parsl and it's use of python decorators.
 
 ```{python}
-#| eval: false
-# Loop versus map for parallel execution of tasks
+#| eval: true
 
-# Using parsl decorators and ThreadPool
+# Required packages
+import parsl
+from parsl import python_app
+from parsl.config import Config
+from parsl.executors import HighThroughputExecutor
+from parsl.providers import LocalProvider
 
-# Tasks are to download data from a dataset
+# Configure the parsl executor
+activate_env = 'workon scomp'
+htex_local = Config(
+    executors=[
+        HighThroughputExecutor(
+            max_workers=15,
+            provider=LocalProvider(
+                worker_init=activate_env
+            )
+        )
+    ],
+)
+parsl.clear()
+parsl.load(htex_local)
+
+# Define a parsl_app for our download function using a decorator
+@python_app
+def download_parsl(row):
+    import urllib
+    service = "https://arcticdata.io/metacat/d1/mn/v2/object/"
+    pid = row[1]['identifier']
+    filename = row[1]['filename']
+    url = service + pid
+    print("Downloading: " + filename)
+    msg = urllib.request.urlretrieve(url, filename)
+    return filename
+
+@timethis
+def download_list(dl_list):
+    results = []
+    for row in dl_list.iterrows():
+        result = download_parsl(row)
+        results.append(result)
+    return(results)
+
+@timethis
+def wait_for_futures():
+    results = download_list(id_list[0:5])
+    done = [app_future.result() for app_future in results]
+    print(done)
+
+wait_for_futures()
+htex_local.executors[0].shutdown()
+parsl.clear()
 ```
 
-- Configurable Executors in parsl
-  - HightThroughputExecutor for cluster jobs
-
-```{python}
-#| eval: false
-# Loop versus map for parallel execution of tasks
-
-# Using parsl decorators and ThreadPool
-
-# Tasks are to download data from a dataset
-```
 
 ## When to parallelize
 
