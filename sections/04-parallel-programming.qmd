@@ -226,6 +226,8 @@ def download_file(row):
 @timethis
 def download_list(dl_list):
     return [download_file(row) for row in dl_list.itertuples()]
+    results = map(download_file, dl_list.itertuples())
+    return(results)
 
 results = download_list(id_list[0:5])
 print(results)
