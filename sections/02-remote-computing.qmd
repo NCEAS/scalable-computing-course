@@ -21,10 +21,6 @@ Remote computing typically involves communication between two or more "host" com
 - **Client**: the host computer *intiating* a request
 - **Server**: the host computer *responding* to a request
 
-::: {.callout-note}
- Hosts typically have one network address but can have many different ones (for example, adding multiple network cards to a single server increases bandwith).
-:::
-
 <center><img src="../images/remote-comp-configs.png" alt="Examples of ifferent remote computing configurations." width="700"/></center>
 
 
@@ -32,12 +28,37 @@ Remote computing typically involves communication between two or more "host" com
 
 ## IP addressing
 
-Hosts are assigned a **unique numerical address** used for all communication and routing called an [Internet Protocol Address (IP Address)](https://en.wikipedia.org/wiki/IP_address). They look something like this: **128.111.220.7**. Each IP Address can be used to communicate over various "[ports](https://en.wikipedia.org/wiki/Port_(computer_networking))", which allows multiple applications to communicate with a host without mixing up traffic. 
+::: {.callout-important}
+## TODO
+- elaborate on localhost in note below
+- (https://github.com/NCEAS/scalable-computing-examples/blob/main/group-project/solutions/session-06-solution.ipynb) - example if you're using a highthroughput executor through a gateway, need IP
+- we'll need IP addresses to connect to remote clusters; IP address lets you connect to a vm
+:::
+
+Hosts are assigned a **unique numerical address** used for all communication and routing called an [Internet Protocol Address (IP Address)](https://en.wikipedia.org/wiki/IP_address). They look something like this: **128.111.220.7**. Each IP Address can be used to communicate over various "[ports](https://en.wikipedia.org/wiki/Port_(computer_networking))", which allow multiple applications to communicate with a host without mixing up traffic. 
+
+::: {.callout-note}
+## Port numbers are divided into three ranges: 
+
+1.  *well-known ports*, range from 0 through 1023 and are reserved for the most commonly used services (see table below for examples of some well-known port numbers)
+2.   *registered ports*, range from 1024 through 49151 and are not assigned or controlled, but can be registered (e.g. by a vendor for use with thier own server application) to prevent duplication
+3.   *dynamic ports*, range from 49152 through 65535 and are not assigned, controlled, or registered but may instead be used as temporary or private ports
+
+| well-known port  | assignment                                                                    |
+|------------------|-------------------------------------------------------------------------------|
+|      20, 21      | File Transfer Protocol (FTP), for transfering files between a client & server |   
+|        22        | secure shell (SSH), to create secure network conections                       | 
+|        53        | Domain Name System (DNS) service, to match domain names to IP addresses       |
+|        80        | Hypertext Transfer Protocol (HTTP), used in the World Wide Web                |
+|       443        | HTTP Secure (HTTPS), an encrypted version of HTTP                             |
+:::
 
 Because IP addresses can be difficult to remember, they are also assigned **hostnames**, which are handled through the global [Domain Name System (DNS)](https://en.wikipedia.org/wiki/Domain_Name_System). Clients first look up a hostname in the DNS to find the IP address, then open a connection to the IP address.
     
 ::: {.callout-note} 
-Throughout this course, we'll be working on a server with the hostname, **included-crab** and an IP address, 128.111.85.1. 
+## A couple important IP addresses
+1. Throughout this course, we'll be working on a server with the hostname, **included-crab** and IP address, 128.111.85.1 (in just a little bit, we'll learn how to connect to **included-crab** using SSH)
+2. **localhost** is a hostname that refers to your local device with an IP address 127.0.0.1
 :::
 
 ## Bash Shell Programming
@@ -50,9 +71,9 @@ Throughout this course, we'll be working on a server with the hostname, **includ
 
 *What is Bash?* Bash, or **B**ourne-**a**gain **Sh**ell, is a command line tool (language) commonly used to manipulate files and directories. Accessing and using bash is slightly different depending on what type of machine you work on:
 
-- **Mac:** bash via the [Terminal](https://support.apple.com/guide/terminal/welcome/mac), which comes ready-to-use with all Macs
+- **Mac:** bash via the [Terminal](https://support.apple.com/guide/terminal/welcome/mac), which comes ready-to-use with all Macs and Linux machines
 
-- **Windows:** bash via [Git Bash](https://gitforwindows.org/), which needs to be installed
+- **Windows:** running bash depends on which version of Windows you have -- newer versions may ship with bash or may require a separate install (e.g. [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about) or [Git Bash](https://gitforwindows.org/)), however there are a number of different (non-bash) shell options as well (they all vary slightly; e.g. [PowerShell](https://docs.microsoft.com/en-us/powershell/), [Command Prompt](https://en.wikipedia.org/wiki/Cmd.exe)).
 
 ::: {.callout-note}
 Mac users may have to switch from [Z Shell](https://www.zsh.org/), or zsh, to bash. Use the command `exec bash` to switch your default shell to bash (or `exec zsh` to switch back).
@@ -73,12 +94,17 @@ Below are just a few bash commands that you're likely to use. Some may be extend
 |      `cp`        | copy a file(s) or directory(ies)                                              |
 |      `touch`     | create a new empty file                                                       |
 |      `mkdir`     | create a new directory                                                        |
-|      `rm`/`rmdir`| remove a file/ empty directory (be careful -- there is not "trash" folder!)   |
+|      `rm`/`rmdir`| remove a file/ empty directory (be careful -- there is no "trash" folder!)   |
 |      `grep`      | searches a given file(s) for lines containing a match to a given pattern list |
 |      `sed`       | stands for **S**tream **Ed**itor; a versatile command for editing files       |
 |      `cut`       | extract a specific portion of text in a file                                  |
 |      `join`      | join two files based on a key field present in both                           |
 |   `top`, `htop`  | view running processes in a Linux system  (press `Q` to quit)                 |
+
+::: {.callout-important}
+## TODO:
+`awk` 
+:::
 
 ### General command syntax
 
@@ -94,6 +120,16 @@ ls --all file/path/to/directory # long form
 ls -o all file/path/to/directory # long form
 ```
 
+### Some useful keyboard shortcuts
+
+It can sometimes feel messy working on the command line. These keyboard shortcuts can make it a little easier: 
+
+-  `Ctrl` + `L`: clear your terminal window
+-  `Ctrl` + `U`: delete the current line
+-  `Ctrl` + `C`: abort a command
+- up & down arrow keys: recall previously executed commands in chronological order
+- TAB key: autocompletion
+
 ## Connecting to a remote computer via a shell
 
 In addition to navigating your computer/manipulating your files, you can also use a shell to gain accesss to and remotely control other computers. To do so, you'll need the following:
@@ -103,7 +139,7 @@ In addition to navigating your computer/manipulating your files, you can also us
 - the IP address or name of the remote computer
 - the necessary permissions to access the remote computer
 
-Secure Shell, or SSH, is a network communication protocol that is often used for securely connecting to and running shell commands on a remote host, tremendously simplifying remote computing. It is supported out-of-the-box on Linux and Macs via Teminal and on Windows machines via Windows PowerShell.
+Secure Shell, or SSH, is a network communication protocol that is often used for securely connecting to and running shell commands on a remote host, tremendously simplifying remote computing. 
 
 ## Git via a shell
 
@@ -111,10 +147,12 @@ Secure Shell, or SSH, is a network communication protocol that is often used for
 
 | Git command     | what it does                                                                  |
 |-----------------|-------------------------------------------------------------------------------|
-|    `git clone`  | create a copy (clone) of repository in a new direcotry ad a different location| 
-|    `git add`    | adds a change in the working directory to the staging area                    |
+|    `git clone`  | create a copy (clone) of repository in a new directory in a different location| 
+|    `git add`    | add a change in the working directory to the staging area                     |
 |    `git commit` | record a snapshot of a repository; the `-m` option adds a commit message      |
 |    `git push`   | send commits from a local repository to a remote repository                   |
+|    `git fetch`  | downloads contents (e.g. files, commits, refs) from a remote repo to a local repo |
+|    `git pull`   | fetches contents of a remote repo and merges chnanges into the local repo     |
 
 ## Let's practice!
 
@@ -153,19 +191,6 @@ yourusername@included-crab:~$
 
 ::: {.callout-important}
 You won't see anything appear as you type or paste your password -- this is a security feature! Type or paste your password and press enter/return when done to finish connecting to the server.
-:::
-
-::: {.callout-warning} 
-DO WE NEED THIS SECTION?  
-
-3. Change your password
-```{.bash}
-yourusername@included-crab:~$ passwd
-Changing password for yourusername.
-(current) UNIX password: 
-Enter new UNIX password: 
-Retype new UNIX password: 
-```
 :::
 
 ::: {.callout-note}
@@ -337,7 +362,7 @@ Let's begin by creating a simple bash script that when executed, will print out 
 2. Next, we'll create a shell script called `mybash.sh` using the `touch` command:
 
 ```{.bash}
-$ touch hello_world.sh
+$ touch bybash.sh
 ```
 
 3. There are a number of ways to edit a file or script -- we'll use [Nano](https://www.nano-editor.org/), a terminal-based text editor, as we did earlier. Open your `mybash.sh` with nano by running the following in your terminal:
