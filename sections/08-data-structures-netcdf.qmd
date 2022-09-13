@@ -95,42 +95,80 @@ The North Carolina Institute for Climate Studies holds a [list of the units foun
 
 ### Exercise
 
+Let's do a short practice now that we have reviewed the classic NetCDF model and know a bit about metadata best practices.
+<p align="center">
+**Part 1**
+</p>
+
 Imagine the following scenario: we have a network of 25 weather stations. 
 They are located in a square grid: starting at 30°0′N 60°0′E, there is a station every 10° North and every 10° East. 
 Each station measures the air temperature at a set time for three days, starting on September 1st, 2022. 
 On the first day, all stations record a temperature of 0°C. On the second day, all temperatures are 1°C, and on the third day, all temperatures are 2°C. 
 What are the *variables*, *dimensions* and *attributes* for this data? 
 
-**TO DO: include diagram**
-
-**Variables**: There is a single variable being measured: temperature. The variable values can be represented as a 3x5x5 array, with constant values for each day, as seen in the diagram. 
+**Variables**: There is a single variable being measured: temperature. 
+The variable values can be represented as a 5x5x3 array, with constant values for each day. 
 
 **Dimensions**: 
 This dataset has three dimensions: time, latitude, and longitude. 
-Time indicates when the measurement happened, we can encode it as the dates 2022-09-1, 2022-09-02, and 2022-09-03. 
+Time indicates when the measurement happened, we can encode it as the dates 2022-09-01, 2022-09-02, and 2022-09-03. 
 The pairs of latitude and longitude values indicate the positions of the weather stations. 
 Latitude has values 30, 40, 50, 60, and 70, measured in degrees North. Longitude has values 60, 70, 80, 90, and 100, measured in degrees East. 
 
+![](../images/netcdf_exercise_1.png)
+
 **Attributes**: Let’s divide these into attributes for the variable, the dimensions, and the whole dataset:
 
-* Temperature attributes: 
-    + standard_name: air_temperature
-    + units: degree_C
+* Variable attributes:
+    * Temperature attributes: 
+        + standard_name: air_temperature
+        + units: degree_C
 
-* Time attributes:
-    + description: date of measurement
+* Dimension attributes:
+    * Time attributes:
+        + description: date of measurement
 
-* Latitude attributes:
-    + standard_name: grid_latitude
-    + units: degrees_N
+    * Latitude attributes:
+        + standard_name: grid_latitude
+        + units: degrees_N
 
-* Longitude attributes:
-    + satandard_name: grid_longitude
-    + units: degree_E
+    * Longitude attributes:
+        + satandard_name: grid_longitude
+        + units: degree_E
 
 * Dataset attributes:
-    + title: Temperature at Weather Stations
+    + title: Temperature Measurements at Weather Stations
     + summary: an example of NetCDF data format
+
+<p align="center">
+**Part 2**
+</p>
+
+Now imagine we calculate the average temperature over time at each weather station and we wish to incorporate ths data into the same dataset.
+How will this change the variables, attributes and dimensions of the dataset?
+
+**Variables**: Now we are measuring two variables: temperature and average temperature. 
+The temperature data stays the same. 
+We can represent the average temperature as a single 5x5 array with value 1 at each cell.
+
+**Dimensions**: 
+This dataset still has three dimensions: time, latitude, and longitude. 
+The temperature variable uses all three dimensions, and the average temperature variable only uses two (latitude and longitude). 
+This is ok! 
+The dataset’s dimensions are the union of the dimensions of all the variables in the dataset. 
+Variables in the same dataset may have all, some, or no dimensions in common.
+
+![](../images/netcdf_exercise_2.png)
+
+**Attributes**:
+We need to keep all the previous attributes for the variables, dimension and dataset. 
+Notice that the dataset's title is general enough that we don't need to update it.
+The only update we need to do is add the attributes for our new average temperature variable:
+
+* Average temperature attributes: 
+    + standard_name: average_air_temperature
+    + description: average temperature over three days
+
 
 Our next step is to see how we can translate all this information into something we can store and handle on our computers.
 
@@ -154,7 +192,9 @@ It is easier to keep track of a dimension labeled “time” than to remember th
 Moreover, `xarray` is based on the netCDF data model, making it the appropriate tool to open, process, and create datasets in netCDF format.
 
 -->
+
 ## `xarray.DataArray`
+
 The `xarray.DataArray` is the primary data structure of the `xarray` package. 
 It is an n-dimensional array with **labeled dimensions**. 
 We can think of it as representing a single variable in the NetCDF data format: it holds the variable's values, dimensions, and attributes. 
