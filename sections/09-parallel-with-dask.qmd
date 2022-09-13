@@ -113,6 +113,8 @@ Just as we did in the previous lesson, we will download the data using the `requ
 ```{python}
 import os              
 import requests 
+
+import dask.dataframe as dd
 ```
 
 ```{python}
@@ -130,8 +132,6 @@ In this example, we will split the data frame into six partitions, meaning a blo
 
 ```{python}
 #| eval: false
-import dask.dataframe as dd
-
 fp = os.path.join(os.getcwd(),'dg_soil_moisture.csv')
 df = dd.read_csv(fp, blocksize = '20MB' , encoding='ISO-8859-1')
 df
@@ -202,8 +202,9 @@ Here you can find more information about [chunks](https://docs.dask.org/en/lates
 In this short example we will create a 200x500 `dask.array` by specifying chunk sizes of 100x100.
 
 ```{python}
-import dask.array as da
 import numpy as np
+
+import dask.array as da
 ```
 
 
