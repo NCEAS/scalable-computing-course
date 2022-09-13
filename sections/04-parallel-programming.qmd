@@ -239,7 +239,7 @@ The issue with this loop is that we execute each trial sequentially, which means
 
 ## Task parallelism with `concurrent.futures`
 
-In this case, we'll use the same `download_file` function from previously, but will switch up the `download_list` to use `concurrent.futures.
+In this case, we'll use the same `download_file` function from previously, but will switch up the `download_list` to use `concurrent.futures`.
 
 ```{python}
 #| eval: true
