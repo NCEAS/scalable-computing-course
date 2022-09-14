@@ -35,13 +35,12 @@ These are the *client*, the *scheduler* and the *workers*.
 
 - After receiving the tasks from the client, the **scheduler** determines how tasks will be distributed among the workers and coordinates them to process tasks in parallel.
 
-- Finally, the **workers** are threads, processes, or separate machines in a cluster. They compute tasks and store and return computations results. 
-You can read more about [threads and processes here](https://towardsdatascience.com/which-is-faster-python-threads-or-processes-some-insightful-examples-26074e90848f).
+- Finally, the **workers** compute tasks and store and return computations results. Workers can be threads, processes, or separate machines in a cluster. We won't go into how to choose between threads and processes, but there are best practices to select the right one. You can read more about [threads and processes here](https://towardsdatascience.com/which-is-faster-python-threads-or-processes-some-insightful-examples-26074e90848f).
 
 To interact with the client and generate tasks that can be processed in parallel we need to use Dasks' objects to read our data. 
 In this lesson, we will see examples of how to use `dask.dataframes` and `dask.arrays`. Apart from data frames and arrays, [other Dask objects](https://docs.dask.org/en/stable/api.html) can be used to parallelize your workflow.
 
-![From: https://www.datarevenue.com/en-blog/understanding-dask-architecture-client-scheduler-workers Make this into a collored graph, add cluster envelope ](../images/dask_cluster.png)
+![[M. Schmitt, *Understanding Dask Architecture: The Client, Scheduler and Workers*](https://www.datarevenue.com/en-blog/understanding-dask-architecture-client-scheduler-workers)](../images/dask_cluster.png)
 
 
 ### Setting up a Local Cluster
@@ -226,12 +225,15 @@ a.mean().compute()
 ```
 
 ## Dask and `xarray`
-In the future, it might be more common having to read some big array-like dataset (like a high-resolution multiband raster) than creating one from scratch using NumPy. 
-In this case, it can be useful to use the `xarray` module together with Dask. 
+In the future, it might be more common having to read some big array-like dataset (like a high-resolution multiband raster) than creating one from scratch using `NumPy`. 
+In this case, it can be useful to use the `xarray` module and its extender `rioxarray` together with Dask. 
+In the previous lesson, *Data Structures and Formats for Large Data*, we explore how to use the `xarray` package to work with labelled arrays. 
+`rioxarray` extends `xarray` with the *rio* accessor, which stands for "raster input and output". 
+
 It is simple to wrap Dask around `xarray` objects. We only need to specify the number of chunks as an argument when we are reading in a dataset (see also [[1]](https://docs.xarray.dev/en/stable/user-guide/dask.html)).
 
 ### Open .tif file
-As an example, let's do an NDVI calculation using remote sensing imagery collected by aerial vehicles over northeastern Siberia ([Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
+As an example, let's do a Normalized Difference Vegetation Index (NDVI) calculation using remote sensing imagery collected by aerial vehicles over northeastern Siberia ([Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
 The NDVI is an index commonly used to check if an area has live green vegetation or not. It can also show the difference between water, plants, bare soil, and human-made structures, among other things. 
 
 The NDVI is calculated using the near-infrared and red bands of the satellite image. The formula is
@@ -255,7 +257,6 @@ open("RU_ANS_TR2_FL005M_nir.tif", "wb").write(response.content)
 
 
 Because these are .tif files and have geospatial metadata, we will use `rioxarray` to read them. 
-`rioxarray` extends `xarray` with the *rio* accessor, which stands for "raster input and output". 
 You can find more information about `rioxarray` [here](https://corteva.github.io/rioxarray/stable/getting_started/getting_started.html). 
 
 To indicate we will open these .tif files with `dask.arrays` as the underlying object to the `xarray.DataArray` (instead of a `numpy.array`), we need to specify either a shape or the size in bytes for each chunk. 
