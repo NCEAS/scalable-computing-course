@@ -12,8 +12,9 @@ title: "Data Structures and Formats for Large Data"
 - Learn how to use the `xarray` Python package to work with NetCDF files:
     - Describe the core `xarray` data structures, the `xarray.DataArray` and the `xarray.Dataset`, and their components, including data variables, dimensions, coordinates, and attributes
     - Create `xarray.DataArrays` and `xarra.DataSets` out of raw `numpy` arrays and save them as netCDF files
-    - Load `xarray` datasets from netCDF and understand the attributes view 
+    - Load `xarray.DataSets` from netCDF files and understand the attributes view 
     - Perform basic indexing, processing, and reduction of `xarray.DataArrays`
+    - Convert `pandas.DataFrames` into `xarray.DataSets`
 
 ## Introduction
 
@@ -172,9 +173,7 @@ The only update we need to do is add the attributes for our new average temperat
 
 Our next step is to see how we can translate all this information into something we can store and handle on our computers.
 
-## NetCDF and Tabular Data
-
-https://docs.xarray.dev/en/stable/getting-started-guide/faq.html
+## `xarray`
 
 <!--
 ## `xarray`
@@ -193,7 +192,7 @@ Moreover, `xarray` is based on the netCDF data model, making it the appropriate 
 
 -->
 
-## `xarray.DataArray`
+### `xarray.DataArray`
 
 The `xarray.DataArray` is the primary data structure of the `xarray` package. 
 It is an n-dimensional array with **labeled dimensions**. 
@@ -208,8 +207,7 @@ In our previous example about temperature measured in weather stations, latitude
 
 ![ Read more here about the [`xarray` terminology](https://docs.xarray.dev/en/stable/user-guide/terminology.html).](../images/xarray_logo.png)
 
-
-### Create an `xarray.DataArray`
+#### Create an `xarray.DataArray`
 Let's suppose we want to make an `xarray.DataArray` that includes the information from our previous exercise about measuring temperature across three days. 
 First, we import all the necessary libraries.
 
@@ -287,8 +285,8 @@ temp
 
 At this point, since we have a single variable, the dataset attributes and the variable attributes are the same. 
 
-### Indexing
-An `xarray.DataArray` allows both positional indexing (like `NumPy`) and label-based indexing (like `pandas`). 
+#### Indexing
+An `xarray.DataArray` allows both positional indexing (like `numpy`) and label-based indexing (like `pandas`). 
 Positional indexing is the most basic, and it's done using Python's `[]` syntax, as in `array[i,j]` with i and j both integers. 
 **Label-based indexing** takes advantage of dimensions in the array having names and coordinate values that we can use to access data instead of remembering the positional order of each dimension.
 
@@ -312,7 +310,7 @@ See [xarray.DataArray.item](https://docs.xarray.dev/en/stable/generated/xarray.D
 
 More about [`xarray` indexing](https://docs.xarray.dev/en/stable/user-guide/indexing.html).
 
-### Reduction
+#### Reduction
 `xarray` has implemented several methods to reduce an `xarray.DataArray` along any number of dimensions. 
 One of the advantages of `xarray.DataArray` is that, if we choose to, it can carry over attributes when doing calculations.
 For example, we can calculate the average temperature at each weather station over time and obtain a new `xarray.DataArray`. 
@@ -328,14 +326,14 @@ avg_temp
 
 More about [`xarray` computations](https://docs.xarray.dev/en/stable/user-guide/computation.html).
 
-## `xarray.DataSet`
+### `xarray.DataSet`
 An `xarray.DataSet` resembles an in-memory representation of a NetCDF file and consists of *multiple* variables (each being an `xarray.DataArray`), with dimensions, coordinates, and attributes, forming a self-describing dataset. 
 Attributes can be specific to each variable, each dimension, or they can describe the whole dataset. 
 The variables in an `xarray.DataSet` can have the same dimensions, share some dimensions, or have no dimensions in common. 
 Let's see an example of this.
 
 
-### Create an `xarray.DataSet`
+#### Create an `xarray.DataSet`
 Following our previous example, we can create an `xarray.DataSet` by combining the temperature data with the average temperature data. 
 We also add some attributes that now describe the whole dataset, not only each variable. 
 
@@ -365,7 +363,7 @@ Notice the following:
 temp_dataset
 ```
 
-### Save and Reopen
+#### Save and Reopen
 Finally, we want to save our dataset as a NetCDF file. 
 To do this, specify the file path and use the *.nc* extension for the file name. 
 Then save the dataset using the `to_netcdf` method with your file path.
@@ -423,3 +421,64 @@ https://arcticdata.io/catalog/view/doi:10.18739/A26T0GX63
 - Is it a good archival format: Yes! Better than CSV in many (not all) ways. The format is open and well-documented, support for the reading the format is ubiquitous, it's efficient w/ disk space (compared to CSV), it supports remote querying (unlike CSV).
 
 -->
+
+## NetCDF and Tabular Data
+
+Undoubtedly, tabular data is one of the most popular data formats. 
+In this last section, we will go over the relation between tabular data and the NetCDF data format and how to transform a `pandas.DataFrame` into an `xarray.DataSet`.
+
+### Tabular to NetCDF
+
+We assume our starting point is tabular data which meets the criteria for **tidy data**, which means:
+
+* Each column holds a different variable.
+
+* Each rows holds a different observation.
+
+
+Take, for example, this tidy data subset from our exercise about weather stations measuring temperature:
+![](../images/netcdf_tabular_data.png)
+
+To understand how this will transform into NetCDF format, we first need to identify which columns will act as dimensions and which as variables. 
+We can also think of the values of the dimension columns as the coordinates in the `xarray.DataSet`. 
+The diagram below shows how these columns would transform into variables, dimensions and coordinates. 
+
+![](../images/netcdf_pandas_to_xarray.png)
+
+Tabular formats like csv do not offer a standard way to encode attributes for the dimensions or variables, this is why we don't see any attributes in the resulting NetCDF data. One of the biggest advantages of NetCDF is its self-describing properties.
+
+### `pandas` to `xarray`
+
+How does the previous example look like when we are working with `pandas` and `xarray`?
+
+Let's work with a csv file containing the previous temperature measurements. 
+Essentially, we need to read this file as a `pandas.DataFrame` and then use the `pandas.DataFrame.to_xarray()` method, taking into account that the dimensions of the resulting `xarray.DataSet` will be formed using the index column(s) of the `pandas.DataFrame`. 
+In this case, we know the first three columns will be our dimension columns, so we need to group them as a [multindex](https://pandas.pydata.org/docs/user_guide/advanced.html#advanced-hierarchical) for the `pandas.DataFrame`. 
+We can do this by using the `index_col` argument directly when we read in the csv file.
+
+```{python}
+import pandas as pd
+
+# path to csv data
+fp = os.path.join(os.getcwd(),'netcdf_temp_data.csv') 
+
+# specify columns representing dimensions
+dimension_columns = [0,1,2]
+
+# read file
+temp = pd.read_csv(fp, index_col=dimension_columns)
+temp
+```
+
+And this is our resulting `xarray.DataSet`:
+```{python}
+temp.to_xarray()
+```
+
+For further reading and examples about switching between `pandas` and `xarray` be sure to visit the following:
+
+- `xarray`'s [Frequently Asked Questions](https://docs.xarray.dev/en/stable/getting-started-guide/faq.html)
+
+- `xarray`'s documentation about [working with pandas](https://docs.xarray.dev/en/stable/user-guide/pandas.html)
+
+- [`pandas.DataFrame.to_xarray` documentation](https://docs.xarray.dev/en/stable/user-guide/pandas.html)
