@@ -89,10 +89,14 @@ The most commonly used metadata standard for geospatial data is the **Climate an
 >Principles of CF include self-describing data (no external tables needed for understanding), metadata equally readable by humans and software, minimum redundancy, and maximum simplicity. [(CF conventions FAQ)](http://cfconventions.org/faq.html)
 
 The CF conventions provide a unique standardized name and precise description of over 1,000 physical variables. 
-To maximize the reusability of our data, it is best to include a variable's standardized name as an attribute called `standard_name` . 
-You can find all of the CF convention's standard names [in this table](http://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html).
-Variables should also include a `units` attribute. This should be a string that can be recognized by UNIDATA’s Udunits package [UDUNITS](https://www.unidata.ucar.edu/software/udunits/).
-The North Carolina Institute for Climate Studies holds a [list of the units found in the UDUNITS database](https://ncics.org/portfolio/other-resources/udunits2/#degree_N).
+To maximize the reusability of our data, it is best to include a variable's standardized name as an attribute called `standard_name`. 
+Variables should also include a `units` attribute. 
+This attribute should be a string that can be recognized by UNIDATA’s [UDUNITS package](https://www.unidata.ucar.edu/software/udunits/).
+In these links you can find:
+
+* [a table with all of the CF convention's standard names](http://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html), and
+
+* [a list of the units found in the UDUNITS database](https://ncics.org/portfolio/other-resources/udunits2/#degree_N) maintained by the North Carolina Institute for Climate Studies. 
 
 ### Exercise
 
@@ -150,8 +154,8 @@ Latitude has values 30, 40, 50, 60, and 70, measured in degrees North. Longitude
 **Part 2**
 </p>
 
-Now imagine we calculate the average temperature over time at each weather station and we wish to incorporate ths data into the same dataset.
-How will this change the variables, attributes and dimensions of the dataset?
+Now imagine we calculate the average temperature over time at each weather station, and we wish to incorporate this data into the same dataset.
+How will adding the average temperature data change the dataset's variables, attributes, and dimensions?
 
 :::{.callout-tip collapse="true"}
 ### Answer
@@ -170,7 +174,7 @@ Variables in the same dataset may have all, some, or no dimensions in common.
 ![](../images/netcdf_exercise_2.png)
 
 **Attributes**:
-We need to keep all the previous attributes for the variables, dimension and dataset. 
+To begin with, we need to keep all the previous attributes.
 Notice that the dataset's title is general enough that we don't need to update it.
 The only update we need to do is add the attributes for our new average temperature variable:
 
@@ -183,6 +187,9 @@ The only update we need to do is add the attributes for our new average temperat
 Our next step is to see how we can translate all this information into something we can store and handle on our computers.
 
 ## `xarray`
+
+`xarray` is an open source project and Python package that augments NumPy arrays by adding labeled dimensions, coordinates and attributes. 
+`xarray` is based on the netCDF data model, making it the appropriate tool to open, process, and create datasets in netCDF format.
 
 <!--
 ## `xarray`
@@ -201,6 +208,8 @@ Moreover, `xarray` is based on the netCDF data model, making it the appropriate 
 
 -->
 
+![ [`xarray`'s development portal](https://xarray.dev)](../images/xarray_logo.png)
+
 ### `xarray.DataArray`
 
 The `xarray.DataArray` is the primary data structure of the `xarray` package. 
@@ -211,10 +220,10 @@ Apart from variables, dimensions, and attributes, `xarray` introduces one more p
 in `xarray` each dimension has at least one set of **coordinates**.
 A dimension's coordinates indicate the dimension's values. 
 We can think of the coordinate's values as the tick labels along a dimension. 
+For example, in our previous exercise about temperature measured in weather stations, latitude is a dimension, and the latitude's coordinates are 30, 40, 50, 60, and 70 because those are the latitude values at which we are collecting temperature data. 
+In that same exercise, time is a dimension, and its coordinates are 2022-09-1, 2022-09-02, and 2022-09-03.
 
-In our previous example about temperature measured in weather stations, latitude is a dimension, and the latitude's coordinates are 30, 40, 50, 60, and 70 because those are the latitude values at which we are collecting temperature data. In that same example, time is a dimension, and its coordinates are 2022-09-1, 2022-09-02, and 2022-09-03.
-
-![ Read more here about the [`xarray` terminology](https://docs.xarray.dev/en/stable/user-guide/terminology.html).](../images/xarray_logo.png)
+Here you can read more about the [`xarray` terminology](https://docs.xarray.dev/en/stable/user-guide/terminology.html).
 
 #### Create an `xarray.DataArray`
 Let's suppose we want to make an `xarray.DataArray` that includes the information from our previous exercise about measuring temperature across three days. 
@@ -410,44 +419,65 @@ fw_data
 
 ```
 
-1. SOMETHING ABOUT OBJECT ORGANIZATION
+1. How many dimensions does the `runoff_annual` variable have? 
+What are the coordinates for the second dimension of this variable?
 
 :::{.callout-tip collapse="true"}
 ### Answer
-BLA BLA
+We can see in the object viewer that the `runoff_annual` variable has two dimensions: `time` and `member`, in that order. 
+We can also access the dimensions by calling:
+
+```{python}
+#| eval: false
+fw_data.runoff_annual.dims
+```
+
+The second dimensions is `member`. 
+Near the top of the object viewer, under coordinates, we can see that that member's coordinates is an array from 1 to 11. 
+We can directly see this array by calling:
+```{python}
+#| eval: false
+fw_data.member
+```
+
 :::
 
-2.
+2. Select the values for the second member of the `netPrec_annual` variable.
 
 :::{.callout-tip collapse="true"}
 ### Answer
 ```{python}
+#| eval: false
 member2 = fw_data.netPrec_annual.sel(member=2)
 ```
 :::
 
-3.
+3. What is the maximum value of the second member of the `netPrec_annual` variable in the time period 2022 to 2100? [Hint](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.loc.html).
 
 :::{.callout-tip collapse="true"}
 ### Answer
+Based on our previous answer, this maximum is:
 ```{python}
-max_22_100 = member2.loc[2022:2100].max()
+#| eval: false
+x_max = member2.loc[2022:2100].max()
+xmax.item(0)
 ```
+Notice we had to use `item` to transform the array into a number.
 :::
 
 
 ## NetCDF and Tabular Data
 
 Undoubtedly, tabular data is one of the most popular data formats. 
-In this last section, we will go over the relation between tabular data and the NetCDF data format and how to transform a `pandas.DataFrame` into an `xarray.DataSet`.
+In this last section, we will discuss the relation between tabular data and the NetCDF data format and how to transform a `pandas.DataFrame` into an `xarray.DataSet`.
 
 ### Tabular to NetCDF
 
-We assume our starting point is tabular data which meets the criteria for **tidy data**, which means:
+We assume our starting point is tabular data that meets the criteria for **tidy data**, which means:
 
 * Each column holds a different variable.
 
-* Each rows holds a different observation.
+* Each row holds a different observation.
 
 
 Take, for example, this tidy data subset from our exercise about weather stations measuring temperature:
@@ -455,15 +485,15 @@ Take, for example, this tidy data subset from our exercise about weather station
 
 To understand how this will transform into NetCDF format, we first need to identify which columns will act as dimensions and which as variables. 
 We can also think of the values of the dimension columns as the coordinates in the `xarray.DataSet`. 
-The diagram below shows how these columns would transform into variables, dimensions and coordinates. 
+The diagram below shows how these columns transform into variables, dimensions, and coordinates. 
 
 ![](../images/netcdf_pandas_to_xarray.png)
 
-Tabular formats like csv do not offer a standard way to encode attributes for the dimensions or variables, this is why we don't see any attributes in the resulting NetCDF data. One of the biggest advantages of NetCDF is its self-describing properties.
+Tabular formats like csv do not offer a standard way to encode attributes for the dimensions or variables, this is why we don't see any attributes in the resulting NetCDF data. One of the most significant advantages of NetCDF is its self-describing properties.
 
 ### `pandas` to `xarray`
 
-How does the previous example look like when we are working with `pandas` and `xarray`?
+What does the previous example look like when working with `pandas` and `xarray`?
 
 Let's work with a csv file containing the previous temperature measurements. 
 Essentially, we need to read this file as a `pandas.DataFrame` and then use the `pandas.DataFrame.to_xarray()` method, taking into account that the dimensions of the resulting `xarray.DataSet` will be formed using the index column(s) of the `pandas.DataFrame`. 
