@@ -9,7 +9,7 @@ title: "Parallelization with Dask"
     - Understand delayed computations and "lazy" evaluation
     - Obtain information about computations via the Dask dashboard
     
-- Learn to load data and specify partition/chunk sizes of `dask.arrays`/`dask.dataframes`.
+- Learn to load data and specify partition/chunk sizes of `dask.arrays`/`dask.dataframes`
 <!--
     - Interpret a task graph
 -->
@@ -232,6 +232,12 @@ It is simple to wrap Dask around `xarray` objects. We only need to specify the n
 
 ### Open .tif file
 As an example, let's do an NDVI calculation using remote sensing imagery collected by aerial vehicles over northeastern Siberia ([Loranty, Forbath, Talucci, Alexander, DeMarco, et al. 2020. doi:10.18739/A2ZC7RV6H](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2ZC7RV6H).). 
+The NDVI is an index commonly used to check if an area has live green vegetation or not. It can also show the difference between water, plants, bare soil, and human-made structures, among other things. 
+
+The NDVI is calculated using the near-infrared and red bands of the satellite image. The formula is
+
+$$NDVI = \frac{NIR - Red}{NIR + Red}.$$
+
 
 First, we download the data for the near-infrared (NIR) and red bands from the Arctic Data Center:
 
@@ -259,9 +265,7 @@ Both files are 76 MB, so let's have chunks of 15 MB to have roughly six chunks.
 import rioxarray as rioxr
 ```
 
-```{python}
-#raster = rioxr.open_rasterio(href, chunks={"x": int(x_n/workers_sqrt), "y":int(y_n/workers_sqrt)})       
-
+```{python}   
 # read in the file
 fp_red = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_red.tif")
 red = rioxr.open_rasterio(fp_red, chunks = '15MB')
@@ -285,16 +289,8 @@ Next, we read in the NIR band and do the same pre-processing:
 fp_nir = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_nir.tif")
 nir = rioxr.open_rasterio(fp_nir, chunks = '15MB')
 
-# print current shape
-print('shape before squeeze:', nir.shape)
-print('chunks before squeeze:', nir.chunks )
-
 #squeeze
 nir = nir.squeeze()
-
-# print squeezed shape
-print('shape after squeeze:', nir.shape)
-print('chunk after squeeze:', nir.chunks )
 ```
 
 ### Calculating NDVI
