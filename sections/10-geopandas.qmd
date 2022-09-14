@@ -75,7 +75,7 @@ type(ships_meta)
 
 The `ships` object is a `numpy` array, while the `ships_meta` is a special `rasterio` class called `Profile`. To understand why the raster data is represented as an array, and what that profile object is, let's look into what raster data are, exactly.
 
-![](https://raw.githubusercontent.com/NEONScience/NEON-Data-Skills/dev-aten/graphics/raster-general/raster_concept.png)
+![](../images/raster-diagram.png)
 
 Source: [Leah A. Wasser, Megan A. Jones, Zack Brym, Kristina Riemer, Jason Williams, Jeff Hollister, Mike Smorul. Raster 00: Intro to Raster Data in R. National Evologial Observatory Network (NEON).](https://www.neonscience.org/resources/learning-hub/tutorials/dc-raster-data-r)
 
@@ -137,7 +137,7 @@ comm.head
 
 Note the existence of the `geometry` column. This is where the actual geospatial points that comprise the vector data are stored, and this brings up the important difference between raster and vector data - while raster data is regularly gridded at a specific resolution, vector data are just points in space.
 
-![](https://raw.githubusercontent.com/NEONScience/NEON-Data-Skills/dev-aten/graphics/vector-general/pnt_line_poly.png)
+![](../images/vector-diagram.png)
 
 Source: [Leah A. Wasser, Megan A. Jones, Zack Brym, Kristina Riemer, Jason Williams, Jeff Hollister, Mike Smorul. Raster 00: Intro to Raster Data in R. National Evologial Observatory Network (NEON).](https://www.neonscience.org/resources/learning-hub/tutorials/dc-raster-data-r)
 
