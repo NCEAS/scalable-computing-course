@@ -169,6 +169,7 @@ survey.schema.to_string()
 Let's pick out only the ones we are interested in.
 
 ```{python}
+#| eval: false
 survey_s = survey.to_table(columns=['SampleID','Datetime', 'Station', 'Longitude', 'Latitude'])
 ```
 
