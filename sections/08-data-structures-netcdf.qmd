@@ -501,9 +501,18 @@ In this case, we know the first three columns will be our dimension columns, so 
 We can do this by using the `index_col` argument directly when we read in the csv file.
 
 ```{python}
-# path to csv data
-fp = os.path.join(os.getcwd(),'netcdf_temp_data.csv') 
+#| echo: false
+# real path to csv data
+fp = "../data/netcdf_temp_data.csv"
+```
 
+
+```{python}
+#| eval: false
+fp = os.path.join(os.getcwd(),'netcdf_temp_data.csv') 
+```
+
+```{python}
 # specify columns representing dimensions
 dimension_columns = [0,1,2]
 
