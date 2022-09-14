@@ -207,7 +207,7 @@ The stories that hit the news are often of privacy breaches or biases seeping in
 
 ### ImageNet: A case study of ethics and bias in machine learning 
 
-![](../images/apple_treachery.png)
+![](../images/apple_treachery.jpeg)
 Image source: Kate Crawford and Trevor Paglen, “Excavating AI: The Politics of Training Sets for Machine Learning" (September 19, 2019).
 
 ImageNet is a great example of how personal bias can enter machine learning through the training data. ImageNet was a training data set of photos that was used to train image classifiers. The data set was initially created as a large collection of pictures, which were mainly used to identify objects, but some included images of people. The creators of the data set created labels to categorize the images, and through crowdsourcing, people from the internet labeled these images. (This example is from Kate Crawford and Trevor Paglen, “Excavating AI: The Politics of Training Sets for Machine Learning", September 19, 2019). 
