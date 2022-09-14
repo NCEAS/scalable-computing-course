@@ -152,7 +152,7 @@ sections/data
 sections/*nc
 
 # csv in sections
-sections/*.csv
+sections/dg_soil_moisture.csv
 
 # runinfo?
 
