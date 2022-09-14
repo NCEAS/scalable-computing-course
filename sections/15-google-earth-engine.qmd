@@ -1,68 +1,107 @@
 ---
 title: "Google Earth Engine"
 ---
-
-SAM NOTES, DELETE LATER
+::: {.callout-important}
+## TODO
  - need to make sure that .ipynb that student's will work out of are running in same virutal enviroment as everything else
  - embed .ipynb into quarto notebook (get book to build from those examples)
  - use Ryan Abernathey's [post](https://medium.com/pangeo/closed-platforms-vs-open-architectures-for-cloud-native-earth-system-analytics-1ad88708ebb6) to help frame introduction
+:::
 
 ## Learning Objectives
 
 - Understand what Google Earth Engine provides and its applications
-- Learn about some real-world applications of Google Earth Engine
-- Learn how to get started using Google Earth Engine on your own computer
-- Learn how to find and access Google Earth Engine Data
+- Learn how to search for, import, manipulate, and visualize Google Earth Engine Data
+- Learn about some real-world applications of Google Earth Engine in Earth systems research
 
-## Introduction (15-20min)
+## Introduction 
 
-[Google Earth Engine](https://earthengine.google.com/) (GEE) is a geospatial processing platform powered by Google Cloud Platform. It contains over 30 years (and petabytes) of satellite imagery and geospatial datasets that are continually updated and available instantly. Users can process data using Google Cloud Platform and built-in algorithms or by using the Earth Engine API, which is available in Python (and JavaScript) for anyone with an account (a free tier service is available). 
+[Google Earth Engine](https://earthengine.google.com/) (GEE) is a geospatial processing platform powered by Google Cloud Platform. It contains over 30 years (and multiple petabytes) of satellite imagery and geospatial datasets that are continually updated and available instantly. Users can process data using Google Cloud Platform and built-in algorithms or by using the Earth Engine API, which is available in Python (and JavaScript) for anyone with an account (a free tier service is available). 
 <br> 
 
 <center><img src="../images/gee.gif" alt="" width="600"/></center>
+<center><span style = 'font-size: 85%; color: #6e6d6d;'>Image Source: [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets)</span></center>
 
 <br>
-So why should we be excited about GEE? As data have gotten larger, the typical download-data-work-locally workflow is no longer always feasible. GEE offers web access to an extensive catalog of analysis-ready geospatial data and scalable computing power via their cloud service, making global-scale analyses and visualizations possible for anyone with an account ([sign up here](https://signup.earthengine.google.com)!)
+So what's so exciting about platforms like GEE? [Ryan Abernathey](https://scholar.google.com/citations?user=t1lmjVkAAAAJ&hl=en) frames this nicely in his blogpost [Closed Platform vs. Open Architectures for Cloud-Native Earth System Analytics](https://medium.com/pangeo/closed-platforms-vs-open-architectures-for-cloud-native-earth-system-analytics-1ad88708ebb6)...
 
-Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellite ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)).
+-  as Earth System data have gotten larger, the typical download-data-work-locally workflow is no longer always feasible
+-  those data are also produced and distributed by lots of different organizations (e.g. [NASA](https://www.nasa.gov/), [NOAA](https://www.noaa.gov/), [Copernicus](copernicus.eu/en))
+- researchers often need to apply a wide range of analytical methods to those data, ranging from simple stats to machine learning approaches
 
-## Exercise 1.1: Getting started with Google Earth Engine (GEE) 
+GEE offers web access (i.e. no need to download data to your computer) to an extensive catalog of analysis-ready geospatial data (from many different organizations) and scalable computing power via their cloud service, making global-scale analyses and visualizations possible for anyone with an account ([sign up here](https://signup.earthengine.google.com)!)
+
+Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellite ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)). 
+
+In this lesson, we'll get some hands-on practice connecting to and using Google Earth Engine to visualize global precicpation data. We'll then **__________Ingmar's plan here__________**.
+
+## **Exercise 1:** An introductory lesson on using Google Earth Engine
+
+### **Part i.** Setup
 
 ::: {.callout-note}
-## GEE libraries were installed when you set up your `scomp` virtual environment
+## Necessary libraries are already installed in the `scomp` virtual environment
 
 We'll be using a few different libraries in the next exercises/demos that should already be installed if you successfully set up your `scomp` virtual environment. If you eventually find yourself working outside our virtual environment, you'll want need to install the following libraries: 
 
 ```{.bash}
 #| eval: false
-pip install earthengine-api 
+pip install earthengine-api # the GEE API
 pip install ee # Google Earth Engine interface
 pip install geemap # package for interactive maping with GEE 
 ```
 :::
 
-1. Create a Google Earth Engine account (if you haven't already done so) -- it's best to use a personal gmail address.
+1. Create a Google Earth Engine account (if you haven't already done so) 
 
--  Find instructions on how to do so [here](https://learning.nceas.ucsb.edu/2022-09-arctic/#create-a-free-google-earth-engine-gee-account)
-
-::: {.callout-note}
-## Combine this step with importing libraries below??
-
-2. Set up GEE Authentication
-
--  In order to begin using GEE, you'll need to connect your envionment (`scomp`) to the authentication credentials associated with your Google account. This will need to be done each time you connect to GEE, (but only be done once per session). 
-
-- On the command line, type:
-
-```{.bash}
-#| eval: false
-# earthengine authenticate
-```
-
--  This should launch a browser window where you can login with your Google account to the Google Earth Engine Authenticator. Following the prompts will generate a code, which you'll then need to copy and paste back onto the command line. This will be saved as an authentication token so you won't need to go through this process again until the next time you start a new session.
+::: {.callout-important}
+GEE authentication (step 3, below) use [Cloud Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Some organizations (like UCSB) control who can create Cloud Projects, which may prevent you from completing the authentication process. To circumvent authentication issues, we recommend creating your GEE account using a non-orgnaizational account (e.g. a personal gmail account). Check out GEE's [authentication troubleshooting recommendations](https://developers.google.com/earth-engine/guides/python_install#troubleshooting-authentication-issues) if you continue to run into issues.
 :::
 
-## Exercise 1.2: Visualize global precipitation data using Google Earth Engine 
+-  Refer back to the [preface](https://learning.nceas.ucsb.edu/2022-09-arctic/#create-a-free-google-earth-engine-gee-account)
+to find instructions on creating a GEE account.
+
+2. Load libraries
+
+```{python}
+import ee
+import geemap
+```
+
+3. Authenticate your GEE account
+
+-  In order to begin using GEE, you'll need to connect your environment (`scomp`) to the authentication credentials associated with your Google account. This will need to be done each time you connect to GEE, (but only be done once per session). 
+
+```{python}
+#| eval: false
+ee.Authenticate() # triggers the authentication process
+```
+
+-  This should launch a browser window where you can login with your Google account to the Google Earth Engine Authenticator. Following the prompts will generate a code, which you'll then need to copy and paste into the VS Code command palette (at the top of the IDE). This will be saved as an authentication token so you won't need to go through this process again until the next time you start a new session. The browser-based authentication steps will look something like this:
+
+a. **Notebook Authenticator:** choose an active Google account and Cloud Project (you may have to create one if this is your first time authenticating) and click "Generate Token"  
+b. **Choose an account:** if prompted, select the same Google account as above
+c. **Google hasn't verified this app:** You may be temped to click the blue "Back to saftey" button, but don't! Click "Continue"  
+d. **Select what Earth Engine Notebook Client can access:** click both check boxes, then "Continue"  
+e. Copy your authentication code to your clipboard to paste into the VS Code command palette
+
+4. Lastly, intialize. This verifies that valid credentials have been created and populates the Python client library with methods that the backend server supports.
+
+```{python}
+#| eval: false
+ee.Initialize() 
+```
+
+If successful, you're now ready to begin working with Earth Engine data!
+
+### **Part ii.** Explore the ERA5 Daily Aggregate Data
+
+:::{.callout-important}
+## TODO
+<https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#description>
+:::
+
+### **Part iii.** Visualize global precipitation data using ERA5 Daily Aggregate data
 
 *Content for this section was adapted from Dr. Sam Stevenson's [Visualizing global precipitation using Google Earth Engine](https://github.com/samanthastevenson/EDS220_Fall2021/blob/main/Week1_ERA5Maps_GEE.ipynb) lesson, given in her [EDS 220 course](https://samanthastevenson.github.io/EDS220_site/) in Fall 2021.*
 
@@ -99,6 +138,11 @@ Reanalysis combines observations with model data to provide the most complete pi
 
 The `ImageCollection` method extracts a set of individual images that satisfies some criterion that you pass to GEE through the `ee` package. This is stored as an **ImageCollection** object which can be filtered and processed in various ways. We can pass the `ImageCollction` method agruments to tell GEE which data we want to retrieve. Below, we retrieve all daily ERA5 data (so we can see individual rain events).
 
+::: {.callout-tip}
+## Earth Engine Snippets make importing ImageCollections easy!
+To import an ImageCollection, copy and paste the Earth Engine Snippet for your dataset of interest. For example, the Earth Enginge Snippet to import the ERA5 daily aggregates data can be found on the [dataset page](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY).
+:::
+
 ```{python}
 #| eval: false
 weatherData = ee.ImageCollection('ECMWF/ERA5/DAILY')
@@ -133,7 +177,7 @@ We can fist use the `setCenter` method to tell the map where to center itself. I
 
 ```{python}
 #| eval: false
-Map.setCenter(-152.505706, 59.432367, 2) # Cook Inlet, Alaska (WE CAN CHANGE THIS LOCATION)
+myMap.setCenter(-152.505706, 59.432367, 2) # Cook Inlet, Alaska (WE CAN CHANGE THIS LOCATION)
 ```
 
 Next, set a color palette to use when plotting the data layer. The following is a palette specified for precipitation in the GEE description page for ERA5. GEE has lots of color tables like this that you can look up. 
@@ -151,18 +195,29 @@ Finally, plot our filtered data, `precip_filtered` on top of our basemap using t
 
 ```{python}
 #| eval: false
-Map.addLayer(precip_filtered, precip_palette, 'total precipitation', opacity = 0.3)
+myMap.addLayer(precip_filtered, precip_palette, 'total precipitation', opacity = 0.3)
 ```
 
-## Ingmar's Demo
+## **Exercise 2:** Ingmar's Demo
+
+::: {.callout-important}
+## TODO
+Add content here
+:::
 
 ## Conclusion/Summary 
 
+::: {.callout-important}
+## TODO
 * lessons learned
 * utilities
 * etc.
+:::
 
 ## Other Resources
 
-- [GEE Code Editor](https://code.earthengine.google.com/) is a web-based IDE for using GEE (JavaScript)
-
+- [GEE Code Editor](https://code.earthengine.google.com/),a web-based IDE for using GEE (JavaScript)
+- [`earthengine-api` installation instructions](https://developers.google.com/earth-engine/guides/python_install)
+- [Creating and managing Google Cloud projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
+- [Troubleshooting authentication issues](https://developers.google.com/earth-engine/guides/python_install#troubleshooting-authentication-issues)
+- [An Intro to the Earth Engine Python API](https://developers.google.com/earth-engine/tutorials/community/intro-to-python-api)
