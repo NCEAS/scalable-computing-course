@@ -466,7 +466,7 @@ Notice we had to use `item` to transform the array into a number.
 :::
 
 
-## NetCDF and Tabular Data
+## Tabular Data and NetCDF
 
 Undoubtedly, tabular data is one of the most popular data formats. 
 In this last section, we will discuss the relation between tabular data and the NetCDF data format and how to transform a `pandas.DataFrame` into an `xarray.DataSet`.
@@ -489,7 +489,7 @@ The diagram below shows how these columns transform into variables, dimensions, 
 
 ![](../images/netcdf_pandas_to_xarray.png)
 
-Tabular formats like csv do not offer a standard way to encode attributes for the dimensions or variables, this is why we don't see any attributes in the resulting NetCDF data. One of the most significant advantages of NetCDF is its self-describing properties.
+Tabular formats like csv do not offer an intrinsic way to encode attributes for the dimensions or variables, this is why we don't see any attributes in the resulting NetCDF data. One of the most significant advantages of NetCDF is its self-describing properties.
 
 ### `pandas` to `xarray`
 
