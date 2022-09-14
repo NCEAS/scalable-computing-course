@@ -106,7 +106,7 @@ Next we can read in the data using `ds.dataset()`, passing it the path to the pa
 
 ```{python}
 #| eval: false
-deltafish = ds.dataset("/home/shares/deltafish/fish", format="parquet", partitioning=["Species"])
+deltafish = ds.dataset("/home/shares/deltafish/fish", format="parquet", partitioning='hive')
 ```
 
 You can check out a file listing using the `files` method. Another great feature of parquet files is that they allow you to partition the data accross variables of the dataset. These partitions mean that, in this case, data from each species of fish is written to it's own file. This allows for even faster operations down the road, since we know that users will commonly need to filter on the species variable. Even though the data are partitioned into different files, `pyarrow` knows that this is a single dataset, and you still work with it by referencing just the directory in which all of the partitioned files live.
@@ -142,11 +142,11 @@ If we are only interested in a few species, we can do a filter:
 
 ```{python}
 #| eval: false
-expr = ((ds.field("Species")=="Dorosoma petenense")| 
-        (ds.field("Species")=="Morone saxatilis") |
-        (ds.field("Species")== "Spirinchus thaleichthys"))
+expr = ((ds.field("Taxa")=="Dorosoma petenense")| 
+        (ds.field("Taxa")=="Morone saxatilis") |
+        (ds.field("Taxa")== "Spirinchus thaleichthys"))
 
-fishf = deltafish.to_table(filter = expr)
+fishf = deltafish.to_table(filter = expr, columns =['SampleID', 'Length', 'Count', 'Taxa'])
 ```
 
 
@@ -156,7 +156,7 @@ First read in the survey dataset.
 
 ```{python}
 #| eval: false
-survey = ds.dataset("/home/jclark/deltafish/survey", format="parquet", partitioning=["Source"])
+survey = ds.dataset("/home/jclark/deltafish/survey", format="parquet", partitioning='hive')
 ```
 
 Take a look at the columns again:
@@ -166,13 +166,19 @@ Take a look at the columns again:
 survey.schema.to_string()
 ```
 
+Let's pick out only the ones we are interested in.
+
+```{python}
+survey_s = survey.to_table(columns=['SampleID','Datetime', 'Station', 'Longitude', 'Latitude'])
+```
+
+
 Then do the join, and convert to a pandas `data.frame`. 
 
 ```{python}
 #| eval: false
-fish_j = fishf.join(survey, "SampleID").to_pandas()
+fish_j = fishf.join(survey_s, "SampleID").to_pandas()
 ```
-
 
 Note that when we did our first manipulation of this dataset, we went from working with a `FileSystemDataset`, which is a representation of a dataset on disk without reading it into memory, to a `Table`, which is read into memory. `pyarrow` has a [number of functions](https://arrow.apache.org/docs/python/compute.html) that do computations on datasets without reading them into memory. However these are evaluated "eagerly," as opposed to "lazily." These are useful in some cases, like above, where we want to take a larger than memory dataset and generate a smaller dataset (via filter, or group by/summarize), but are not as useful if we need to do a join before our summarization/filter.
 
