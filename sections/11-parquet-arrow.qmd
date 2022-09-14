@@ -1,5 +1,5 @@
 ---
-title: "Data Futures: Parquet and Arrow"
+title: "Parquet and Arrow"
 ---
 
 ## Learning Objectives
@@ -18,7 +18,7 @@ So what happens if the data you need to read in are larger than your memory? 32G
 
 ## Row major vs column major
 
-The difference between row major and column major is in the ordering of items in the array.
+The difference between row major and column major is in the ordering of items in the array when they are read into memory.
 
 Take the array:
 ```
@@ -52,7 +52,7 @@ Allison | Oregon | 57
 In the above row major example, data are read in the order:
 `John, Washingon, 40, [new line], Mariah, Texas, 21`.
 
-This means that getting a subset of all columns would be easy; you can specify to read in only the first X rows. However, if we are only interested in `Name` and `Location`, we would still have to read in all of the rows before discarding the Age column.
+This means that getting a subset of rows with all the columns would be easy; you can specify to read in only the first X rows. However, if we are only interested in `Name` and `Location`, we would still have to read in all of the rows before discarding the Age column.
 
 If these data were organized in a column major format, they might look like this:
 
@@ -75,7 +75,7 @@ Parquet is an open-source file format that stores data in a column-major format.
 
 ![](../images/parquet-schematic.png)
 
-Row groups are blocks of data over a set number of rows that contain data from the same columns. Within each row group, data are organized in column-major format, and within each column are pages that are typically 1MB. The footer of the file contains metaata like the schema, encodings, unique values in each column, etc.
+Row groups are blocks of data over a set number of rows that contain data from the same columns. Within each row group, data are organized in column-major format, and within each column are pages that are typically 1MB. The footer of the file contains metadata like the schema, encodings, unique values in each column, etc.
 
 The parquet format has many tricks to to increase storage efficiency, and is increasingly being used to handle large datasets.
 

@@ -221,6 +221,7 @@ ImageNet is a great example of how personal bias can enter machine learning thro
 
 ## References and Further Reading
 
+![](../images/apple_treachery.jpeg)
 Carroll, S.R., Herczog, E., Hudson, M. et al. (2021) Operationalizing the CARE and FAIR Principles for Indigenous data futures. Sci Data 8, 108 https://doi.org/10.1038/s41597-021-00892-0
 
 Chen, W., & Quan-Haase, A. (2020) Big Data Ethics and Politics: Towards New Understandings. Social Science Computer Review. https://journals.sagepub.com/doi/10.1177/0894439318810734 
