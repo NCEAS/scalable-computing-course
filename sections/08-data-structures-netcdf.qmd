@@ -32,7 +32,7 @@ In this lesson, we will
 
 2. learn to use the `xarray` Python package to read, process, and create NetCDF files.
 
-## NetCDF data format
+## NetCDF Data Format
 
 [NetCDF](https://docs.unidata.ucar.edu/netcdf-c/current/index.html) (network Common Data Form) is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. NetCDF was initially developed at the Unidata Program Center and is supported on almost all platforms, and parsers exist for most scientific programming languages. 
 
@@ -107,6 +107,9 @@ Each station measures the air temperature at a set time for three days, starting
 On the first day, all stations record a temperature of 0°C. On the second day, all temperatures are 1°C, and on the third day, all temperatures are 2°C. 
 What are the *variables*, *dimensions* and *attributes* for this data? 
 
+
+:::{.callout-tip collapse="true"}
+### Answer
 **Variables**: There is a single variable being measured: temperature. 
 The variable values can be represented as a 5x5x3 array, with constant values for each day. 
 
@@ -141,12 +144,17 @@ Latitude has values 30, 40, 50, 60, and 70, measured in degrees North. Longitude
     + title: Temperature Measurements at Weather Stations
     + summary: an example of NetCDF data format
 
+:::
+
 <p align="center">
 **Part 2**
 </p>
 
 Now imagine we calculate the average temperature over time at each weather station and we wish to incorporate ths data into the same dataset.
 How will this change the variables, attributes and dimensions of the dataset?
+
+:::{.callout-tip collapse="true"}
+### Answer
 
 **Variables**: Now we are measuring two variables: temperature and average temperature. 
 The temperature data stays the same. 
@@ -170,6 +178,7 @@ The only update we need to do is add the attributes for our new average temperat
     + standard_name: average_air_temperature
     + description: average temperature over three days
 
+:::
 
 Our next step is to see how we can translate all this information into something we can store and handle on our computers.
 
@@ -397,30 +406,35 @@ open("FW_data_CESM_LW_2006_2100.nc", "wb").write(response.content)
 fp = os.path.join(os.getcwd(),'FW_data_CESM_LW_2006_2100.nc')
 fw_data = xr.open_dataset(fp)
 fw_data
-#netPrec_annual
 
 
 ```
 
+1. SOMETHING ABOUT OBJECT ORGANIZATION
 
-<!--
-### Exercise 3
+:::{.callout-tip collapse="true"}
+### Answer
+BLA BLA
+:::
 
-https://arcticdata.io/catalog/view/doi:10.18739/A26T0GX63
+2.
 
-## INCLUDE THIS? - Bryce's notes
+:::{.callout-tip collapse="true"}
+### Answer
+```{python}
+member2 = fw_data.netPrec_annual.sel(member=2)
+```
+:::
 
-- Look into parallel access and NetCDF and whether all wheels can take advantage of the built-in parallel access
-- Data Organization / File Naming?
-- Using hierarchical folder structures
-    - Encoding hierarchy into filenames
-    - File naming for natural ordering (principle of most sig. fist)
-    - Setting things up for Dask multi-file support
-- Understand the advantages of random and parallel formats such as NetCDF
-- Talk about NetCDF and its role in data archival
-- Is it a good archival format: Yes! Better than CSV in many (not all) ways. The format is open and well-documented, support for the reading the format is ubiquitous, it's efficient w/ disk space (compared to CSV), it supports remote querying (unlike CSV).
+3.
 
--->
+:::{.callout-tip collapse="true"}
+### Answer
+```{python}
+max_22_100 = member2.loc[2022:2100].max()
+```
+:::
+
 
 ## NetCDF and Tabular Data
 
@@ -457,8 +471,6 @@ In this case, we know the first three columns will be our dimension columns, so 
 We can do this by using the `index_col` argument directly when we read in the csv file.
 
 ```{python}
-import pandas as pd
-
 # path to csv data
 fp = os.path.join(os.getcwd(),'netcdf_temp_data.csv') 
 
@@ -475,7 +487,7 @@ And this is our resulting `xarray.DataSet`:
 temp.to_xarray()
 ```
 
-For further reading and examples about switching between `pandas` and `xarray` be sure to visit the following:
+For further reading and examples about switching between `pandas` and `xarray` you can visit the following:
 
 - `xarray`'s [Frequently Asked Questions](https://docs.xarray.dev/en/stable/getting-started-guide/faq.html)
 
