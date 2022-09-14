@@ -43,7 +43,7 @@ To help guide researchers as they write their ethical research statements, we ha
 
 Consider the following ethical considerations that are relevant for your field of research.
 
-##### Ethical Considerations for all Arctic Researchers
+### Ethical Considerations for all Arctic Researchers
 
 ![](../images/all-researchers-logos.png)
 
@@ -65,7 +65,7 @@ Consider the following ethical considerations that are relevant for your field o
 8. If this data is intended for publication, are authorship expectations clear for everyone involved?
 Other professional ethics can be found here
 
-##### Archaeological and Paleontological Research
+### Archaeological and Paleontological Research
 
 ![](../images/paleo.png)
 
@@ -82,7 +82,7 @@ Other professional ethics can be found here
 4. Were the samples deposited to a physical repository?
 5. Were there any steps taken to account for looting threats? Please explain why or why not?
 
-##### Human Participation and Sensitive Data
+### Human Participation and Sensitive Data
 ![](../images/social-science.png)
 
 **Research Planning**
@@ -98,7 +98,7 @@ Other professional ethics can be found here
 
 5. Have you shared this data with the community or participants involved?
 
-##### Marines Sciences (e.g. Marine Biology Research)
+### Marines Sciences (e.g. Marine Biology Research)
 
 ![](../images/marine.png)
 
@@ -116,7 +116,7 @@ Other professional ethics can be found here
 **Data Sharing and Publication**
 6. Did the species or study area represent any cultural importance to local communities, or include culturally sensitive information? Please explain how you came to this conclusion and how any cultural sensitivity was accounted for.
 
-##### Physical Sciences (e.g. Geology, Glaciology, and Ice Research)
+### Physical Sciences (e.g. Geology, Glaciology, and Ice Research)
 
 ![](../images/ice.png)
 
@@ -132,7 +132,7 @@ Other professional ethics can be found here
 
 4. Is there any sensitive information including information on sensitive sites, valuable samples, or culturally sensitive information?
  
-##### Plant and Soil Research
+### Plant and Soil Research
 
 ![](../images/plants-logo.png)
 
@@ -150,7 +150,7 @@ Other professional ethics can be found here
 
 5. Do any of the study sites or specimens represent culturally sensitive areas or species? Please explain how you came to this conclusion, and if yes, how was this accounted for?
  
-##### Spatial Data
+### Spatial Data
 
 ![](../images/mapping.png)
  
@@ -169,7 +169,7 @@ Other professional ethics can be found here
 5. Have you shared this data with the community or participants involved?
 6. If location sensitive data was obtained (endangered/threatened flora & fauna location, archaeological and historical sites, identifiable ships, sensitive spatial information), how were the data desensitized?
 
-##### Wildlife Sciences (e.g. Ecology and Biology Research)
+### Wildlife Sciences (e.g. Ecology and Biology Research)
 
 ![](../images/wildlife.png)
 
@@ -197,6 +197,7 @@ Menti question:
 ## Ethics in Machine Learning 
 
 Menti poll
+
 1. What is your level of familiarity with machine learning
 2. Have you thought about ethics in machine learning prior to this lesson?
 3. Can anyone list potential ethical considerations in machine learning?
