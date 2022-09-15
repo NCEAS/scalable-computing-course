@@ -123,6 +123,10 @@ In order to code along during the Google Earth Engine lesson ([Ch 15]()) on Thur
 <br>
 Once submitted, you'll receive an email with some helpful links and a message that it may take a few days for your account to be up and running. **Please be sure to do this a few days ahead of needing to use GEE.**
 
+::: {.callout-important}
+GEE authentication (more on that in [Lesson 15](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/15-google-earth-engine.html)) uses [Cloud Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Some organizations control who can create Cloud Projects, which may prevent you from completing the authentication process. To circumvent authentication issues, we recommend creating your GEE account using a non-orgnaizational account (e.g. a personal gmail account). Check out GEE's [authentication troubleshooting recommendations](https://developers.google.com/earth-engine/guides/python_install#troubleshooting-authentication-issues) if you continue to run into issues.
+:::
+
 ## About this book
 
 These written materials reflect the continuous development of learning materials at the Arctic Data Center and NCEAS to support individuals to understand, adopt, and apply ethical open science practices. In bringing these materials together we recognize that many individuals have contributed to their development. The primary authors are listed alphabetically in the citation below, with additional contributors recognized for their role in developing previous iterations of these or similar materials.
