@@ -16,7 +16,7 @@ title: "Google Earth Engine"
 
 ## Introduction 
 
-[Google Earth Engine](https://earthengine.google.com/) (GEE) is a geospatial processing platform powered by Google Cloud Platform. It contains over 30 years (and multiple petabytes) of satellite imagery and geospatial datasets that are continually updated and available instantly. Users can process data using Google Cloud Platform and built-in algorithms or by using the Earth Engine API, which is available in Python (and JavaScript) for anyone with an account (a free tier service is available). 
+[Google Earth Engine](https://earthengine.google.com/) (GEE) is a geospatial processing platform powered by Google Cloud Platform. It contains over 30 years (and multiple petabytes) of satellite imagery and geospatial datasets that are continually updated and available instantly. Users can process data using Google Cloud Platform and built-in algorithms or by using the Earth Engine API, which is available in Python (and JavaScript) for anyone with an account (Earth Engine is free to use for research, education, and nonprofit use). 
 <br> 
 
 <center><img src="../images/gee.gif" alt="" width="600"/></center>
@@ -105,15 +105,7 @@ If successful, you're now ready to begin working with Earth Engine data!
 
 *Content for this section was adapted from Dr. Sam Stevenson's [Visualizing global precipitation using Google Earth Engine](https://github.com/samanthastevenson/EDS220_Fall2021/blob/main/Week1_ERA5Maps_GEE.ipynb) lesson, given in her [EDS 220 course](https://samanthastevenson.github.io/EDS220_site/) in Fall 2021.*
 
-1. Import necessary packages
-```{python}
-#| eval: false
-import ee 
-import geemap 
-# import pandas as pd
-```
-
-2. Create an interactive basemap
+1. Create an interactive basemap
 
 The default basemap is (you guessed it) Google Maps. The following code displays an empty Google Map that you can manipulate just like you would in the typical Google Maps interface. Do this using the `Map` method from the `geemap` library. We'll also center the map at a specified latitude and longitude (here, 40N, 100E), set a zoom level, and save our map as an object called `myMap`.
 
@@ -123,12 +115,15 @@ myMap = geemap.Map(center = [40, -100], zoom = 2)
 myMap
 ```
 
-3. Load ERA5 Image Collections from GEE
+2. Load ERA5 Image Collections from GEE
 
-SAM NOTE DELETE LATER
+::: {.callout-important}
+## TODO
 * NOTE: ADC has worked with these data -- took 3 weeks to download
 * EE colleciton is all you need to load and analyze imgage collection
 * precursor to Ingmar's stuff
+* MOVE CONTENT BELOW TO PART II
+:::
 
 We'll be using the ERA5 daily aggregates reanalysis dataset, produced by the European Centre for Medium-Range Weather Forecasts (ECMWF), found [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY), which models atmospheric weather observations. We'll load the `total_precipitation` field (check out the metadata on [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#bands)).
 
@@ -148,16 +143,29 @@ To import an ImageCollection, copy and paste the Earth Engine Snippet for your d
 weatherData = ee.ImageCollection('ECMWF/ERA5/DAILY')
 ```
 
-4. Select an image to plot
+3. Select an image to plot
 
 To plot a map over our Google Maps basemap, we need an "Image" rather than an "ImageCollection." ERA5 contains many different climate variables, so we need to pick what we'd like to plot. We'll use the `.select` method to choose the parameter(s) we're interested in from our `weatherData` object.
 
 ```{python}
-#| eval: false
+# select apporpriate bands (total_preciptation)
 precip = weatherData.select("total_precipitation")
+print(precip)
 ```
 
-We can look at our `precip` object using the `print` method to see that it's still an "ImageCollection" which contains daily infomration from 1979 to 2020. 
+```{python}
+#| eval: false
+# initial date of interest (inclusive)
+# i_date = '2000-01-01'
+
+# final data of interest (exclusive)
+# f_date = '2020-01-01'
+
+# select apporpriate bands (total_preciptation) and dates
+# precip = weatherData.select("total_precipitation").filterDate(i_date, f_date)
+```
+
+We can look at our `precip` object using the `print` method to see that it's still an "ImageCollection" which contains daily information from 1979 to 2020. 
 
 ```{python}
 #| eval: false
