@@ -354,7 +354,7 @@ The plot we made above is great, but what if we wanted to make it for each varia
 * create `myplot.py`
 
 ```{python}
-import matplotlib.plot as plt
+import matplotlib.pyplot as plt
 
 def myplot(df, var):
 
