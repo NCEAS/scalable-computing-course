@@ -2,16 +2,19 @@
 title: "Data Ethics for Scalable Computing"
 ---
 
+## Learning objectives
+
+- Review FAIR and CARE Principles, and their relevance to data ethics
+- Examine how ethical considerations are shared and considered at the Arctic Data Center
+- Discuss ethical considerations in machine learning
+
 ## Intro to Data Ethics
+
+![](../images/calvin_hobbes5.png)
 
 **To recap, the Arctic Data Center is an openly-accessible data repository and the data published through the repository is open for anyone to reuse**, subject to conditions of the license (at the Arctic Data Center, data is released under one of two licenses: CC-0 Public Domain and CC-By Attribution 4.0). In facilitating use of data resources, the data stewardship community has converged on principles surrounding best practices for open data management. 
 
 Two principles that the Arctic Data Center explicitly adopts are FAIR Principles (Findable, Accessible, Interoperable, and Reproducible) and CARE Principles for Indigenous Governance (Collective Benefit, Authority to Control, Responsibility, Ethics). 
-
-*Menti question*:
-
-1. What is your familiarity with FAIR principles?
-2. What is your familiarity with CARE principles?
 
 FAIR and CARE principles are relevant in the context of data ethics for multiple reasons. FAIR speaks to how metadata is managed, stored, and shared. 
 
@@ -222,7 +225,6 @@ ImageNet is a great example of how personal bias can enter machine learning thro
 
 ## References and Further Reading
 
-![](../images/apple_treachery.jpeg)
 Carroll, S.R., Herczog, E., Hudson, M. et al. (2021) Operationalizing the CARE and FAIR Principles for Indigenous data futures. Sci Data 8, 108 https://doi.org/10.1038/s41597-021-00892-0
 
 Chen, W., & Quan-Haase, A. (2020) Big Data Ethics and Politics: Towards New Understandings. Social Science Computer Review. https://journals.sagepub.com/doi/10.1177/0894439318810734 

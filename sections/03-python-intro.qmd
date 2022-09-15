@@ -354,6 +354,8 @@ The plot we made above is great, but what if we wanted to make it for each varia
 * create `myplot.py`
 
 ```{python}
+import matplotlib.plot as plt
+
 def myplot(df, var):
 
         var_labs = {'discharge_m_3_s': 'Total Discharge (m^3/s)',
@@ -370,6 +372,7 @@ def myplot(df, var):
 
 
 * load myplot into jupyter notebook (`from myplot import myplot`)
+* add libraries
 * replace old plot method with new function
 
 ```{python}

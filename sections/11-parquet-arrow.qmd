@@ -10,11 +10,13 @@ title: "Parquet and Arrow"
 
 ## Introduction
 
-System calls are calls that are run by the operating system within their own process. There are several that are relevant to reading and writing data: open, read, write, seek, and close. Open establishes a connection with a file for reading, writing, or both. On open, a file offset points to the beginning of the file. After reading or writing `n` bytes, the offset will move `n` bytes forward to prepare for the next opration. Close closes the connection to the file. Read will read data from the file into a memory buffer, and write will write data from a memory buffer to a file. Seek is used to change the location of the offset pointer, for either reading or writing purposes.
+Paralleization is great, and can greatly help you in working with large data. However, it might not help you with every processing problem. Like we talked about with Dask, sometimes your data are too large to be read into memory, or you have I/O limitations. Parquet and `pyarrow` were designed to help overcome some of these problems.
+
+Before jumping into those tools, however, first let's discuss system calls. These are calls that are run by the operating system within their own process. There are several that are relevant to reading and writing data: open, read, write, seek, and close. Open establishes a connection with a file for reading, writing, or both. On open, a file offset points to the beginning of the file. After reading or writing `n` bytes, the offset will move `n` bytes forward to prepare for the next opration. Close closes the connection to the file. Read will read data from the file into a memory buffer, and write will write data from a memory buffer to a file. Seek is used to change the location of the offset pointer, for either reading or writing purposes.
 
 If you've worked with even moderately sized datasets, you may have encounted an "out of memory" error. Memory is where a computer stores the information needed immediately for processes. This is in contrast to storage, which is typically slower to access than memory, but has a much larger capacity. When you `open` a file, you are establishing a connection between your processor and the information in storage. On `read`, the data is read into memory that is then available to your python process, for example.
 
-So what happens if the data you need to read in are larger than your memory? 32GB is a common memory size, but this would be considered a modestly sized dataset by this courses's standards. There are a number of solutions to this problem, which don't involve just buying a computer with more memory. In this lesson we'll discuss the difference between row major and column major file formats, and how leveraging column major formats can increase memory efficiency. We'll also learn about another python library called `pyarrow`, which has a memory format that allows for "zero copy" read.
+So what happens if the data you need to read in are larger than your memory? 32GB is a common memory size, but this would be considered a modestly sized dataset by this courses's standards. There are a number of solutions to this problem, which don't involve just buying a computer with more memory. In this lesson we'll discuss the difference between row major and column major file formats, and how leveraging column major formats can increase memory efficiency. We'll also learn about another python library called `pyarrow`, which has a memory format that allows for "zero copy" read. As a note, `pyarrow` and Parquet are newer technologies, and definitely are on the bleeding edge, so you may run into some bumps incorporating them into workflows.
 
 ## Row major vs column major
 
@@ -50,9 +52,9 @@ Mariah | Texas | 21
 Allison | Oregon | 57
 
 In the above row major example, data are read in the order:
-`John, Washingon, 40, [new line], Mariah, Texas, 21`.
+`John, Washingon, 40 \n Mariah, Texas, 21`.
 
-This means that getting a subset of rows with all the columns would be easy; you can specify to read in only the first X rows. However, if we are only interested in `Name` and `Location`, we would still have to read in all of the rows before discarding the Age column.
+This means that getting a subset of rows with all the columns would be easy; you can specify to read in only the first X rows (utilizing the seek system call). However, if we are only interested in `Name` and `Location`, we would still have to read in all of the rows before discarding the Age column.
 
 If these data were organized in a column major format, they might look like this:
 
@@ -184,3 +186,12 @@ fish_j = fishf.join(survey_s, "SampleID").to_pandas()
 Note that when we did our first manipulation of this dataset, we went from working with a `FileSystemDataset`, which is a representation of a dataset on disk without reading it into memory, to a `Table`, which is read into memory. `pyarrow` has a [number of functions](https://arrow.apache.org/docs/python/compute.html) that do computations on datasets without reading them into memory. However these are evaluated "eagerly," as opposed to "lazily." These are useful in some cases, like above, where we want to take a larger than memory dataset and generate a smaller dataset (via filter, or group by/summarize), but are not as useful if we need to do a join before our summarization/filter.
 
 More functionality for lazy evaluation is on the horizon for `pyarrow` though, by leveraging [Ibis](https://ibis-project.org/docs/3.0.2/tutorial/01-Introduction-to-Ibis/).
+
+## Synopsis
+
+In this lesson we learned:
+
+- the difference between row major and column major formats
+- under what circumstances a column major format can improve memory efficiency
+- what Parquet is
+- how `pyarrow` can interact with Parquet files to analyze data
