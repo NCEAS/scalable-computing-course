@@ -55,10 +55,11 @@ pip install geemap # package for interactive maping with GEE
 1. Create a Google Earth Engine account (if you haven't already done so) 
 
 ::: {.callout-important}
+## TODO: move to preface
 GEE authentication (step 3, below) use [Cloud Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Some organizations (like UCSB) control who can create Cloud Projects, which may prevent you from completing the authentication process. To circumvent authentication issues, we recommend creating your GEE account using a non-orgnaizational account (e.g. a personal gmail account). Check out GEE's [authentication troubleshooting recommendations](https://developers.google.com/earth-engine/guides/python_install#troubleshooting-authentication-issues) if you continue to run into issues.
 :::
 
--  Refer back to the [preface](https://learning.nceas.ucsb.edu/2022-09-arctic/#create-a-free-google-earth-engine-gee-account)
+-  Refer back to the [Preface](https://learning.nceas.ucsb.edu/2022-09-arctic/#create-a-free-google-earth-engine-gee-account)
 to find instructions on creating a GEE account.
 
 2. Load libraries
@@ -98,7 +99,9 @@ If successful, you're now ready to begin working with Earth Engine data!
 
 :::{.callout-important}
 ## TODO
-<https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#description>
+- <https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#description>
+- what is an `ImageCollection` (and check with Ingmar on what data object types he'll be working with)
+- show bands tab for ERA5 dataset
 :::
 
 ### **Part iii.** Visualize global precipitation data using ERA5 Daily Aggregate data
@@ -110,7 +113,6 @@ If successful, you're now ready to begin working with Earth Engine data!
 The default basemap is (you guessed it) Google Maps. The following code displays an empty Google Map that you can manipulate just like you would in the typical Google Maps interface. Do this using the `Map` method from the `geemap` library. We'll also center the map at a specified latitude and longitude (here, 40N, 100E), set a zoom level, and save our map as an object called `myMap`.
 
 ```{python}
-#| eval: false
 myMap = geemap.Map(center = [40, -100], zoom = 2)
 myMap
 ```
@@ -125,10 +127,10 @@ myMap
 * MOVE CONTENT BELOW TO PART II
 :::
 
-We'll be using the ERA5 daily aggregates reanalysis dataset, produced by the European Centre for Medium-Range Weather Forecasts (ECMWF), found [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY), which models atmospheric weather observations. We'll load the `total_precipitation` field (check out the metadata on [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#bands)).
+Next, we need to tell GEE what data to layer on top of our basemap. We'll be using the ERA5 daily aggregates reanalysis dataset, produced by the [European Centre for Medium-Range Weather Forecasts](https://www.ecmwf.int/) (ECMWF), found [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY), which models atmospheric weather observations. We'll load the `total_precipitation` field (check out the metadata on [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#bands)).
 
 ::: {.column-margin}
-Reanalysis combines observations with model data to provide the most complete picture of past weather and climate. To read more about reanalyses, check out the [European Centre for Medium-Range Weather Forecasts' webites](https://www.ecmwf.int/en/about/media-centre/focus/2020/fact-sheet-reanalysis#:~:text=What%20is%20reanalysis%3F,with%20modern%20weather%20forecasting%20models.)
+Reanalysis combines observation data with model data to provide the most complete picture of past weather and climate. To read more about reanalyses, check out the [EWCMWF website](https://www.ecmwf.int/en/about/media-centre/focus/2020/fact-sheet-reanalysis#:~:text=What%20is%20reanalysis%3F,with%20modern%20weather%20forecasting%20models.)
 :::
 
 The `ImageCollection` method extracts a set of individual images that satisfies some criterion that you pass to GEE through the `ee` package. This is stored as an **ImageCollection** object which can be filtered and processed in various ways. We can pass the `ImageCollction` method agruments to tell GEE which data we want to retrieve. Below, we retrieve all daily ERA5 data (so we can see individual rain events).
@@ -139,7 +141,6 @@ To import an ImageCollection, copy and paste the Earth Engine Snippet for your d
 :::
 
 ```{python}
-#| eval: false
 weatherData = ee.ImageCollection('ECMWF/ERA5/DAILY')
 ```
 
@@ -148,13 +149,30 @@ weatherData = ee.ImageCollection('ECMWF/ERA5/DAILY')
 To plot a map over our Google Maps basemap, we need an "Image" rather than an "ImageCollection." ERA5 contains many different climate variables, so we need to pick what we'd like to plot. We'll use the `.select` method to choose the parameter(s) we're interested in from our `weatherData` object.
 
 ```{python}
-# select apporpriate bands (total_preciptation)
+# select desired bands (total_preciptation)
 precip = weatherData.select("total_precipitation")
+```
+
+We can look at our `precip` object using the `print` method to see that it's still an "ImageCollection" which contains daily information from 1979 to 2020. 
+
+```{python}
 print(precip)
+```
+
+::: {.callout-note}
+You may see a message in the VS Code Interactive pane that says, **"Output exceeds the size limit. Open the full output data in a text editor"** when printing your image object. Click here to see the entire output, which includes date range information.
+:::
+
+We want to filter it down to a single field for a time of interest -- let's say December 1-2, 2019. We apply the `.filter` method to our `precip` object and apply the `ee.Filter.date` method (from the `ee` package) to filter for data from our chosen date range. We also apply the `.mean` method, which takes whatever precedes it and calculates the average.
+
+```{python}
+precip_filtered = precip.filter(ee.Filter.date('2019-12-01', '2019-12-02')).mean()
+print(precip_filtered)
 ```
 
 ```{python}
 #| eval: false
+#| ALTERNATIVELY
 # initial date of interest (inclusive)
 # i_date = '2000-01-01'
 
@@ -165,34 +183,19 @@ print(precip)
 # precip = weatherData.select("total_precipitation").filterDate(i_date, f_date)
 ```
 
-We can look at our `precip` object using the `print` method to see that it's still an "ImageCollection" which contains daily information from 1979 to 2020. 
-
-```{python}
-#| eval: false
-print(precip)
-```
-
-We want to filter it down to a single field for a time of interest -- let's say December 1-2, 2019. We apply the `.filter` method to our `precip` object and apply the `ee.Filter.date` method (from the `ee` package) to filter for data from our chosen date range. We also apply the `.mean` method, which takes whatever precedes it and calculates the average.
-
-```{python}
-#| eval: false
-precip_filtered = precip.filter(ee.Filter.date('2019-12-01', '2019-12-02')).mean()
-```
-
 5. Add data to map
 
 We can fist use the `setCenter` method to tell the map where to center itself. It takes the longitude and latitude as the first two coordinates, followed by the zoom level.
 
 ```{python}
-#| eval: false
-myMap.setCenter(-152.505706, 59.432367, 2) # Cook Inlet, Alaska (WE CAN CHANGE THIS LOCATION)
+myMap.setCenter(lat = 60.335998656, lon = -151.87166318, zoom = 4) # Cook Inlet, Alaska 
 ```
 
 Next, set a color palette to use when plotting the data layer. The following is a palette specified for precipitation in the GEE description page for ERA5. GEE has lots of color tables like this that you can look up. 
 
 ```{python}
 #| eval: false
-precip_palette = {
+precip_palette = = {
     'min':0,
     'max':0.1,
     'palette': ['#FFFFFF', '#00FFFF', '#0080FF', '#DA00FF', '#FFA400', '#FF0000']
