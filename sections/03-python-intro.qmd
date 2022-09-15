@@ -21,6 +21,7 @@ We will also be working quite a bit in Jupyter notebooks in this course. Noteboo
 
 To get set up for the course, let's connect to the server again. If you were able to work through the setup for the lesson without difficulty, follow these steps to connect:
 
+- open VS Code
 - open the command pallette (Cmd + Shift + P)
 - enter "Remote SSH: Connect to Host"
 - select `included-crab`
@@ -28,7 +29,9 @@ To get set up for the course, let's connect to the server again. If you were abl
 
 Alternatively, you may see a popup window that says **"Cannot reconnect. Please reload the window"**. Choose the blue **Reload Window** button and enter your password, if prompted.
 
-Once connected, use the `pwd` command to make sure you're in your home directory (`/home/yourusername`). Use the `ls` command to list out the contents of your home directory and ensure that you have a clone of the `scalable-computing-examples` respository (this should have been completed during [Exercise 3](http://localhost:6226/sections/02-remote-computing.html#exercise-3-clone-a-github-repository-to-the-server) in the [Remote Computing](http://localhost:6226/sections/02-remote-computing.html) session).
+To open the `scalable-computing-examples` workspace, select File > Open Workspace from File. Then navigate to and select `~/scalable-computing-examples/scalable-computing-examples.code-workspace`. If you cannot find the `scalable-computing-examples` directory, in a terminal you can use the `ls` command to list out the contents of your home directory and ensure that you have a clone of the respository. If not, follow the instructions in [Exercise 3](http://localhost:6226/sections/02-remote-computing.html#exercise-3-clone-a-github-repository-to-the-server) in the [Remote Computing](http://localhost:6226/sections/02-remote-computing.html) session).
+
+Once connected and in the workslace, use the `pwd` command in the terminal to make sure you're in your project directory (`/home/yourusername/scalable-computing-examples`). 
 
 ## Virtual Environments
 
@@ -221,7 +224,7 @@ type(dict)
 
 ## Jupyter notebooks
 
-To create a new notebook, from the file menu select File > New File > Jupyter Notebook
+To create a new notebook, from the file menu select File > New File > Jupyter Notebook. Go ahead and save this notebook at the top level of your `scalable-computing-examples` directory.
 
 At the top of your notebook, add a first level header using a single hash. Practice some markdown text by creating:
 
@@ -381,3 +384,6 @@ myplot(daily_flow, 'temperature_degrees_c')
 
 We'll have more on functions in the software design sections.
 
+## Summary
+
+In this lesson we learned all about virtual environments, how to use them, and why. We got our environments set up for the course, did a brief python syntax review, and then jumped into Jupyter notebooks, pandas, and writing functions.
