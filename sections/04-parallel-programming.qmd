@@ -1,5 +1,7 @@
 ---
 title: "Pleasingly Parallel Programming"
+execute:
+  freeze: auto
 ---
 
 ## Learning Objectives

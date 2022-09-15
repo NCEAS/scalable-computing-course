@@ -1,5 +1,7 @@
 ---
 title: "Data Structures and Formats for Large Data"
+execute:
+  freeze: auto
 ---
 
 

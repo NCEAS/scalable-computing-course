@@ -1,5 +1,7 @@
 ---
 title: "Parallelization with Dask"
+execute:
+  freeze: auto
 ---
 
 ## Learning Objectives
