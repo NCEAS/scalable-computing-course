@@ -40,19 +40,6 @@ In this lesson, we'll get some hands-on practice connecting to and using Google 
 
 ### **Part i.** Setup
 
-::: {.callout-note}
-## Necessary libraries are already installed in the `scomp` virtual environment
-
-We'll be using a few different libraries in the next exercises/demos that should already be installed if you successfully set up your `scomp` virtual environment. If you eventually find yourself working outside our virtual environment, you'll want need to install the following libraries: 
-
-```{.bash}
-#| eval: false
-pip install earthengine-api # the GEE API
-pip install ee # Google Earth Engine interface
-pip install geemap # package for interactive maping with GEE 
-```
-:::
-
 1. Create a Google Earth Engine account (if you haven't already done so) 
 
 -  Please refer back to the [Preface](https://learning.nceas.ucsb.edu/2022-09-arctic/#create-a-free-google-earth-engine-gee-account)
@@ -183,11 +170,11 @@ print(precip_filtered)
 
 5. Add data to map
 
--  We can first use the `setCenter` method to tell the map where to center itself. It takes the longitude and latitude as the first two coordinates, followed by the zoom level.
+-  We can first use the `setCenter` method to tell the map where to center itself (here, we center it over Cook Inlet, Alaska). It takes the longitude and latitude as the first two coordinates, followed by the zoom level.
 
 ```{python}
 #| eval: false
-myMap.setCenter(lat = 60.335998656, lon = -151.87166318, zoom = 4) # Cook Inlet, Alaska 
+myMap.setCenter(lat = 60.335998656, lon = -151.87166318, zoom = 4)
 myMap
 ```
 
