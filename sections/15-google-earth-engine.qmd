@@ -3,10 +3,9 @@ title: "Google Earth Engine"
 ---
 ::: {.callout-important}
 ## TODO
- - need to make sure that .ipynb that student's will work out of are running in same virutal enviroment as everything else
-- get color palette code working and print final map
+ - create jupyter notebook outline for scalable-computing-examples(?)
 - incporporate Ingmar's stuff (or keep it separate in scalable-computing-examples)?
-- way to print different versions of the map (rather than update all each time a new layer is added)?
+- ADD REF TO CHOOSING GOOD COLORS
 :::
 
 ## Learning Objectives
@@ -25,6 +24,8 @@ title: "Google Earth Engine"
 
 <br>
 So what's so exciting about platforms like GEE? [Ryan Abernathey](https://scholar.google.com/citations?user=t1lmjVkAAAAJ&hl=en) frames this nicely in his blogpost [Closed Platform vs. Open Architectures for Cloud-Native Earth System Analytics](https://medium.com/pangeo/closed-platforms-vs-open-architectures-for-cloud-native-earth-system-analytics-1ad88708ebb6)...
+
+TODO: GEE is one of many.  Microsoft Planetary Computer, Pangeo, Amazon Web Services (Amazon Enviromental SOmething)
 
 -  as Earth System data have gotten larger, the typical download-data-work-locally workflow is no longer always feasible
 -  those data are also produced and distributed by lots of different organizations (e.g. [NASA](https://www.nasa.gov/), [NOAA](https://www.noaa.gov/), [Copernicus](copernicus.eu/en))
@@ -105,13 +106,16 @@ myMap
 
 -  Next, we need to tell GEE what data to layer on top of our basemap. We'll be using the ERA5 daily aggregates reanalysis dataset, produced by the [European Centre for Medium-Range Weather Forecasts](https://www.ecmwf.int/) (ECMWF), found [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY), which models atmospheric weather observations. We'll load the `total_precipitation` field (check out the metadata on [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#bands)).
 
+::: {.column-margin}
+Reanalysis combines observation data with model data to provide the most complete picture of past weather and climate. To read more about reanalyses, check out the [EWCMWF website](https://www.ecmwf.int/en/about/media-centre/focus/2020/fact-sheet-reanalysis#:~:text=What%20is%20reanalysis%3F,with%20modern%20weather%20forecasting%20models.).
+:::
+
 ::: {.callout-note}
 ## TODO: GEE makes working with these *very* large data a breeze
 The Arctic Data Center has worked with ERA5 data -- took three weeks to download. The `ee.ImageCollection()` method is all you need to load and analyze large image collection data (more on that below!).
-:::
 
-::: {.column-margin}
-Reanalysis combines observation data with model data to provide the most complete picture of past weather and climate. To read more about reanalyses, check out the [EWCMWF website](https://www.ecmwf.int/en/about/media-centre/focus/2020/fact-sheet-reanalysis#:~:text=What%20is%20reanalysis%3F,with%20modern%20weather%20forecasting%20models.)
+ADC is using ERA5 (hourly) data; reaggregating to weekly statistical summaries
+
 :::
 
 -  The `ImageCollection` method extracts a set of individual images that satisfies some criterion that you pass to GEE through the `ee` package. This is stored as an **ImageCollection** object which can be filtered and processed in various ways. We can pass the `ImageCollction` method agruments to tell GEE which data we want to retrieve. Below, we retrieve all daily ERA5 data (so we can see individual rain events).
@@ -137,6 +141,8 @@ precip = weatherData.select("total_precipitation")
 ```
 
 -  We can look at our `precip` object using the `print` method to see that it's still an "ImageCollection" which contains daily information from 1979 to 2020. 
+
+TODO: this is a surrogate for the data (metadata)
 
 ```{python}
 #| eval: false
@@ -174,7 +180,7 @@ print(precip_filtered)
 
 ```{python}
 #| eval: false
-myMap.setCenter(lat = 60.335998656, lon = -151.87166318, zoom = 4)
+myMap.setCenter(lat = 60, lon = -151, zoom = 4)
 myMap
 ```
 
@@ -184,12 +190,12 @@ myMap
 #| eval: false
 precip_palette = {
     'min':0,
-    'max':0.1,
+    'max':0.01,
     'palette': ['#FFFFFF', '#00FFFF', '#0080FF', '#DA00FF', '#FFA400', '#FF0000']
 }
 ```
 
--  Finally, plot our filtered data, `precip_filtered` on top of our basemap using the `.addLayer` method. We'll aslo pass it our visualization parameters (colors and ranges stored in `precip_palette`, the name of the data field `total precipitation`, and opacity so that we can see the basemap underneath)
+-  Finally, plot our filtered data, `precip_filtered` on top of our basemap using the `.addLayer` method. We'll also pass it our visualization parameters (colors and ranges stored in `precip_palette`, the name of the data field `total precipitation`, and opacity so that we can see the basemap underneath)
 
 ```{python}
 #| eval: false
@@ -203,6 +209,19 @@ myMap
 ## TODO
 Add content here
 :::
+
+1. Import libraries
+
+```{python}
+#| eval: false
+import ee 
+import geemap
+import eemont
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+```
 
 ## Conclusion/Summary 
 
