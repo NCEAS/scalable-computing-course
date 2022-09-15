@@ -92,38 +92,9 @@ Note that these clusters have multiple nodes (hosts), and each host has multiple
 
 ## Modes of parallelization
 
-- TODO: develop diagram(s) showing
-  - Single memory image task parallelization
+- TODO: describe these modes
 
-Serial
-  ```
-  Launch tasks --> Task 1 --> Task 2 --> Task 3 --> Task 4 --> Task 5 --> Finish
-  ```
-
-Parallel
-  ``` 
-  Launch tasks --> 
-                   Task 1 --\
-                   Task 2 ---\
-                   Task 3 -----> Finish  
-                   Task 4 ---/ 
-                   Task 5 --/
-  ```
-
-  - Cluster task parallelization
-
-Cluster parallel
-  ``` 
-  Show dispatch to cluster nodes and reassembly of data
-  Launch tasks --> 
-                   Marshal --> Task 1 --> Unmarshal --\
-                   Marshal --> Task 2 --> Unmarshal ---\
-                   Marshal --> Task 3 --> Unmarshal -----> Finish  
-                   Marshal --> Task 4 --> Unmarshal ---/ 
-                   Marshal --> Task 5 --> Unmarshal --/
-  ```
-
-- TODO: Should we also include figure with data or functional dependencies?
+![Serial and parallel execution of tasks on using thre4ads and cluster processes.](../images/serial-parallel-exec.png)
 
 ## Simple task parallelization
 
