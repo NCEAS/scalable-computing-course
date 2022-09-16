@@ -244,7 +244,7 @@ As mentioned in [Step 1: The Narrative Metadata Submission] section above, when 
 
 ### Data Organization
 
-The data archival process is much smoother when users already have a well structured and organized file management system. As we are at the end of the research life cycle for many users, we understand that you may not already have a well organized file system. In cases such as these, we recommend organizing your data as much as possible ***before*** upload.
+The data archival process is much smoother when users already have a well structured and organized file management system. We strongly recommend starting to work with the Arctic Data Center towards the beginning of your project, instead of the very end. Our curation team can help you publish your data faster, and more smoothly, the earlier you talk to us. Regardless of where you are in your project, however, considering your organization strategy is best done ***before*** data upload.
 
 Take a look at this recently made [data portal](https://arcticdata.io/catalog/portals/AIS). Originally, this user had only submitted the last listed dataset. That dataset contains over 700 rasters and shapefiles depicting vessel paths in the North Pacific at many different resolutions. Upon review, the submitter determined that it would be best if other users could download the data at specific resolution scales in addition to the whole collection of data. By creating separate datasets at the resolution scale, this user was able to organize their data in a structured way that makes it easy for future researchers to use their data. Furthermore, the user was able to house their related datasets under one roof using our portal system.
 
