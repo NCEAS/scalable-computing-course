@@ -133,7 +133,7 @@ These written materials reflect the continuous development of learning materials
 
 This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
-**Citation**:  Matthew B. Jones, Bryce Mecum, S. Jeanette Clark, Samantha Csik. 2022. Scalable and Computationally Reproducible Approaches to Arctic Research.
+**Citation**:  Matthew B. Jones, Bryce Mecum, S. Jeanette Clark, Samantha Csik, Carmen Galaz García, Daphne Virlar-Knight. 2022. Scalable and Computationally Reproducible Approaches to Arctic Research.
 
 **Additional contributors**: Amber E. Budden, Natasha Haycock-Chavez, Noor Johnson, Stephanie Hampton, Jim Regetz, Bryce Mecum, Julien Brun, Julie Lowndes, Erin McLean, Andrew Barrett, David LeBauer, Jessica Guo.
 

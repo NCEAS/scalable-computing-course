@@ -246,7 +246,7 @@ In your first code chunk, lets load in some modules. We'll use `pandas`, `numpy`
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import requests
+import urllib
 import skimpy
 import os
 ```
@@ -274,7 +274,7 @@ Create a new code chunk that will download the csv that we are going to use for 
 - Right click the download button for 'Discharge_timeseries.csv'
 - Click 'copy link address'
 
-Create a variable called URL and assign it the link copied to your clipboard. Then use `requests.get` to download the file, and `open` to write it to disk, to a directory called `data/`. We'll write this bundled in an `if` statement so that we only download the file if it doesn't yet exist. First, we create the directory if it doesn't exist:
+Create a variable called URL and assign it the link copied to your clipboard. Then use `urllib.request.urlretrieve` to download the file, and `open` to write it to disk, to a directory called `data/`. We'll write this bundled in an `if` statement so that we only download the file if it doesn't yet exist. First, we create the directory if it doesn't exist:
 
 ```{python}
 if not os.path.exists ('data/'):
@@ -287,8 +287,7 @@ if not os.path.exists('data/discharge_timeseries.csv'):
 
         url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Ae248467d-e1f9-4a32-9e38-a9b4fb17cefb'
 
-        data = requests.get(url)
-        a = open('data/discharge_timeseries.csv', 'wb').write(data.content)
+        msg = urllib.request.urlretrieve(url, 'data/discharge_timeseries.csv')
 ```
 
 Now we can read in the data from the file.

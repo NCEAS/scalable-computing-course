@@ -2,6 +2,7 @@ chardet==4
 dask==2022.9
 ee==0.2
 eemont==0.3
+flake8
 geemap==0.17
 geopandas==0.11
 IPython==8.5
