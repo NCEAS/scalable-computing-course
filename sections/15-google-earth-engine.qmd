@@ -22,16 +22,24 @@ title: "Google Earth Engine"
 <center><img src="../images/gee.gif" alt="" width="600"/></center>
 <center><span style = 'font-size: 85%; color: #6e6d6d;'>Image Source: [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets)</span></center>
 
-<br>
+::: {.callout-note}
+## GEE is just one platform of many.  
+Microsoft Planetary Computer, Pangeo, Amazon Web Services (Amazon Enviromental SOmething)
+:::
+
 So what's so exciting about platforms like GEE? [Ryan Abernathey](https://scholar.google.com/citations?user=t1lmjVkAAAAJ&hl=en) frames this nicely in his blogpost [Closed Platform vs. Open Architectures for Cloud-Native Earth System Analytics](https://medium.com/pangeo/closed-platforms-vs-open-architectures-for-cloud-native-earth-system-analytics-1ad88708ebb6)...
 
-TODO: GEE is one of many.  Microsoft Planetary Computer, Pangeo, Amazon Web Services (Amazon Enviromental SOmething)
+
 
 -  as Earth System data have gotten larger, the typical download-data-work-locally workflow is no longer always feasible
 -  those data are also produced and distributed by lots of different organizations (e.g. [NASA](https://www.nasa.gov/), [NOAA](https://www.noaa.gov/), [Copernicus](copernicus.eu/en))
 - researchers often need to apply a wide range of analytical methods to those data, ranging from simple stats to machine learning approaches
 
 GEE offers web access (i.e. no need to download data to your computer) to an extensive catalog of analysis-ready geospatial data (from many different organizations) and scalable computing power via their cloud service, making global-scale analyses and visualizations possible for anyone with an account ([sign up here](https://signup.earthengine.google.com)!)
+
+::: {.callout-note}
+## GEE is just one of a number of cloud platform solutions developed for climate science
+:::
 
 Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellite ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)). 
 
