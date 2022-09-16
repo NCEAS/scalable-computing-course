@@ -233,7 +233,7 @@ First, we import all the necessary libraries.
 
 ```{python}
 import os              
-import requests 
+import urllib 
 import pandas as pd
 import numpy as np
 
@@ -409,8 +409,7 @@ is archived at the Arctic Data Center [doi:10.18739/A2280504J](https://arcticdat
 ```{python}
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A792bfc37-416e-409e-80b1-fdef8ab60033'
 
-response = requests.get(url)
-open("FW_data_CESM_LW_2006_2100.nc", "wb").write(response.content)
+msg = urllib.request.urlretrieve(url, "FW_data_CESM_LW_2006_2100.nc")
 ```
 
 ```{python}

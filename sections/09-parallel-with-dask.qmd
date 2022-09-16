@@ -113,7 +113,7 @@ Just as we did in the previous lesson, we will download the data using the `requ
 
 ```{python}
 import os              
-import requests 
+import urllib 
 
 import dask.dataframe as dd
 ```
@@ -122,9 +122,7 @@ import dask.dataframe as dd
 #| eval: false
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A27e4043d-75eb-4c4f-9427-0d442526c154'
 
-response = requests.get(url)
-open("dg_soil_moisture.csv", "wb").write(response.content)
-
+msg = urllib.request.urlretrieve(url, "dg_soil_moisture.csv")
 ```
 
 In the Arctic Data Center metadata we can see this file is 115 MB. 
@@ -248,13 +246,13 @@ First, we download the data for the near-infrared (NIR) and red bands from the A
 ```{python}
 # download red band
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Aac25a399-b174-41c1-b6d3-09974b161e5a'
-response = requests.get(url)
-open("RU_ANS_TR2_FL005M_red.tif", "wb").write(response.content)
+msg = urllib.request.urlretrieve(url, "RU_ANS_TR2_FL005M_red.tif")
+
 
 # download nir band
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A1762205e-c505-450d-90ed-d4f3e4c302a7'
-response = requests.get(url)
-open("RU_ANS_TR2_FL005M_nir.tif", "wb").write(response.content)
+
+msg = urllib.request.urlretrieve(url, "RU_ANS_TR2_FL005M_nir.tif")
 ```
 
 
@@ -267,6 +265,7 @@ Both files are 76 MB, so let's have chunks of 15 MB to have roughly six chunks.
 ```{python}
 import rioxarray as rioxr
 ```
+
 
 ```{python}   
 # read in the file
