@@ -206,26 +206,6 @@ The second question is, under what circumstances should I consider uploading dat
 
 Before you can upload your data to the Data Team's server, make sure to email us at `support@arcticdata.io` to retrieve the login password. Once you have that, you can proceed through the following steps.
 
-When you start Cyberduck, you should see a screen similar to the image below.
-
-![](../images/cyberduck-1.png)
-
-Click the arrows of the drop down menu that says "FTP", and select the "SFTP" option. Make sure you enter `datateam.nceas.ucsb.edu` as the server, and `visitor` as the username. Enter the password, and click connect.
-
-::: callout-note
-If prompted about an unknown fingerprint, click **allow**.
-:::
-
-![](../images/cyberduck-2.png)
-
-Once you have successfully logged into the visitor folder, you will be able to see the folders of other users who have also uploaded their data. Notice the folders are almost exclusively the user's last name.
-
-![](../images/cyberduck-3.png)
-
-When you email the Data Team asking for the login password, they will instruct you to add a folder with your last name (assuming one does not already exist). You can add a folder by clicking the cog icon labeled "Action", and then selecting "New Folder" from the drop down menu. Once you have your own folder, you can upload your data by again clicking the "Action" button, and selecting "Upload" from the menu.
-
-![](../images/cyberduck-4.png)
-
 ::: callout-tip
 If you know that you will need to use this process for more than one dataset, we suggest creating folders with the **same name** as the associated dataset's title. This way, it will be clear as to which submission the data should be associated with.
 :::
