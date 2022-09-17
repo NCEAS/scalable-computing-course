@@ -68,7 +68,7 @@ These data repositories all assign a unique identifier to ***every version*** of
 
 ## Archiving Data: The Large Data Perspective
 
-There are two components to any data package archived with the Arctic Data Center: the metadata & the data themselves. Data can be images, plain text documents, tabular data, spatial data, scripts used to analyze the data, a readme file, and more. To the best of your ability, please make sure that the data uploaded are in an open format, rather than proprietary. This means uploading a `.pdf` rather than a `.docx` file, or `.csv` rather than `.xlsx`. That being said, we understand that this is not always possible or reasonable for users, as is the case sometimes if they've used ESRI products rather than QGIS.
+There are two components to any data package archived with the Arctic Data Center: the metadata & the data themselves. Data can be images, plain text documents, tabular data, spatial data, scripts used to analyze the data, a readme file, and more. To the best of your ability, please make sure that the data uploaded are in an open format, rather than proprietary format. We strongly recommend using open, self-documenting binary formats for large data archival. NetCDF, HDF, .mat (v7.3) and Parquet files are all examples of "self-documenting" files. In the case of a NetCDF file, users can input the attribute name, attribute description, missing value codes, units, and more into the file itself. When these data are well-documented within themselves, it can save the time when users submit their data to us, since the documentation for variable level information is already mostly complete. We'll discuss NetCDF and metadata more in Session 8. For geospatial data, we recommend using geotiff for raster files, and geopackage files for vector files.
 
 This section provides an overview of some highlights within the data submission process, and will specifically address issues related to datasets with large amounts of data, whether that be in number of files or cumulative file size.
 
@@ -198,11 +198,13 @@ After you get the big green success message, you can visit your dataset and revi
 
 ### Step 3: Uploading Large Data
 
-In order to submit your large data files to the Arctic Data Center repository, we encourage users to directly upload their data to the Data Team's servers using a secure file transfer protocol (FTP). Our team uses and recommends the free program [Cyberduck](https://cyberduck.io/download/).
+In order to submit your large data files to the Arctic Data Center repository, we encourage users to directly upload their data to the Data Team's servers using a secure file transfer protocol (SFTP). There are a number of GUI driven and command line programs out there that all work well. For a GUI program, our team uses and recommends the free program [Cyberduck](https://cyberduck.io/download/). We will discuss command line programs in Session 18 in more detail, including `rsync` and Globus.
 
 Before we begin, let's answer the following question: *Why would a user want to upload their data through a separate process, rather than the web form when they submit their metadata?*
 
 Depending on your internet connection, the number of files you have, and the cumulative size of the data, users may experience difficulty uploading their data through the submission form. These difficulties are most often significantly reduced upload speeds and submission malfunctions. As such, it is best for all parties for large quantities of data to be uploaded directly to our server through an FTP.
+
+The second question is, under what circumstances should I consider uploading data directly to the server, versus the webform? Although server uploads are more efficient for large datasets, for smaller datasets it is much more efficient to go through the webform. So, what constitutes a large dataset and what tools should you consider? Here is a helpful diagram:
 
 Before you can upload your data to the Data Team's server, make sure to email us at `support@arcticdata.io` to retrieve the login password. Once you have that, you can proceed through the following steps.
 
@@ -240,9 +242,9 @@ As mentioned in [Step 1: The Narrative Metadata Submission] section above, when 
 
 ### Data Organization
 
-The data archival process is much smoother when users already have a well structured and organized file management system. As we are at the end of the research life cycle for many users, we understand that you may not already have a well organized file system. In cases such as these, we recommend organizing your data as much as possible ***before*** upload.
+The data archival process is much smoother when users already have a well structured and organized file management system. We strongly recommend starting to work with the Arctic Data Center towards the beginning of your project, instead of the very end. Our curation team can help you publish your data faster, and more smoothly, the earlier you talk to us. Regardless of where you are in your project, however, considering your organization strategy is best done ***before*** data upload.
 
-Take a look at this recently made [data portal](https://arcticdata.io/catalog/portals/AIS). Originally, this user had only submitted the last listed dataset. That dataset contains over 700 rasters and shapefiles depicting vessel paths in the North Pacific at many different resolutions. Upon review, the submitter determined that it would be best if other users could download the data at specific resolution scales in addition to the whole collection of data. By creating separate datasets at the resolution scale, this user was able to organize their data in a structured way that makes it easy for future researchers to use their data. Furthermore, the user was able to house their related datasets under one roof using our portal system.
+Take a look at this recently made [data portal](https://arcticdata.io/catalog/portals/AIS). Originally, this user had only submitted one dataset with all of her files (over 700, at varying resolutions). The data contain rasters and shapefiles depicting vessel paths in the North Pacific at many different resolutions. Upon review, the submitter and curation team together determined that it would be best if other users could download the data at specific resolution scales. As a solution, we created separate datasets according to resolution and data type. With the addition of the data portal, the user was able to house their related datasets at a single URL, which allows for search and discovery within only the datasets for that project.
 
 ::: callout-note
 To find out more about portals, visit <https://arcticdata.io/data-portals/>. You can view our catalog of portals [here](https://arcticdata.io/catalog/portals). We recommend reviewing the Distributed Biological Observatory's [portal](https://arcticdata.io/catalog/portals/DBO) to see what a more fleshed out portal can look like.
