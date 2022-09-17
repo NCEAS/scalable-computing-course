@@ -106,6 +106,29 @@ Finally, maybe one of these NSF-sponsored high performance computing clusters (H
 
 Note that these clusters have multiple nodes (hosts), and each host has multiple cores. So this is really multiple computers clustered together to act in a coordinated fashion, but each node runs its own copy of the operating system, and is in many ways independent of the other nodes in the cluster.  One way to use such a cluster would be to use just one of the nodes, and use a multi-core approach to parallelization to use all of the cores on that single machine.  But to truly make use of the whole cluster, one must use parallelization tools that let us spread out our computations across multiple host nodes in the cluster.
 
+## Parallel processing in the shell
+
+Shell programming helps massively speed up data management tasks, and even more so with simple use of the [GNU `parallel`](https://www.gnu.org/software/bash/manual/html_node/GNU-Parallel.html) utility to execute bash commands in parallel. In its simplest form, this can be used to speed up common file operations, such as renaming, compression, decompression, and file transfer. Let's look at a common example -- calculating checksums to verify file integrity for data files. Calculating a hash checksum using the `shasum` command can be time consuming, especially when you have a lot of large files to work on. But it is a classic processor-limited task, and one that can be massively faster using `parallel`. 
+
+```bash
+#| exec: false
+$ for fn in `ls *.gpkg`; do shasum -a 256 ${fn}; done
+
+real	35.081s
+user	32.745s
+sys	    2.336s
+
+$ ls *.gpkg | parallel "shasum -a 256 {}"
+
+real    2.97s 
+user    37.16s 
+system  2.70s
+```
+
+And you can see processor cores spiking in usage when the command is run:
+
+![Processor usage in parallel task](../images/processor-htop.png)
+
 ## Modes of parallelization
 
 Several different approaches can be taken to structuring a computer program to take advantage of the hardware capabilities of multi-core processors. In the typical, and simplest, case, each task in a computation is executed serially in order of first to last. The total computation time is the sum of the time of all of the subtasks that are executed.  In the next figure, a single core of the processor is used to sequentially execute each of the five tasks, with time flowing from left to right.
