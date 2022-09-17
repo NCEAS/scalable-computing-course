@@ -206,10 +206,6 @@ Depending on your internet connection, the number of files you have, and the cum
 
 Before you can upload your data to the Data Team's server, make sure to email us at `support@arcticdata.io` to retrieve the login password. Once you have that, you can proceed through the following steps.
 
-::: callout-note
-Please note, if you have data nearing the petabyte scale, it may be best to arrange a shipment of an external hard drive.
-:::
-
 When you start Cyberduck, you should see a screen similar to the image below.
 
 ![](../images/cyberduck-1.png)
