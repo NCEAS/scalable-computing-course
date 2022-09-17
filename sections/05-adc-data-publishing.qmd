@@ -251,7 +251,7 @@ To find out more about portals, visit <https://arcticdata.io/data-portals/>. You
 ![](../images/kapsar-portal.png)
 
 ::: callout-tip
-This example also illustrates that users can create multiple datasets for a single NSF award. It's understandable that you may think you have to submit all your data for a given award under one dataset. However, we encourage you to be flexible in how you approach archiving and organizing your data with us as this user has been.
+This example also illustrates that users can create multiple datasets for a single NSF award. It's understandable that you may think you have to submit all your data for a given award under one dataset. However, we think breaking up data into separate datasets (in logical, structured ways) increases the discoverability and usability of the data. This is especially true when users also create a data portal for their project.
 
 When uploading your data files using SFTP, either through the command line or a GUI, we recommend creating folders with the same name as your dataset's title so that it is easier to associate the data with their associated metadata submission.
 
