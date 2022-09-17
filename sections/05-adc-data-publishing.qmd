@@ -204,6 +204,8 @@ Before we begin, let's answer the following question: *Why would a user want to 
 
 Depending on your internet connection, the number of files you have, and the cumulative size of the data, users may experience difficulty uploading their data through the submission form. These difficulties are most often significantly reduced upload speeds and submission malfunctions. As such, it is best for all parties for large quantities of data to be uploaded directly to our server through an FTP.
 
+The second question is, under what circumstances should I consider uploading data directly to the server, versus the webform? Although server uploads are more efficient for large datasets, for smaller datasets it is much more efficient to go through the webform. So, what constitutes a large dataset and what tools should you consider? Here is a helpful diagram:
+
 Before you can upload your data to the Data Team's server, make sure to email us at `support@arcticdata.io` to retrieve the login password. Once you have that, you can proceed through the following steps.
 
 ::: callout-note
