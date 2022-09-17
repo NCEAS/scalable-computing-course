@@ -64,17 +64,15 @@ Note that the dataset above lists a collection of files that are contained withi
 
 These data repositories all assign a unique identifier to ***every version*** of every data file, similarly to how it works with source code commits in GitHub. Those identifiers usually take one of two forms. A DOI (digital object identifier) identifier is often assigned to the metadata and becomes the publicly citable identifier for the package. Each of the other files gets a global identifier, often a UUID (universally unique identifier) that is globally unique. In the example above, the package can be cited with the DOI [`doi:10.5063/F1F18WN4`](@https://knb.ecoinformatics.org/view/doi:10.5063/F1F18WN4), and each of the individual files have their own identifiers as well.
 
-## Submitting Data from the Large Data Perspective
-
 ## Archiving Data: The Large Data Perspective
 
-There are two components to any data package archived with the Arctic Data Center: the metadata & the data themselves. Data can be images, plain text documents, tabular data, spatial data, scripts used to analyze the data, a readme file, and more. To the best of your ability, please make sure that the data uploaded are in an open format, rather than proprietary. This means uploading a `.pdf` rather than a `.docx` file, or `.csv` rather than `.xlsx`. That being said, we understand that this is not always possible or reasonable for users, as is the case sometimes if they've used ESRI products rather than QGIS.
+There are two components to any data package archived with the Arctic Data Center: the metadata & the data themselves. Data can be images, plain text documents, tabular data, spatial data, scripts used to analyze the data, a readme file, and more. To the best of your ability, please make sure that the data uploaded are in an open format, rather than proprietary format. We strongly recommend using open, self-documenting binary formats for large data archival. NetCDF, HDF, .mat (v7.3) and Parquet files are all examples of "self-documenting" files. In the case of a NetCDF file, users can input the attribute name, attribute description, missing value codes, units, and more into the file itself. When these data are well-documented within themselves, it can save the time when users submit their data to us, since the documentation for variable level information is already mostly complete. We'll discuss NetCDF and metadata more in Session 8. For geospatial data, we recommend using geotiff for raster files, and geopackage files for vector files.
 
 This section provides an overview of some highlights within the data submission process, and will specifically address issues related to datasets with large amounts of data, whether that be in number of files or cumulative file size.
 
 First we'll go over the metadata submission; then learn how to upload the data using a secure File Transfer Protocol; and finally how to add attribute information to the data.
 
-### Step 1: The Metadata Submission
+### Step 1: The Narrative Metadata Submission
 
 #### ORCiDs
 
@@ -120,7 +118,7 @@ For each, please provide their [ORCID](https://orcid.org/) identifier, which hel
 
 #### Temporal Information
 
-Add the temporal coverage of the data, which represents the time period to which data apply. You may notice as you begin to fill in the date information that a second box automatically appears. The editor allows you to enter multiple dates. Please use multiple date ranges if your sampling was discontinuous.
+Add the temporal coverage of the data, which represents the time period when data was collected. If your sampling over time was discontinuous and you require multiple date ranges to represent your data, please email us the date ranges and we will add that to the submission on the back-end.
 
 ![](../images/submissions-form-date.png)\
 
@@ -156,51 +154,7 @@ When you are successful, you should see a large green banner with a link to the 
 
 ![](../images/submissions-form-save-successful.png)
 
-### Step 2: Uploading Large Data
-
-In order to submit your large data files to the Arctic Data Center repository, we encourage users to directly upload their data to the Data Team's servers using a secure file transfer protocol (FTP). Our team uses and recommends the free program [Cyberduck](https://cyberduck.io/download/).
-
-Before we begin, let's answer the following question: *Why would a user want to upload their data through a separate process, rather than the web form when they submit their metadata?*
-
-Depending on your internet connection, the number of files you have, and the cumulative size of the data, users may experience difficulty uploading their data through the submission form. These difficulties are most often significantly reduced upload speeds and submission malfunctions. As such, it is best for all parties for large quantities of data to be uploaded directly to our server through an FTP.
-
-Before you can upload your data to the Data Team's server, make sure to email us at `support@arcticdata.io` to retrieve the login password. Once you have that, you can proceed through the following steps.
-
-::: callout-note
-Please note, if you have multiple terabytes of data, it may be best to arrange a shipment of an external hard drive.
-:::
-
-When you start Cyberduck, you should see a screen similar to the image below.
-
-![](../images/cyberduck-1.png)
-
-Click the arrows of the drop down menu that says "FTP", and select the "SFTP" option. Make sure you enter `datateam.nceas.ucsb.edu` as the server, and `visitor` as the username. Enter the password, and click connect.
-
-::: callout-note
-If prompted about an unknown fingerprint, click **allow**.
-:::
-
-![](../images/cyberduck-2.png)
-
-Once you have successfully logged into the visitor folder, you will be able to see the folders of other users who have also uploaded their data. Notice the folders are almost exclusively the user's last name.
-
-![](../images/cyberduck-3.png)
-
-When you email the Data Team asking for the login password, they will instruct you to add a folder with your last name (assuming one does not already exist). You can add a folder by clicking the cog icon labeled "Action", and then selecting "New Folder" from the drop down menu. Once you have your own folder, you can upload your data by again clicking the "Action" button, and selecting "Upload" from the menu.
-
-![](../images/cyberduck-4.png)
-
-::: callout-tip
-If you know that you will need to use this process for more than one dataset, we suggest creating folders with the **same name** as the associated dataset's title. This way, it will be clear as to which submission the data should be associated with.
-:::
-
-Once you have finished uploading your data to our servers, please let the Data Team know via email so that we can continue associate your uploaded data with your metadata submission.
-
-As mentioned in [Step 1: The Metadata Submission] section above, when the data package is finalized and made public, there will be a sentence in the abstract that directs users to a separate page where your data will live. The following image is an example of where the data from [this](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2CV4BS5K) dataset live.
-
-![](../images/large-data-package.png)
-
-### Step 3: Adding File & Variable Level Metadata
+### Step 2: Adding File & Variable Level Metadata
 
 The final major section of metadata concerns the structure and content of your data files. Assuming there are many files (and not a few very large ones), it would be unreasonable for users to input file and variable level metadata for each file. When this situation occurs, we encourage users to fill out as much information as possible for each ***unique*** type of file. Once that is completed, usually with some assistance from the Data Team, we will then programmatically carry over the information to other relevant files.
 
@@ -211,3 +165,79 @@ When you're data are associated with your metadata submission, they will appear 
 Once there, you will see the following screen. In the Overview section, we recommend ***not*** editing the file name, and instead add a descriptive overview of the file. Once done, click the Attributes tab.
 
 ![](../images/editor-18-socialsci.png)
+
+The **Attributes** tab is where you enter variable (aka attribute) information, including:
+
+-   attribute name (for programs)
+
+-   attribute label (for display)
+
+![](../images/editor-19-socialsci.png)
+
+-   variable definition (be specific)
+
+-   type of measurement
+
+![](../images/editor-20-socialsci.png)
+
+-   units & code definitions
+
+![](../images/editor-21-socialsci.png)
+
+Users will need to add these definitions for every variable (column) in the file. When done, click **Done**. Now, the list of data files will show a green checkbox indicating that you have fully described that file's internal structure. Proceed with documenting other unique file types, and then click **Save Dataset** to save all of these changes.
+
+::: callout-tip
+When dealing with large datasets, the Data Team can help users fill out metadata for similar file types with identical internal structures. An example of this will be discussed in the Best Practices section.
+:::
+
+![](../images/editor-23-socialsci.png)
+
+After you get the big green success message, you can visit your dataset and review all of the information that you provided. If you find any errors, simply click **Edit** again to make changes.
+
+### Step 3: Uploading Large Data
+
+In order to submit your large data files to the Arctic Data Center repository, we encourage users to directly upload their data to the Data Team's servers using a secure file transfer protocol (SFTP). There are a number of GUI driven and command line programs out there that all work well. For a GUI program, our team uses and recommends the free program [Cyberduck](https://cyberduck.io/download/). We will discuss command line programs in Session 18 in more detail, including `rsync` and Globus.
+
+Before we begin, let's answer the following question: *Why would a user want to upload their data through a separate process, rather than the web form when they submit their metadata?*
+
+Depending on your internet connection, the number of files you have, and the cumulative size of the data, users may experience difficulty uploading their data through the submission form. These difficulties are most often significantly reduced upload speeds and submission malfunctions. As such, it is best for all parties for large quantities of data to be uploaded directly to our server through an FTP.
+
+The second question is, under what circumstances should I consider uploading data directly to the server, versus the webform? Although server uploads are more efficient for large datasets, for smaller datasets it is much more efficient to go through the webform. So, what constitutes a large dataset and what tools should you consider? Here is a helpful diagram:
+
+Before you can upload your data to the Data Team's server, make sure to email us at `support@arcticdata.io` to retrieve the login password. Once you have that, you can proceed through the following steps.
+
+::: callout-tip
+If you know that you will need to use this process for more than one dataset, we suggest creating folders with the **same name** as the associated dataset's title. This way, it will be clear as to which submission the data should be associated with.
+:::
+
+Once you have finished uploading your data to our servers, please let the Data Team know via email so that we can continue associate your uploaded data with your metadata submission.
+
+As mentioned in [Step 1: The Narrative Metadata Submission] section above, when the data package is finalized and made public, there will be a sentence in the abstract that directs users to a separate page where your data will live. The following image is an example of where the data from [this](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2CV4BS5K) dataset live.
+
+![](../images/large-data-package.png)
+
+## Best Practices for Submitting Large Data
+
+### Data Organization
+
+The data archival process is much smoother when users already have a well structured and organized file management system. We strongly recommend starting to work with the Arctic Data Center towards the beginning of your project, instead of the very end. Our curation team can help you publish your data faster, and more smoothly, the earlier you talk to us. Regardless of where you are in your project, however, considering your organization strategy is best done ***before*** data upload.
+
+Take a look at this recently made [data portal](https://arcticdata.io/catalog/portals/AIS). Originally, this user had only submitted one dataset with all of her files (over 700, at varying resolutions). The data contain rasters and shapefiles depicting vessel paths in the North Pacific at many different resolutions. Upon review, the submitter and curation team together determined that it would be best if other users could download the data at specific resolution scales. As a solution, we created separate datasets according to resolution and data type. With the addition of the data portal, the user was able to house their related datasets at a single URL, which allows for search and discovery within only the datasets for that project.
+
+::: callout-note
+To find out more about portals, visit <https://arcticdata.io/data-portals/>. You can view our catalog of portals [here](https://arcticdata.io/catalog/portals). We recommend reviewing the Distributed Biological Observatory's [portal](https://arcticdata.io/catalog/portals/DBO) to see what a more fleshed out portal can look like.
+:::
+
+![](../images/kapsar-portal.png)
+
+::: callout-tip
+This example also illustrates that users can create multiple datasets for a single NSF award. It's understandable that you may think you have to submit all your data for a given award under one dataset. However, we think breaking up data into separate datasets (in logical, structured ways) increases the discoverability and usability of the data. This is especially true when users also create a data portal for their project.
+
+When uploading your data files using SFTP, either through the command line or a GUI, we recommend creating folders with the same name as your dataset's title so that it is easier to associate the data with their associated metadata submission.
+
+For more complex folder structures, it is wise to include a README file that explicitly walks users through the structure and provides a basic understanding of what is available. Generally speaking, we recommend structuring your data in an easy to understand way such that a README isn't completely necessary.
+:::
+
+## Summary
+
+*This will be a summary of the chapter*
