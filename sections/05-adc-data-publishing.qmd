@@ -2,8 +2,6 @@
 title: "Documenting and Publishing Data"
 ---
 
-TODO: UPDATE ATTRIBUTE-WALKTHROUGH IMAGES TO REFLECT A NETCDF FILE OR SIMILAR
-
 ## Learning Objectives
 
 -   Become familiar with the submission process
