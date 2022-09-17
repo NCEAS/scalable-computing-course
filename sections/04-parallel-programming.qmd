@@ -36,19 +36,33 @@ can be:
 - **I/O-bound**: Take too much time to read/write from disk
 - **network-bound**: Take too much time to transfer
 
-To help with **cpu-bound** computations, one can take advantage of modern processor architectures that provide multiple cores on a single processor, and thereby enable multiple computations to take place at the same time. In addition, some machines ship with multiple processors, allowing large computations to occur across the entire cluster of those computers. Plus, these machines also have large amounts of memory to avoid **memory-bound** computing jobs.
+To help with **cpu-bound** computations, one can take advantage of modern processor architectures that provide multiple cores on a single processor, and thereby enable multiple computations to take place at the same time. In addition, some machines ship with multiple processors, allowing large computations to occur across the entire set of those processors. Plus, these machines also have large amounts of memory to avoid **memory-bound** computing jobs.
 
-## Processors (CPUs) and Cores
+## Processors (CPUs), Cores, anf Threads
 
 A modern CPU (Central Processing Unit) is at the heart of every computer.  While
 traditional computers had a single CPU, modern computers can ship with mutliple 
-processors, which in turn can each contain multiple cores.  These processors and 
-cores are available to perform computations.
-
-A computer with one processor may still have 4 cores (quad-core), allowing 4 computations
-to be executed at the same time.
+processors, each of which in turn can contain multiple cores.  These processors and 
+cores are available to perform computations. But, just what's the difference between 
+processors and cores? A computer with one processor may still have 4 cores (quad-core), 
+allowing 4 (or possibly more) computations to be executed at the same time.
 
 ![](../images/processor.png) 
+
++ [**Microprocessor**](https://en.wikipedia.org/wiki/Microprocessor):
+an integrated circuit that contains the data processing logic and control for a computer. 
+
++ [**Multi-core processor**](https://en.wikipedia.org/wiki/Multi-core_processor):
+a microprocessor containing multiple processing units (cores) on a single integrated circuit. Each core in a multi-core processor can execute program instructions at the same time. 
+
++ [**Process**](https://en.wikipedia.org/wiki/Process_(computing)):
+an instance of a computer program (including instructions, memory, and other resources) that is executed on a microprocessor. 
+
++ [**Thread**](https://en.wikipedia.org/wiki/Thread_(computing)):
+a thread of execution is the smallest sequence of program instructions that can be executed independently, and is typically a component of a process. The threads in a process can be executed concurrently and typically share the same memory space. They are faster to create than a process.
+
++ [**Cluster**](https://en.wikipedia.org/wiki/Computer_cluster):
+a set of multiple, physically distinct computing systems, each with its own microprocessors, memory, and storage resources, connected together by a (fast) network that allows the nodes to be viewed as a single system.
 
 A typical modern computer has multiple cores, ranging from one or two in laptops
 to thousands in high performance compute clusters.  Here we show four quad-core
@@ -58,7 +72,7 @@ processors for a total of 16 cores in this machine.
 
 You can think of this as allowing 16 computations to happen at the same time. Theroetically, your computation would take 1/16 of the time (but only theoretically, more on that later).
 
-Historically, R has only utilized one processor, which makes it single-threaded.  Which is a shame, because the 2017 MacBook Pro that I am writing this on is much more powerful than that:
+Historically, many languages only utilized one processor, which makes them single-threaded.  Which is a shame, because the 2019 MacBook Pro that I am writing this on is much more powerful than that, and has mutliple cores that would support concurrent execution of multiple threads:
 
 ```bash
 jones@powder:~$ sysctl hw.ncpu hw.physicalcpu
@@ -80,7 +94,7 @@ NUMA node0 CPU(s):               0-87
 
 Now that's more compute power!  `included-crab` has 384 GB of RAM, and ample storage. All still under the control of a single operating system.
 
-However, maybe one of these NSF-sponsored high performance computing clusters (HPC) is looking attractive about now:
+Finally, maybe one of these NSF-sponsored high performance computing clusters (HPC) is looking attractive about now:
 
 - [JetStream](https://jetstream-cloud.org/)
     - 640 nodes, 15,360 cores, 80TB RAM
@@ -88,15 +102,21 @@ However, maybe one of these NSF-sponsored high performance computing clusters (H
     - 4200 KNL nodes: 285,600 cores
     - 1736 SKX nodes: 83,328 cores
     - 224 ICX nodes: 17,920 cores
-    - TOTAL: 386,848 cores
+    - TOTAL: **386,848** cores
 
 Note that these clusters have multiple nodes (hosts), and each host has multiple cores. So this is really multiple computers clustered together to act in a coordinated fashion, but each node runs its own copy of the operating system, and is in many ways independent of the other nodes in the cluster.  One way to use such a cluster would be to use just one of the nodes, and use a multi-core approach to parallelization to use all of the cores on that single machine.  But to truly make use of the whole cluster, one must use parallelization tools that let us spread out our computations across multiple host nodes in the cluster.
 
 ## Modes of parallelization
 
-- TODO: describe these modes
+Several different approaches can be taken to structuring a computer program to take advantage of the hardware capabilities of multi-core processors. In the typical, and simplest, case, each task in a computation is executed serially in order of first to last. The total computation time is the sum of the time of all of the subtasks that are executed.  In the next figure, a single core of the processor is used to sequentially execute each of the five tasks, with time flowing from left to right.
 
-![Serial and parallel execution of tasks on using thre4ads and cluster processes.](../images/serial-parallel-exec.png)
+![Serial and parallel execution of tasks on using threads and cluster processes.](../images/serial-parallel-exec.png)
+
+In comparison, the middle panel shows two approaches to parallelization on a single computer. With **multi-threaded** execution, a separate thread of execution is created for each of the 5 tasks, and these are executed concurrently on 5 of the cores of the processor. All of the threads are in the same process and share the same memory and resources, so one must take care that they do not interfere with each other.
+
+With **multi-process** execution, a separate process is created for each of the 5 tasks, and these are executed concurrently on the cores of the processor. The difference is that each process has it's own copy of the program memory, and changes are merged when each child process completes. Because each child process must be created and resources for that process must be marshaled and unmarshaled, there is more overhead in creating a process than a thread.
+
+Finally, **cluster parallel** execution is shown in the last panel, in which a cluster with multiple computers is used to execute multiple processes for each task. Again, there is a setup task associated with creating and mashaling resources for the task, which now can include overhead of moving data from one machine to the others in the cluster over the network. This further increases the cost of creating and executing multiple processes, but can still be advantageous because it can provide access to exceedingly large numbers of processing cores.
 
 ## Simple task parallelization
 
