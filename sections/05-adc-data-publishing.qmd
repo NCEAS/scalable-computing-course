@@ -258,6 +258,6 @@ When uploading your data files using SFTP, either through the command line or a 
 For more complex folder structures, it is wise to include a README file that explicitly walks users through the structure and provides a basic understanding of what is available. Generally speaking, we recommend structuring your data in an easy to understand way such that a README isn't completely necessary.
 :::
 
-### Self-Documenting Files
+## Summary
 
-NetCDF, .hdf, and .mat file types are all examples of "self-documenting" files. In the case of a NetCDF file, users can input the attribute name, attribute description, missing value codes, units, and more into the file itself. When these data are well-documented within themselves, it can save the user's time when they go to submit their data with us.
+*This will be a summary of the chapter*
