@@ -248,4 +248,4 @@ For more complex folder structures, it is wise to include a README file that exp
 
 ## Summary
 
-*This will be a summary of the chapter*
+In this lesson we learned about metadata and the structure of a data package; how to submit narrative metadata; how to upload data and when to use different services; how to document file and attribute-level metadata; and best practices for data organization and management. As mentioned earlier, more in-depth information on uploading data to our servers using Globus and RSync can be found in [Session 18](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/18-arctic-data-staging.html).
