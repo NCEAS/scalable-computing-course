@@ -196,7 +196,7 @@ After you get the big green success message, you can visit your dataset and revi
 
 ### Step 3: Uploading Large Data
 
-In order to submit your large data files to the Arctic Data Center repository, we encourage users to directly upload their data to the Data Team's servers using a secure file transfer protocol (SFTP). There are a number of GUI driven and command line programs out there that all work well. For a GUI program, our team uses and recommends the free program [Cyberduck](https://cyberduck.io/download/). We will discuss command line programs in Session 18 in more detail, including `rsync` and Globus.
+In order to submit your large data files to the Arctic Data Center repository, we encourage users to directly upload their data to the Data Team's servers using a secure file transfer protocol (SFTP). There are a number of GUI driven and command line programs out there that all work well. For a GUI program, our team uses and recommends the free program [Cyberduck](https://cyberduck.io/download/). We will discuss command line programs in [Session 18](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/18-arctic-data-staging.html) in more detail, including `rsync` and Globus.
 
 Before we begin, let's answer the following question: Why would a user want to upload their data through a separate process, rather than the web form when they submit their metadata?
 
