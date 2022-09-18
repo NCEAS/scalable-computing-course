@@ -352,7 +352,7 @@ for result in results:
 	print(result)
 ```
 
-Again, the output messages print almost immediately, but then later the proesses finish and report that it took between *10 to 15 seconds* to run. Your mileage may vary. When I increase the number of files being downloaded to 10 or even to 20, I notice it is actually about the same, around *10-15 seconds*.  So, part of our time now is the overhead of setting up multiple processes. But once we have that infrastructure in place, we can make effective euse of the pool of processes to handle many downloads.
+Again, the output messages print almost immediately, but then later the processes finish and report that it took between *10 to 15 seconds* to run. Your mileage may vary. When I increase the number of files being downloaded to 10 or even to 20, I notice it is actually about the same, around *10-15 seconds*.  So, part of our time now is the overhead of setting up multiple processes. But once we have that infrastructure in place, we can make effective euse of the pool of processes to handle many downloads.
 
 ## Parallel processing with `parsl`
 
@@ -447,7 +447,7 @@ In addition, not all of a task can be parallelized. Depending on the proportion,
 
 So, it is important to evaluate the computational efficiency of requests, and work to ensure that additional compute resources brought to bear will pay off in terms of increased work being done. 
 
-# Parallel Pitfalls
+## Parallel Pitfalls
 
 A set of tasks is considered 'pleasingly parallel' when large portions of the code can be executed indpendently of the other portions and have few or no dependencies on other parts of the execution. This situation is common, and we can frequently execute parallel tasks on independent subsets of our data. Nevertheless, dependencies among different parts of your computation can definitely create bottlenecks and slow down computations. Some of the challenges you may need to work around include:
 
