@@ -198,11 +198,19 @@ After you get the big green success message, you can visit your dataset and revi
 
 In order to submit your large data files to the Arctic Data Center repository, we encourage users to directly upload their data to the Data Team's servers using a secure file transfer protocol (SFTP). There are a number of GUI driven and command line programs out there that all work well. For a GUI program, our team uses and recommends the free program [Cyberduck](https://cyberduck.io/download/). We will discuss command line programs in Session 18 in more detail, including `rsync` and Globus.
 
-Before we begin, let's answer the following question: *Why would a user want to upload their data through a separate process, rather than the web form when they submit their metadata?*
+Before we begin, let's answer the following question: Why would a user want to upload their data through a separate process, rather than the web form when they submit their metadata?
 
 Depending on your internet connection, the number of files you have, and the cumulative size of the data, users may experience difficulty uploading their data through the submission form. These difficulties are most often significantly reduced upload speeds and submission malfunctions. As such, it is best for all parties for large quantities of data to be uploaded directly to our server through an FTP.
 
 The second question is, under what circumstances should I consider uploading data directly to the server, versus the webform? Although server uploads are more efficient for large datasets, for smaller datasets it is much more efficient to go through the webform. So, what constitutes a large dataset and what tools should you consider? Here is a helpful diagram:
+
+![](../images/large-file-matrix.png)
+
+-   [Web Editor]{style="background-color: #E4EEDC;"}: The web editor is most often used by those with less than a hundred files and a small cumulative file size (0-5 GBs). Overall, this option is best for those who have less than 250 files with a small cumulative file size.
+
+-   [SFTP]{style="background-color: #FDF2D0;"}: For users that expect to upload more than 250 files and have a medium cumulative file size (10-100 GBs), uploading data to our servers via SFTP is the recommended method. This can be done through the command line, or a program like Cyberduck. If you find yourself considering uploading a zip file through the web editor, you should instead upload your files using this method.
+
+-   [SFTP & RSync]{style="background-color: #F8E5D8;"}: For users that expect to upload hundreds or thousands of files, with a cumulative file size of hundreds of GB to TBs, you will likely want to make use of SFTP through Globus, or use RSync. Jeanette will be talking about data transfers in more depth on Thursday.
 
 Before you can upload your data to the Data Team's server, make sure to email us at `support@arcticdata.io` to retrieve the login password. Once you have that, you can proceed through the following steps.
 
