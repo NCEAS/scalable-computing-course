@@ -147,7 +147,7 @@ The key to performance gains is to ensure that the overhead associated with crea
 
 ## Task parallelization in Python
 
-Python also provides a number of easy to use packages for concurrent processing. We will review two of these, `concurrent.futures` and `parsl`, to show just how easy it can be to parallelize your programs. 
+Python also provides a number of easy to use packages for concurrent processing. We will review two of these, `concurrent.futures` and `parsl`, to show just how easy it can be to parallelize your programs. [`concurrent.futures`](https://docs.python.org/3/library/concurrent.futures.html) is built right into the python3 release, and is a great starting point for learning concurrency.
 
 ```{python}
 #| echo: false
@@ -283,7 +283,7 @@ file_table.head()
 
 ### Serial
 
-When you have a list of repetitive tasks, you may be able to speed it up by adding more computing power.  If each task is completely independent of the others, then it is a prime candidate for executing those tasks in parallel, each on its own core.  For example, let's build a simple loop that downloads the data files that we need for an analysis. First, we start with the serial implementation.
+When you have a list of repetitive tasks, you may be able to speed it up by adding more computing power.  If each task is completely independent of the others, then it is pleasingly parallel and a prime candidate for executing those tasks in parallel, each on its own core.  For example, let's build a simple loop that downloads the data files that we need for an analysis. First, we start with the serial implementation.
 
 ```{python}
 #| eval: true
@@ -304,17 +304,17 @@ def download_serial(table):
     results = [download_file(row) for row in table.iterrows()]
     return results
     
-results = download_serial(file_table[0:1])
+results = download_serial(file_table[0:5])
 print(results)
 ```
 
-In this code, we have one function (`download_file`) that downloads a single data file and saves it to disk. It is called iteratively from the function `download_list`. The serial execution takes about 15.2 seconds, but can vary by a few seconds.
+In this code, we have one function (`download_file`) that downloads a single data file and saves it to disk. It is called iteratively from the function `download_serial`. The serial execution takes about *20-25 seconds*, but can vary considerably based on network traffic and other factors.
 
-The issue with this loop is that we execute each trial sequentially, which means that only one of our processors on this machine is in use.  In order to exploit parallelism, we need to be able to dispatch our tasks and allow each to run at the same time, with one task going to each core.  To do that, we can use one of the many parallelization libraries in python to help us out.
+The issue with this loop is that we execute each download task sequentially, which means that only one of our processors on this machine is in use.  In order to exploit parallelism, we need to be able to dispatch our tasks and allow each to run at the same time, with one task going to each core.  To do that, we can use one of the many parallelization libraries in python to help us out.
 
 ### Multi-threaded with `concurrent.futures`
 
-In this case, we'll use the same `download_file` function from previously, but will switch up the `download_list` to use `concurrent.futures`.
+In this case, we'll use the same `download_file` function from before, but let's switch up and create a `download_threaded()` function to use `concurrent.futures` with a `ThreadPoolExecutor` just as we did earlier.
 
 ```{python}
 #| eval: true
@@ -326,12 +326,16 @@ def download_threaded(table):
         results = executor.map(download_file, table.iterrows(), timeout=60)
         return results
 
-results = download_threaded(file_table[0:1])
+results = download_threaded(file_table[0:5])
 for result in results:
 	print(result)
 ```
 
+Note how the "Downloading..." messages were printed immediately, but then it still took over 20 seconds to download the 5 files. This could be for several reasons, including that one of the files alone took that long (e.g., due to network congestion), or that there was a bottleneck in writing the files to disk (i.e., we could have been disk I/O limited). Or maybe the multithreaded executor pool didn't do a good job parallelizing the tasks. The trick is figuring out why you did or didn't get a speedup when parallelizing. So, let's try this another way, using a **multi-processing** approach, rather than multi-threading.
+
 ### Multi-process with `concurrent.futures`
+
+You'll remember from earlier that you can execute tasks concurrently by creating multiple threads within one process (multi-threaded), or by creating and executing muliple processes. The latter creates more independence, as each of the executing tasks has their own memory and process space, but it also takes longer to set up. With `concurrent.futures`, we can switch to a multi-process pool by using a `ProcessPoolExecutor`, analogously to how we used `ThreadPoolExecutor` previously. So, some simple changes, and we're running multiple processes.
 
 ```{python}
 #| eval: true
@@ -343,14 +347,20 @@ def download_process(table):
         results = executor.map(download_file, table.iterrows(), timeout=60)
         return results
 
-results = download_process(file_table[0:1])
+results = download_process(file_table[0:5])
 for result in results:
 	print(result)
 ```
 
-### Multi-process with `parsl`
+Again, the output messages print almost immediately, but then later the proesses finish and report that it took between *10 to 15 seconds* to run. Your mileage may vary. When I increase the number of files being downloaded to 10 or even to 20, I notice it is actually about the same, around *10-15 seconds*.  So, part of our time now is the overhead of setting up multiple processes. But once we have that infrastructure in place, we can make effective euse of the pool of processes to handle many downloads.
 
-- Overview of parsl and it's use of python decorators.
+## Parallel processing with `parsl`
+
+`concurrent.futures` is great and powerful, but it has its limits. Particularly as you try to scale up into the thousands of concurrent tasks, other libraries like [Parsl](https://parsl-project.org/) ([docs](https://parsl.readthedocs.io/)), [Dask](https://www.dask.org/), [Ray](https://www.ray.io/), and others come into play. They all have their strengths, but Parsl makes it particularly easy to build parallel workflows out of existing python code through it's use of decorators on existing python functions.
+
+In addition, Parsl provides a lot of different kinds of Executors, allowing the same python code to be easily run multi-threaded using a `ThreadPoolExecutor`, via multi-processing on many different cluster computing platforms using the `HighThroughputExecutor`, the `KubernetesExecutor`, the `SlurmExecutor`, and many others. And Parsl handles data staging as well across these varied environments, making sure the data is in the right place when it's needed for computations.
+
+Similarly to before, we start by configuring an executor in parsl, and loading it. We'll use multiprocessing by configuring the `HighThroughputExecutor` to use our local resources as a cluster, and we'll activate our virtual environment to be sure we're executing in a consistent environment.
 
 ```{python}
 #| eval: true
@@ -376,7 +386,11 @@ htex_local = Config(
 )
 parsl.clear()
 parsl.load(htex_local)
+```
 
+We now have a live parsl executor (`htex_local`) that is waiting to execute processes. We tell it to execute processes by annotating functions with decorators that indicates which tasks should be parallelized. Parsl then handles the scheduling and execution of those tasks based on the dependencies between them. In the simplest case, we'll decorate our previous function for downloading a file with the `@python_app` decorator, which tells parsl that any function calls with this function should be run on the default executor (in this case, `htex_local`).
+
+```{python}
 # Define a parsl_app for our download function using a decorator
 @python_app
 def download_file_parsl(row):
@@ -388,7 +402,11 @@ def download_file_parsl(row):
     print("Downloading: " + filename)
     msg = urllib.request.urlretrieve(url, filename)
     return filename
+```
 
+Now we just write regular python code that calls that function, and parsl handles the scheduling. Parsl app executors return an [`AppFuture`](https://parsl.readthedocs.io/en/stable/userguide/futures.html#appfutures), and we can call the `AppFuture.done()` function to determine when the future result is ready without blocking. Or, we can just block on `AppFuture.result()` which waits for each of the executions to complete and then returns the result.
+
+```{python}
 @timethis
 def download_parsl(table):
     results = []
@@ -401,7 +419,7 @@ def download_parsl(table):
 def wait_for_futures():
     results = download_parsl(file_table[0:1])
     done = [app_future.result() for app_future in results]
-    print(done)
+    return(done)
 
 wait_for_futures()
 htex_local.executors[0].shutdown()
@@ -421,6 +439,7 @@ So, its important to evaluate the computational efficiency of requests, and work
 
 # Parallel Pitfalls and their solutions
 
+- Task dependencies
 - Race conditions
 - Deadlocks
 
