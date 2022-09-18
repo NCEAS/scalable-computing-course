@@ -358,7 +358,7 @@ Again, the output messages print almost immediately, but then later the proesses
 
 `concurrent.futures` is great and powerful, but it has its limits. Particularly as you try to scale up into the thousands of concurrent tasks, other libraries like [Parsl](https://parsl-project.org/) ([docs](https://parsl.readthedocs.io/)), [Dask](https://www.dask.org/), [Ray](https://www.ray.io/), and others come into play. They all have their strengths, but Parsl makes it particularly easy to build parallel workflows out of existing python code through it's use of decorators on existing python functions.
 
-In addition, Parsl provides a lot of different kinds of Executors, allowing the same python code to be easily run multi-threaded using a `ThreadPoolExecutor`, via multi-processing on many different cluster computing platforms using the `HighThroughputExecutor`, the `KubernetesExecutor`, the `SlurmExecutor`, and many others. And Parsl handles data staging as well across these varied environments, making sure the data is in the right place when it's needed for computations.
+In addition, Parsl supports a lot of different kinds of [providers](https://parsl.readthedocs.io/en/stable/userguide/execution.html#execution-providers), allowing the same python code to be easily run multi-threaded using a `ThreadPoolExecutor` and via multi-processing on many different cluster computing platforms using the `HighThroughputExecutor`. For example, Parsl includes providers supporting local execution, and on Slurm, Condor, Kubernetes, AWS, and other platforms. And Parsl handles data staging as well across these varied environments, making sure the data is in the right place when it's needed for computations.
 
 Similarly to before, we start by configuring an executor in parsl, and loading it. We'll use multiprocessing by configuring the `HighThroughputExecutor` to use our local resources as a cluster, and we'll activate our virtual environment to be sure we're executing in a consistent environment.
 
@@ -388,10 +388,12 @@ parsl.clear()
 parsl.load(htex_local)
 ```
 
-We now have a live parsl executor (`htex_local`) that is waiting to execute processes. We tell it to execute processes by annotating functions with decorators that indicates which tasks should be parallelized. Parsl then handles the scheduling and execution of those tasks based on the dependencies between them. In the simplest case, we'll decorate our previous function for downloading a file with the `@python_app` decorator, which tells parsl that any function calls with this function should be run on the default executor (in this case, `htex_local`).
+We now have a live parsl executor (`htex_local`) that is waiting to execute processes. We tell it to execute processes by annotating functions with decorators that indicate which tasks should be parallelized. Parsl then handles the scheduling and execution of those tasks based on the dependencies between them. In the simplest case, we'll decorate our previous function for downloading a file with the `@python_app` decorator, which tells parsl that any function calls with this function should be run on the default executor (in this case, `htex_local`).
 
 ```{python}
-# Define a parsl_app for our download function using a decorator
+# Decorators seem to be ignored as the first line of a cell, so print something first
+print("Create decorated function")
+
 @python_app
 def download_file_parsl(row):
     import urllib
@@ -407,25 +409,33 @@ def download_file_parsl(row):
 Now we just write regular python code that calls that function, and parsl handles the scheduling. Parsl app executors return an [`AppFuture`](https://parsl.readthedocs.io/en/stable/userguide/futures.html#appfutures), and we can call the `AppFuture.done()` function to determine when the future result is ready without blocking. Or, we can just block on `AppFuture.result()` which waits for each of the executions to complete and then returns the result.
 
 ```{python}
+#! eval: true
+print("Define our download_futures function")
+
 @timethis
-def download_parsl(table):
+def download_futures(table):
     results = []
     for row in table.iterrows():
         result = download_file_parsl(row)
+        print(result)
         results.append(result)
     return(results)
 
 @timethis
-def wait_for_futures():
-    results = download_parsl(file_table[0:1])
+def wait_for_futures(table):
+    results = download_futures(table)
     done = [app_future.result() for app_future in results]
-    return(done)
+    print(done)
 
-wait_for_futures()
+wait_for_futures(file_table[0:5])
+```
+
+When we're done, be sure to clean up and shutdown the `htex_local` executor, or it will continue to persist in your environment and utilize resources. Generally, an executor should be created when setting up your environment, and then it can be used repeatedly for many different tasks.
+
+```{python}
 htex_local.executors[0].shutdown()
 parsl.clear()
 ```
-
 
 ## When to parallelize
 
@@ -435,18 +445,26 @@ In addition, not all of a task can be parallelized. Depending on the proportion,
 
 ![Amdahl's Law](../images/amdahl.png)
 
-So, its important to evaluate the computational efficiency of requests, and work to ensure that additional compute resources brought to bear will pay off in terms of increased work being done. 
+So, it is important to evaluate the computational efficiency of requests, and work to ensure that additional compute resources brought to bear will pay off in terms of increased work being done. 
 
-# Parallel Pitfalls and their solutions
+# Parallel Pitfalls
 
-- Task dependencies
-- Race conditions
-- Deadlocks
+A set of tasks is considered 'pleasingly parallel' when large portions of the code can be executed indpendently of the other portions and have few or no dependencies on other parts of the execution. This situation is common, and we can frequently execute parallel tasks on independent subsets of our data. Nevertheless, dependencies among different parts of your computation can definitely create bottlenecks and slow down computations. Some of the challenges you may need to work around include:
 
++ **Task dependencies**:
+occur when one task in the code depends on the results of another task or computation in the code.
+
++ **Race conditions**:
+ooccur when two tasks execute in parallel, but produce different results based on which task finishes first. Ensuring that results are correct under different timing situations requires careful testing.
+
++ **Deadlocks**:
+occur when two concurrent tasks block on the output of the other. Deadlocks cause parallel programs to lock up indefinitely, and can be difficult to track down.
+
+Even when tasks exhibit strong dependencies, it is frequently possible to still optimize that code by parallelizing explicit code sections, sometimes bringing other concurrency tools into the mix, such as the Message Passing Interface (MPI). But simply improving the efficiency of pleasingly parallel tasks can be liberating.
 
 ## Summary
 
-In this lesson, we showed examples of computing tasks that are likely limited by the number of CPU cores that can be applied, and we reviewed the architecture of computers to understand the relationship between CPU processors and cores.  Next, we reviewed the way in which traditional `for` loops in R can be rewritten as functions that are applied to a list serially using `lapply`, and then how the `parallel` package `mclapply` function can be substituted in order to utilize multiple cores on the local computer to speed up computations. Finally, we installed and reviewed the use of the `foreach` package with the `%dopar` operator to accomplish a similar parallelization using multiple cores.
+In this lesson, we showed examples of computing tasks that are likely limited by the number of CPU cores that can be applied, and we reviewed the architecture of computers to understand the relationship between CPU processors and cores.  Next, we reviewed the way in which traditional sequential loops can be rewritten as functions that are applied to a list of inputs both serially and in parallel to utilize multiple cores to speed up computations. We reviewed the challenges of optimizing code, where one must constantly examine the bottlenecks that arise as we improve cpu-bound, I/O bound,and memory bound computations.
 
 ## Further Reading
 
