@@ -152,7 +152,7 @@ print(precip)
 You may see a message in the VS Code Interactive pane that says, **"Output exceeds the size limit. Open the full output data in a text editor"** when printing your image object. Click here to see the entire output, which includes date range information.
 :::
 
--  Let's say that we want to look at data for a particular time of interest -- e.g. January 1, 2019 - December 31, 2019. We can apply the `filterDate` method to our selected `total_precipitation` parameter to filter for data from our chosen date range. We also apply the `mean` method, which takes whatever precedes it and calculates the average.
+-  Let's say that we want to look at data for a particular time of interest -- e.g. January 1, 2019 - December 31, 2019. We can apply the `filterDate` method to our selected `total_precipitation` parameter to filter for data from our chosen date range. We can also apply the `mean` method, which takes whatever precedes it and calculates the average.
 
 ```{python}
 #| eval: false
@@ -173,9 +173,9 @@ precip = weatherData.select("total_precipitation").filterDate(i_date, f_date).me
 print(precip)
 ```
 
-5. Add the precipitation Image to the basemap
+4. Add the precipitation Image to the basemap
 
--  We can first use the `setCenter` method to tell the map where to center itself (here, we center it over Cook Inlet, Alaska). It takes the longitude and latitude as the first two coordinates, followed by the zoom level.
+-  We can first use the `setCenter` method to tell the map where to center itself (here, we center it over Cook Inlet, Alaska). It takes the longitude and latitude as the first two arguments, followed by the zoom level.
 
 ```{python}
 #| eval: false
@@ -183,7 +183,7 @@ myMap.setCenter(lat = 60, lon = -151, zoom = 4)
 myMap
 ```
 
--  Next, set a color palette to use when plotting the data layer. The following is a palette specified for precipitation in the GEE Description tab for ERA5. Here, we adjusted the max value to change the range of pixel values to which the palette should be applied -- this will make our colors stand out a bit more when we layer our precipitation data on our base map, below.
+-  Next, set a color palette to use when plotting the data layer. The following is a palette specified for ERA5 precipitation data (scroll down to the example code, available on the [landing page for the ERA5 metadata](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY) in the Earth Engine Data Catelog). Here, we adjusted the max value to change the range of pixel values to which the palette should be applied -- this will make our colors stand out a bit more when we layer our precipitation data on our basemap, below.
 
 ::: {.column-margin}
 Learn more about GEE color palettes and Image visualization [here](https://developers.google.com/earth-engine/guides/image_visualization).
@@ -232,7 +232,7 @@ In this exercise, we’ll explore fire dynamics Batagay, Russia, the location of
 
 <br>
 
-Using the following code, we'll learn how to:  
+Using the following code, we'll demonstrate how to:  
 
 -  load and visualize image data  
 -  calculate and visualize indices  
@@ -519,7 +519,7 @@ Map
 -  [Creating and managing Google Cloud projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects)  
 -  [Troubleshooting authentication issues](https://developers.google.com/earth-engine/guides/python_install#troubleshooting-authentication-issues)  
 -  [An Intro to the Earth Engine Python API](https://developers.google.com/earth-engine/tutorials/community/intro-to-python-api)  
--  [geemap documentation](https://geemap.org/)
+-  [geemap documentation](https://geemap.org/)  
 -  [Qiusheng Wu's YouTube channel for GEE & geemap Python tutorials](https://www.youtube.com/c/Qiushengwu)
 -  [GEE on StackExhange](https://gis.stackexchange.com/questions/tagged/google-earth-engine)
 

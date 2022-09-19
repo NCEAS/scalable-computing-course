@@ -50,9 +50,9 @@ Because IP addresses can be difficult to remember, they are also assigned **host
     
 ::: {.callout-note} 
 ## In order to connect to remote servers, computing clusters, virtual machines, etc., you need to know their IP address (or hostname)
-A couple important ones:
-1. Throughout this course, we'll be working on a server with the hostname, **included-crab** and IP address, 128.111.85.28 (in just a little bit, we'll learn how to connect to **included-crab** using SSH)
-2. **localhost** is a hostname that refers to your local computer and is assigned the IP address 127.0.0.1 -- the concept of localhost is important for tasks such as website testing and also is important to understand when provisioning local execution resources (e.g. we'll practice this in during the [section 6 exercise](https://github.com/NCEAS/scalable-computing-examples/blob/main/group-project/solutions/session-06-solution.ipynb) when working with `Parsl`.)
+A couple important ones:  
+1. Throughout this course, we'll be working on a server with the hostname, **included-crab** and IP address, 128.111.85.28 (in just a little bit, we'll learn how to connect to **included-crab** using SSH)  
+2. **localhost** is a hostname that refers to your local computer and is assigned the IP address 127.0.0.1 -- the concept of localhost is important for tasks such as website testing, and is also important to understand when provisioning local execution resources (e.g. we'll practice this during the [section 6 exercise](https://github.com/NCEAS/scalable-computing-examples/blob/main/group-project/solutions/session-06-solution.ipynb) when working with `Parsl`.)
 :::
 
 ## Bash Shell Programming
@@ -133,7 +133,7 @@ Secure Shell, or SSH, is a network communication protocol that is often used for
 
 ## Git via a shell
 
-[Git](https://git-scm.com/), a popular version control systemm and command line tool can be accessed via a shell. While there are lots of graphical user interfaces (GUIs) that faciliatate version control with Git, they often only implement a small subset of Git's most-used functionality. By interacting with Git via the command line, you have access to *all* Git commands. While all-things Git is outside the scope of this workshop, we will use some basic Git commands in the shell to clone GitHub (remote) repositories to the server and save/store our changes to files. A few important Git commands:
+[Git](https://git-scm.com/), a popular version control system and command line tool can be accessed via a shell. While there are lots of graphical user interfaces (GUIs) that faciliatate version control with Git, they often only implement a small subset of Git's most-used functionality. By interacting with Git via the command line, you have access to *all* Git commands. While all-things Git is outside the scope of this workshop, we will use some basic Git commands in the shell to clone GitHub (remote) repositories to the server and save/store our changes to files. A few important Git commands:
 
 | Git command     | what it does                                                                  |
 |-----------------|-------------------------------------------------------------------------------|
@@ -142,7 +142,7 @@ Secure Shell, or SSH, is a network communication protocol that is often used for
 |    `git commit` | record a snapshot of a repository; the `-m` option adds a commit message      |
 |    `git push`   | send commits from a local repository to a remote repository                   |
 |    `git fetch`  | downloads contents (e.g. files, commits, refs) from a remote repo to a local repo |
-|    `git pull`   | fetches contents of a remote repo and merges chnanges into the local repo     |
+|    `git pull`   | fetches contents of a remote repo and merges changes into the local repo     |
 
 ## Let's practice!
 
@@ -192,6 +192,8 @@ logout
 Connection to included-crab.nceas.ucsb.edu closed.
 (base) .....
 ```
+
+Alternatively, click on the green bar that says **SSH: included-crab.nceas.ucsb.edu** (bottom left corner of VS Code), which opens the command palette. Choose **Close Remote Connection** to disconnect from the server.
 :::
 
 ### **Exercise 2:** Practice using some common bash commands
