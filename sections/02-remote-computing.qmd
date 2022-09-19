@@ -51,7 +51,7 @@ Because IP addresses can be difficult to remember, they are also assigned **host
 ::: {.callout-note} 
 ## In order to connect to remote servers, computing clusters, virtual machines, etc., you need to know their IP address (or hostname)
 A couple important ones:
-1. Throughout this course, we'll be working on a server with the hostname, **included-crab** and IP address, 128.111.85.1 (in just a little bit, we'll learn how to connect to **included-crab** using SSH)
+1. Throughout this course, we'll be working on a server with the hostname, **included-crab** and IP address, 128.111.85.28 (in just a little bit, we'll learn how to connect to **included-crab** using SSH)
 2. **localhost** is a hostname that refers to your local computer and is assigned the IP address 127.0.0.1 -- the concept of localhost is important for tasks such as website testing and also is important to understand when provisioning local execution resources (e.g. we'll practice this in during the [section 6 exercise](https://github.com/NCEAS/scalable-computing-examples/blob/main/group-project/solutions/session-06-solution.ipynb) when working with `Parsl`.)
 :::
 
