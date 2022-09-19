@@ -192,8 +192,6 @@ logout
 Connection to included-crab.nceas.ucsb.edu closed.
 (base) .....
 ```
-
-Alternatively, click on the green bar that says **SSH: included-crab.nceas.ucsb.edu** (bottom left corner of VS Code), which opens the command palette. Choose **Close Remote Connection** to disconnect from the server.
 :::
 
 ### **Exercise 2:** Practice using some common bash commands
@@ -338,19 +336,17 @@ IDEs commonly have helper buttons for cloning (i.e. creating a copy of) remote r
 ```{.bash}
 git clone <url-of-forked-repo>
 ```
-4. To open the project, open the folder into your workpace using `File` > `Open Folder`. Enter your password, if prompted. 
-
-5. You should now have a copy of the `scalable-computing-examples` repository to work on on the server. Use the `tree` command to see the structure of the repo (you need to be in the `scalable-computing-examples` directory for this to work) -- there should be a subdirectory called `bash-babynames` that contains (i) a `README.MD` file, (ii) a `KEY.sh` file (this is a functioning bash script available for reference; we'll be recreating it together in the next exercise) and (iii) a `namesbystate` folder containing 51 `.TXT` files and a `StateReadMe.pdf` file with some metadata. 
+4. You should now have a copy of the `scalable-computing-examples` repository to work on on the server. Use the `tree` command to see the structure of the repo (you need to be in the `scalable-computing-examples` directory for this to work) -- there should be a subdirectory called `02-bash-babynames` that contains (i) a `README.MD` file, (ii) a `KEY.sh` file (this is a functioning bash script available for reference; we'll be recreating it together in the next exercise) and (iii) a `namesbystate` folder containing 51 `.TXT` files and a `StateReadMe.pdf` file with some metadata. 
 
 ### **Bonus Exercise:** Automate data processing with a Bash script
 
 As we just demonstrated, we can use bash commands in the terminal to accomplish a variety of tasks like navigating our computer's directories, manipulating/creating/adding files, and much more. However, writing a bash *script* allows us to gather and save our code for automated execusion. 
 
-We just cloned the `scalable-computing-examples` GitHub repository to the server in [**Exercise 3**](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/02-remote-computing.html#exercise-3-clone-a-github-repository-to-the-server) above. This contains a `bash-babynames` folder with 51 `.TXT` files (one for each of the 50 US states + The District of Columbia), each with the top 1000 most popular baby names in that state. We're going to use some of the bash commands we learned in [**Exercise 2**](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/02-remote-computing.html#exercise-2-practice-using-some-common-bash-commands) to concatenate all rows of data from these 51 files into a single `babynames_allstates.csv` file.
+We just cloned the `scalable-computing-examples` GitHub repository to the server in [**Exercise 3**](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/02-remote-computing.html#exercise-3-clone-a-github-repository-to-the-server) above. This contains a `02-bash-babynames` folder with 51 `.TXT` files (one for each of the 50 US states + The District of Columbia), each with the top 1000 most popular baby names in that state. We're going to use some of the bash commands we learned in [**Exercise 2**](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/02-remote-computing.html#exercise-2-practice-using-some-common-bash-commands) to concatenate all rows of data from these 51 files into a single `babynames_allstates.csv` file.
 
 Let's begin by creating a simple bash script that when executed, will print out the message, "Hello, World!" This simple script will help us determine whether or not things are working as expected before writing some more complex (and interesting) code. 
 
-1. Open a terminal window and determine where you are by using the `pwd` command -- we want to be in `scalable-computing-examples/bash-babynames`. If necessary, navigate here using the `cd` command. 
+1. Open a terminal window and determine where you are by using the `pwd` command -- we want to be in `scalable-computing-examples/02-bash-babynames`. If necessary, navigate here using the `cd` command. 
 
 2. Next, we'll create a shell script called `mybash.sh` using the `touch` command:
 

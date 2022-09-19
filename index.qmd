@@ -115,13 +115,7 @@ You can create a test Jupyter Notebook document from the command pallete by typi
 
 ### Create a (free) Google Earth Engine (GEE) account
 
-In order to code along during the Google Earth Engine lesson ([Ch 15]()) on Thursday, you'll need to sign up for an account at <https://signup.earthengine.google.com>. Following the link above will take you to a form that looks like this: 
-<br>
-
-<center><img src="../images/gee_signup.png" alt="" width="400"/></center>
-
-<br>
-Once submitted, you'll receive an email with some helpful links and a message that it may take a few days for your account to be up and running. **Please be sure to do this a few days ahead of needing to use GEE.**
+In order to code along during the Google Earth Engine lesson ([Ch 15]()) on Thursday, you'll need to sign up for an account at <https://signup.earthengine.google.com>. Once submitted, you'll receive an email with some helpful links and a message that it may take a few days for your account to be up and running. **Please be sure to do this a few days ahead of needing to use GEE.**
 
 ::: {.callout-important}
 GEE authentication (more on that in [Lesson 15](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/15-google-earth-engine.html)) uses [Cloud Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Some organizations control who can create Cloud Projects, which may prevent you from completing the authentication process. To circumvent authentication issues, we recommend creating your GEE account using a non-organizational account (e.g. a personal email account). Check out GEE's [authentication troubleshooting recommendations](https://developers.google.com/earth-engine/guides/python_install#troubleshooting-authentication-issues) if you continue to run into issues.
