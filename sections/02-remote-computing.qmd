@@ -353,7 +353,7 @@ Let's begin by creating a simple bash script that when executed, will print out 
 2. Next, we'll create a shell script called `mybash.sh` using the `touch` command:
 
 ```{.bash}
-$ touch bybash.sh
+$ touch mybash.sh
 ```
 
 3. There are a number of ways to edit a file or script -- we'll use [Nano](https://www.nano-editor.org/), a terminal-based text editor, as we did earlier. Open your `mybash.sh` with nano by running the following in your terminal:
