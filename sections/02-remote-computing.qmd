@@ -40,7 +40,7 @@ Hosts are assigned a **unique numerical address** used for all communication and
 | well-known port  | assignment                                                                    |
 |------------------|-------------------------------------------------------------------------------|
 |      20, 21      | File Transfer Protocol (FTP), for transfering files between a client & server |   
-|        22        | secure shell (SSH), to create secure network conections                       | 
+|        22        | secure shell (SSH), to create secure network connections                       | 
 |        53        | Domain Name System (DNS) service, to match domain names to IP addresses       |
 |        80        | Hypertext Transfer Protocol (HTTP), used in the World Wide Web                |
 |       443        | HTTP Secure (HTTPS), an encrypted version of HTTP                             |
@@ -51,6 +51,7 @@ Because IP addresses can be difficult to remember, they are also assigned **host
 ::: {.callout-note} 
 ## In order to connect to remote servers, computing clusters, virtual machines, etc., you need to know their IP address (or hostname)
 A couple important ones:  
+
 1. Throughout this course, we'll be working on a server with the hostname, **included-crab** and IP address, 128.111.85.28 (in just a little bit, we'll learn how to connect to **included-crab** using SSH)  
 2. **localhost** is a hostname that refers to your local computer and is assigned the IP address 127.0.0.1 -- the concept of localhost is important for tasks such as website testing, and is also important to understand when provisioning local execution resources (e.g. we'll practice this during the [section 6 exercise](https://github.com/NCEAS/scalable-computing-examples/blob/main/group-project/solutions/session-06-solution.ipynb) when working with `Parsl`.)
 :::
