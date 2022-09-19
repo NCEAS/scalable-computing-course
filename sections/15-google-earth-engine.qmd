@@ -1,49 +1,35 @@
 ---
 title: "Google Earth Engine"
 ---
-::: {.callout-important}
-## TODO
- - create jupyter notebook outline for scalable-computing-examples(?)
-- incporporate Ingmar's stuff (or keep it separate in scalable-computing-examples)?
-- ADD REF TO CHOOSING GOOD COLORS
-:::
 
 ## Learning Objectives
 
 - Understand what Google Earth Engine provides and its applications
 - Learn how to search for, import, manipulate, and visualize Google Earth Engine Data
-- Learn about some real-world applications of Google Earth Engine in Earth systems research
-
+- Learn about some real-world applications of Google Earth Engine in the geosciences
 ## Introduction 
 
 [Google Earth Engine](https://earthengine.google.com/) (GEE) is a geospatial processing platform powered by Google Cloud Platform. It contains over 30 years (and multiple petabytes) of satellite imagery and geospatial datasets that are continually updated and available instantly. Users can process data using Google Cloud Platform and built-in algorithms or by using the Earth Engine API, which is available in Python (and JavaScript) for anyone with an account (Earth Engine is free to use for research, education, and nonprofit use). 
 <br> 
 
+::: {.column-margin}
+GEE is just one of a number of cloud platform solutions developed for climate and geoscience research. Others include [Microsoft Planetary Computer](https://planetarycomputer.microsoft.com/), [Pangeo](https://pangeo.io/), & [Amazon Sustainability Data Initiative (ADSI)](https://sustainability.aboutamazon.com/environment/the-cloud/amazon-sustainability-data-initiative)  
+:::
+
+
 <center><img src="../images/gee.gif" alt="" width="600"/></center>
 <center><span style = 'font-size: 85%; color: #6e6d6d;'>Image Source: [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets)</span></center>
 
-::: {.callout-note}
-## GEE is just one platform of many.  
-Microsoft Planetary Computer, Pangeo, Amazon Web Services (Amazon Enviromental SOmething)
-:::
-
+<br>
 So what's so exciting about platforms like GEE? [Ryan Abernathey](https://scholar.google.com/citations?user=t1lmjVkAAAAJ&hl=en) frames this nicely in his blogpost [Closed Platform vs. Open Architectures for Cloud-Native Earth System Analytics](https://medium.com/pangeo/closed-platforms-vs-open-architectures-for-cloud-native-earth-system-analytics-1ad88708ebb6)...
-
-
 
 -  as Earth System data have gotten larger, the typical download-data-work-locally workflow is no longer always feasible
 -  those data are also produced and distributed by lots of different organizations (e.g. [NASA](https://www.nasa.gov/), [NOAA](https://www.noaa.gov/), [Copernicus](copernicus.eu/en))
 - researchers often need to apply a wide range of analytical methods to those data, ranging from simple stats to machine learning approaches
 
-GEE offers web access (i.e. no need to download data to your computer) to an extensive catalog of analysis-ready geospatial data (from many different organizations) and scalable computing power via their cloud service, making global-scale analyses and visualizations possible for anyone with an account ([sign up here](https://signup.earthengine.google.com)!)
+GEE offers web access (i.e. no need to download data to your computer) to an extensive catalog of analysis-ready geospatial data (from many different organizations) and scalable computing power via their cloud service, making global-scale analyses and visualizations possible for anyone with an account ([sign up here](https://signup.earthengine.google.com)!). Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellite ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)). 
 
-::: {.callout-note}
-## GEE is just one of a number of cloud platform solutions developed for climate science
-:::
-
-Explore the public [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets/catalog) which includes a variety of standard Earth science raster datasets. Browse by [dataset tags](https://developers.google.com/earth-engine/datasets/tags) or by satellite ([Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat), [MODIS](https://developers.google.com/earth-engine/datasets/catalog/modis), [Sentinel](https://developers.google.com/earth-engine/datasets/catalog/sentinel)). 
-
-In this lesson, we'll get some hands-on practice connecting to and using Google Earth Engine to visualize global precicpation data. We'll then **__________Ingmar's plan here__________**.
+In this lesson, we'll first get some hands-on practice connecting to and using Google Earth Engine to visualize global precicpation data. We'll then walk through a demonstration using GEE to visualize and analyze fire dynamics in the Arctic.
 
 ## **Exercise 1:** An introductory lesson on using Google Earth Engine
 
@@ -77,7 +63,7 @@ a. **Notebook Authenticator:** choose an active Google account and Cloud Project
 b. **Choose an account:** if prompted, select the same Google account as above
 c. **Google hasn't verified this app:** You may be temped to click the blue "Back to saftey" button, but don't! Click "Continue"  
 d. **Select what Earth Engine Notebook Client can access:** click both check boxes, then "Continue"  
-e. Copy your authentication code to your clipboard to paste into the VS Code command palette
+e. **Copy your authorization code** to your clipboard to paste into the VS Code command palette
 
 4. Lastly, intialize. This verifies that valid credentials have been created and populates the Python client library with methods that the backend server supports.
 
@@ -88,15 +74,29 @@ ee.Initialize()
 
 If successful, you're now ready to begin working with Earth Engine data!
 
-### **Part ii.** Explore the ERA5 Daily Aggregate Data
+### **Part ii.** Explore the ERA5 Daily Aggregates Data
 
-:::{.callout-important}
-## TODO
-- <https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#description>
-- show bands tab for ERA5 dataset
+We'll be using the ERA5 daily aggregates reanalysis dataset, produced by the [European Centre for Medium-Range Weather Forecasts](https://www.ecmwf.int/) (ECMWF), found [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY), which models atmospheric weather observations.
+
+::: {.column-margin}
+Reanalysis combines observation data with model data to provide the most complete picture of past weather and climate. To read more about reanalyses, check out the [EWCMWF website](https://www.ecmwf.int/en/about/media-centre/focus/2020/fact-sheet-reanalysis#:~:text=What%20is%20reanalysis%3F,with%20modern%20weather%20forecasting%20models.).
 :::
 
-### **Part iii.** Visualize global precipitation data using ERA5 Daily Aggregate data
+<center><img src="../images/ERA5.png" alt="" width="600"/></center>
+<center><span style = 'font-size: 85%; color: #6e6d6d;'>[ERA5 Daily Aggregates](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY) dataset, available via the Earth Engine Data Catelog</span></center>
+
+<br>
+Take a few moments to explore the metadata record for this dataset. You'll notice that it includes a bunch of important information, including:
+
+-  **Dataset Availability:** the date range 
+-  **Dataset Provider:** where the data come from
+-  **Earth Engine Snippet:** a code snippet used for loading the dataset
+-  **Description (tab):** get to know a bit about the data
+-  **Bands (tab):** the variables present in the dataset; each band has its own name, data type, scale, mask and projection
+-  **Image Properties:** metadata available for each image band
+-  **Example Code:** a script to load and visualize ERA5 climate reanalysis parameters in Google Earth Engine (JavaScript)
+
+### **Part iii.** Visualize global precipitation using ERA5 Daily Aggregate data
 
 *Content for this section was adapted from Dr. Sam Stevenson's [Visualizing global precipitation using Google Earth Engine](https://github.com/samanthastevenson/EDS220_Fall2021/blob/main/Week1_ERA5Maps_GEE.ipynb) lesson, given in her [EDS 220 course](https://samanthastevenson.github.io/EDS220_site/) in Fall 2021.*
 
@@ -110,23 +110,9 @@ myMap = geemap.Map(center = [40, -100], zoom = 2)
 myMap
 ```
 
-2. Load ERA5 Image Collections from GEE
+2. Load the ERA5 Image Collection from GEE
 
--  Next, we need to tell GEE what data to layer on top of our basemap. We'll be using the ERA5 daily aggregates reanalysis dataset, produced by the [European Centre for Medium-Range Weather Forecasts](https://www.ecmwf.int/) (ECMWF), found [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY), which models atmospheric weather observations. We'll load the `total_precipitation` field (check out the metadata on [here](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#bands)).
-
-::: {.column-margin}
-Reanalysis combines observation data with model data to provide the most complete picture of past weather and climate. To read more about reanalyses, check out the [EWCMWF website](https://www.ecmwf.int/en/about/media-centre/focus/2020/fact-sheet-reanalysis#:~:text=What%20is%20reanalysis%3F,with%20modern%20weather%20forecasting%20models.).
-:::
-
-::: {.callout-note}
-## TODO: GEE makes working with these *very* large data a breeze
-The Arctic Data Center has worked with ERA5 data -- took three weeks to download. The `ee.ImageCollection()` method is all you need to load and analyze large image collection data (more on that below!).
-
-ADC is using ERA5 (hourly) data; reaggregating to weekly statistical summaries
-
-:::
-
--  The `ImageCollection` method extracts a set of individual images that satisfies some criterion that you pass to GEE through the `ee` package. This is stored as an **ImageCollection** object which can be filtered and processed in various ways. We can pass the `ImageCollction` method agruments to tell GEE which data we want to retrieve. Below, we retrieve all daily ERA5 data (so we can see individual rain events).
+-  Next, we need to tell GEE what data we want to layer on top of our basemap. The `ImageCollection` method extracts a set of individual images that satisfies some criterion that you pass to GEE through the `ee` package. This is stored as an **ImageCollection** object which can be filtered and processed in various ways. We can pass the `ImageCollction` method agruments to tell GEE which data we want to retrieve. Below, we retrieve all daily ERA5 data.
 
 ::: {.callout-tip}
 ## Earth Engine Snippets make importing ImageCollections easy!
@@ -140,7 +126,14 @@ weatherData = ee.ImageCollection('ECMWF/ERA5/DAILY')
 
 3. Select an image to plot
 
--  To plot a map over our Google Maps basemap, we need an "Image" rather than an "ImageCollection." ERA5 contains many different climate variables -- explore which variables the dataset contains under the [Bands](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#bands) tab. We'll use the `.select` method to choose the parameter(s) (in this case, `total_precipitation`) we're interested in from our `weatherData` object.
+-  To plot a map over our Google Maps basemap, we need an *Image* rather than an *ImageCollection*. ERA5 contains many different climate variables -- explore which variables the dataset contains under the [Bands](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY#bands) tab. We'll use the `select` method to choose the parameter(s) we're interested in from our `weatherData` object. Let's select the `total_precipitation` band.
+
+::: {.column-margin}
+Plotting an **Image** will produce a static visualization (e.g. total precipitation at a particular point in time, or the average precipitation over a specified date range), while an **ImageCollection** can be visualized as either an animation or as a series of thumbnails (aka a "filmstrip"), such as this animation showing a three-day progression of Atlantic hurricanes in September, 2017 (source: [Google Earth Engine](https://developers.google.com/earth-engine/guides/ic_visualization)).
+
+<br>
+<center><img src="../images/hurricanes.gif" alt="" width="200"/></center>
+:::
 
 ```{python}
 #| eval: false
@@ -148,9 +141,7 @@ weatherData = ee.ImageCollection('ECMWF/ERA5/DAILY')
 precip = weatherData.select("total_precipitation")
 ```
 
--  We can look at our `precip` object using the `print` method to see that it's still an "ImageCollection" which contains daily information from 1979 to 2020. 
-
-TODO: this is a surrogate for the data (metadata)
+-  We can look at our `precip` object metadata using the `print` method to see that it's still an *ImageCollection*. 
 
 ```{python}
 #| eval: false
@@ -161,7 +152,7 @@ print(precip)
 You may see a message in the VS Code Interactive pane that says, **"Output exceeds the size limit. Open the full output data in a text editor"** when printing your image object. Click here to see the entire output, which includes date range information.
 :::
 
--  Let's say that we want to filter it down to a single field for a time of interest -- e.g. January 1, 2019 - December 31, 2019. We can apply the `.filterDate` method to our selected precipitation parameter to filter for data from our chosen date range. We also apply the `.mean` method, which takes whatever precedes it and calculates the average.
+-  Let's say that we want to look at data for a particular time of interest -- e.g. January 1, 2019 - December 31, 2019. We can apply the `filterDate` method to our selected `total_precipitation` parameter to filter for data from our chosen date range. We also apply the `mean` method, which takes whatever precedes it and calculates the average.
 
 ```{python}
 #| eval: false
@@ -171,18 +162,18 @@ i_date = '2019-01-01'
 # final data of interest (exclusive)
 f_date = '2020-01-01'
 
-# select apporpriate bands (total_preciptation) and dates
-precip_filtered = weatherData.select("total_precipitation").filterDate(i_date, f_date).mean()
+# select apporpriate bands (total_preciptation), dates, and calculate mean precipitation across that date range
+precip = weatherData.select("total_precipitation").filterDate(i_date, f_date).mean()
 ```
 
--  Use the `print` method again to check out your new `precip_filtered` object -- notice that it's now an `ee.Image` (rather than `ee.ImageCollection`) and the start and end date values are as we specified.
+-  Use the `print` method again to check out your new `precip` object -- notice that it's now an `ee.Image` (rather than `ee.ImageCollection`) and the start and end date values are as we specified.
 
 ```{python}
 #| eval: false
-print(precip_filtered)
+print(precip)
 ```
 
-5. Add data to map
+5. Add the precipitation Image to the basemap
 
 -  We can first use the `setCenter` method to tell the map where to center itself (here, we center it over Cook Inlet, Alaska). It takes the longitude and latitude as the first two coordinates, followed by the zoom level.
 
@@ -192,7 +183,11 @@ myMap.setCenter(lat = 60, lon = -151, zoom = 4)
 myMap
 ```
 
--  Next, set a color palette to use when plotting the data layer. The following is a palette specified for precipitation in the GEE description page for ERA5. GEE has lots of color tables like this that you can look up. 
+-  Next, set a color palette to use when plotting the data layer. The following is a palette specified for precipitation in the GEE Description tab for ERA5. Here, we adjusted the max value to change the range of pixel values to which the palette should be applied -- this will make our colors stand out a bit more when we layer our precipitation data on our base map, below.
+
+::: {.column-margin}
+Learn more about GEE color palettes and Image visualization [here](https://developers.google.com/earth-engine/guides/image_visualization).
+:::
 
 ```{python}
 #| eval: false
@@ -203,20 +198,49 @@ precip_palette = {
 }
 ```
 
--  Finally, plot our filtered data, `precip_filtered` on top of our basemap using the `.addLayer` method. We'll also pass it our visualization parameters (colors and ranges stored in `precip_palette`, the name of the data field `total precipitation`, and opacity so that we can see the basemap underneath)
+::: {.callout-note}
+GEE has lots of pre-defined color palettes to choose from based on the type of data you want to visualize. Also check out [Crameri et al. 2020](https://doi.org/10.1038/s41467-020-19160-7) for recommended best practices when choosing color gradients that accurately represent data and are readable by those with color vision deficiencies.
+:::
+
+-  Finally, plot our filtered data, `precip`, on top of our basemap using the [`addLayer`](https://developers.google.com/earth-engine/apidocs/map-addlayer) method. We'll also pass it our visualization parameters (colors and ranges stored in `precip_palette`, the name of the data field, `total precipitation`, and opacity (so that we can see the basemap underneath).
 
 ```{python}
 #| eval: false
-myMap.addLayer(precip_filtered, precip_palette, 'total precipitation', opacity = 0.3)
+myMap.addLayer(precip, precip_palette, 'total precipitation', opacity = 0.3)
 myMap
 ```
 
-## **Exercise 2:** Ingmar's Demo
+<center><iframe src="../images/precip_map.html" height="600" width="600" title="GEE Precipitation Map"></iframe></center>
+
+In just five lines of code (and mere seconds of execution time), we've applied and visualized a global precipitation model. We can zoom in/out across our interactive map while Google Earth Engine recalculates and revisualizes our model in near real-time.
 
 ::: {.callout-important}
 ## TODO
-Add content here
+While GEE does have its limitations as a closed platform service, it provides researchers with quick and easy access many analysis-ready geospatial datasets...
 :::
+
+## **Exercise 2:** Visualize and analyze fire dynamics in the Arctic using GEE
+
+Landscape changes in Arctic permafrost regions can occur as the result of a variety of processes including slope processes (thaw slumps, landslides), wildfires, hydrological changes, and coastal dynamics. 
+
+In this exercise, we’ll explore fire dynamics Batagay, Russia, the location of the largest permafrost crater in the world -- the [Batagaika crater](https://en.wikipedia.org/wiki/Batagaika_crater).
+<br>
+
+<center><img src="../images/main_batagai.jpeg" alt="" width="300"/><br><img src="../images/MODIS_snapshot-2021-08-13T00_00_00Z.jpeg" alt="" width="300"/></center>
+
+<center><span style = 'font-size: 85%; color: #6e6d6d;'>Top image source: <https://www.science.org/do/10.1126/science.abe0581/full/main_batagai_1280p2.jpg>. Bottom image source: <https://worldview.earthdata.nasa.gov/></span></center>
+
+<br>
+
+Using the following code, we'll learn how to:  
+
+-  load and visualize image data  
+-  calculate and visualize indices  
+-  work with ImageCollections  
+-  extract time-series  
+-  clustering / unsupervized classification  
+
+### **Part i.** Setup
 
 1. Import libraries
 
@@ -231,19 +255,271 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 ```
 
-## Conclusion/Summary 
+2. Authenticate & Initialize
+```{python}
+#| eval: false
+ee.Authenticate()
+ee.Initialize() 
+```
+
+2. Create basemap displaying the Batagay region
+
+```{python}
+#| eval: false
+# site coordinates
+xy = [134.6, 67.66]
+poi = ee.Geometry.Point(xy)
+```
+
+```{python}
+#| eval: false
+# create map
+Map = geemap.Map()
+Map.addLayer(poi)
+Map.centerObject(poi, zoom=3)
+Map
+```
+
+### **Part ii.** Visualize NDVI and NBF spectral indices
+
+We'll plot *Image* data using two different multispectral indices: (1) **Normalized Difference Vegetation Index (NDVI)** for visualizing vegegation, using RGB (Red - Green - Blue), and (2) **Normalized Burn Ratio (NBF)** for visualizing burned areas, using Color-Infrared (NIR - Red - Green). 
+
+1. Instantiate map 
+
+```{python}
+#| eval: false
+Map = geemap.Map()
+```
+
+2. Load map
 
 ::: {.callout-important}
-## TODO
-* lessons learned
-* utilities
-* etc.
+## TODO: code below this point erroring out
 :::
+
+```{python}
+#| eval: false
+# load image
+S2_Image = (ee.Image('COPERNICUS/S2_SR/20210805T030551_20210805T030545_T53WMR')
+            .scaleAndOffset()
+            .spectralIndices(['NDVI', 'NBR']) # Calculate multispectral indices
+           )
+
+# Show
+Map.addLayer(S2_Image, dict(min=0.0, max=0.15, gamma=1.5, bands=['B2', 'B3', 'B2']), 'RGB')
+Map.addLayer(S2_Image, dict(min=0.0, max=0.3, gamma=1.5, bands=['B8', 'B4', 'B3']), 'Color-Infrared', False)
+
+RdYlGn = ['#d7191c','#fdae61','#ffffbf','#a6d96a','#1a9641']
+Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NDVI'], palette=RdYlGn), 'NDVI')
+Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NBR'], palette=RdYlGn), 'NBR')
+
+Map.centerObject(S2_Image, zoom=8)
+
+Map
+```
+
+3. Select point on the map above and pull location as an `ee.Feature`
+
+```{python}
+#| eval: false
+point_selected = Map.draw_last_feature
+point_selected
+
+# or alternatively, use this code:
+point_fire = ee.Geometry.Point([134.6339, 68.0397])
+```
+
+### **Part iii.** Load more than one image (i.e. an ImageCollection) to analyze
+
+You can do the same analysis with an *ImageCollection* (stacks of images of the same type). 
+
+1. Here, we'll load the full Sentinel-2 (S2) series and filter for our data of interest (Location: Batagay & Dates: months June - September). We'll also filter out cloud cover, which can obstruct our spectral indices analysis.:
+
+```{python}
+#| eval: false
+# Image Collection
+ds = 'COPERNICUS/S2_SR'
+
+S2 = (ee.ImageCollection(ds)
+      ### Filters ###
+      .filterBounds(poi) # only images, which intersect our point/region
+      .filter(ee.Filter.calendarRange(6,9,'month')) # only June through September, Summer only
+      .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) # only images with less that 10 % clouds
+      #.filterDate('2022-07-01','2022-12-31')
+      ### PreProcessing ###
+      .scaleAndOffset()
+      .spectralIndices(['NDVI', 'NBR'])
+      .maskClouds()
+      .sort('CLOUDY_PIXEL_PERCENTAGE')
+     )#.first()
+# calculate indices (e.g. NDVI, NBR)
+print(f'Number of images {S2.size().getInfo()}') # Print number of images
+```
+
+2. Visualize satellite data
+
+```{python}
+#| eval: false
+#Map = geemap.Map()
+Map.addLayer(S2, dict(min=0.0, max=0.15, gamma=1.5, bands=['B2', 'B3', 'B2']), 'RGB_Collection')
+Map.addLayer(S2, dict(min=0.0, max=0.3, gamma=1.5, bands=['B8', 'B4', 'B3']), 'Color-Infrared_Collection')
+RdYlGn = ['#d7191c','#fdae61','#ffffbf','#a6d96a','#1a9641']
+
+# Show NDVI
+#Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NDVI'], palette=RdYlGn), 'NDVI')
+# Show NDVI 
+#Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NBR'], palette=RdYlGn), 'NBR')
+Map.centerObject(S2_Image, zoom=8)
+Map
+```
+
+### **Part iv.** Make a timeseries 
+
+*Example taken from <https://eemont.readthedocs.io/en/0.2.0/guide/timeSeries.html>.
+
+1. Create timeseries & clean data
+
+```{python}
+#| eval: false
+def load_and_prepare_Landsat(collection_name):
+    collection = (ee.ImageCollection(collection_name)
+      ### Filters ###
+      .filterBounds(poi) # only images, which intersect our point/region
+      .filter(ee.Filter.calendarRange(7,8,'month')) # only June through September, Summer only
+      .filter(ee.Filter.lt('CLOUD_COVER_LAND', 10)) # only images with less that 10 % clouds
+      #.filterDate('2022-07-01','2022-12-31')
+      ### PreProcessing ###
+      .scaleAndOffset()
+      .spectralIndices(['NDVI', 'NBR'])
+      .maskClouds()
+     )
+    return collection
+```
+
+```{python}
+#| eval: false
+L9 = load_and_prepare_Landsat("LANDSAT/LC09/C02/T1_L2")
+L8 = load_and_prepare_Landsat("LANDSAT/LC08/C02/T1_L2")
+L7 = load_and_prepare_Landsat("LANDSAT/LE07/C02/T1_L2")
+L5 = load_and_prepare_Landsat("LANDSAT/LT05/C02/T1_L2")
+LS = L9.merge(L8).merge(L7).merge(L5)
+```
+
+```{python}
+#| eval: false
+ts = LS.getTimeSeriesByRegion(reducer = ee.Reducer.mean(),
+                              geometry = point_fire,
+                              bands = ['NBR','NDVI'],
+                              scale = 10)
+```
+
+```{python}
+#| eval: false
+tsPandas = geemap.ee_to_pandas(ts)
+tsPandas
+```
+
+```{python}
+#| eval: false
+# a little more cleaning is necessary
+tsPandas[tsPandas == -9999] = np.nan
+tsPandas['date'] = pd.to_datetime(tsPandas['date'],infer_datetime_format = True)
+
+tsPandas = tsPandas.sort_values(by='date').dropna(axis=0).reset_index()
+
+tsPandas
+```
+
+2. Visualize output (example using plotly, but can use library of your choice e.g. matplotlib, seaborn, etc.)
+```{python}
+#| eval: false
+# scatterplot
+px.scatter(tsPandas, x='date', y=['NDVI', 'NBR'])
+```
+
+```{python}
+#| eval: false
+# line plot
+px.line(tsPandas, x='date', y=['NDVI', 'NBR'])
+```
+
+### **Part v.** Clustering
+
+*Example taken from <https://geemap.org/notebooks/31_unsupervised_classification/#make-training-dataset>*.
+
+1. Group individual images into several "similar" objects
+
+```{python}
+#| eval: false
+image = S2_Image
+```
+
+```{python}
+#| eval: false
+# Make the training dataset.
+training = image.sample(
+    **{
+        #     'region': region,
+        'scale': 10,
+        'numPixels': 5000,
+        'seed': 0,
+        'geometries': True,  # Set this to False to ignore geometries
+    }
+)
+```
+
+```{python}
+#| eval: false
+# Instantiate the clusterer and train it.
+n_clusters = 5
+clusterer = ee.Clusterer.wekaKMeans(n_clusters).train(training)
+```
+
+```{python}
+#| eval: false
+# Cluster the input using the trained clusterer.
+result = image.cluster(clusterer)
+
+# # Display the clusters with random colors.
+Map.addLayer(result.randomVisualizer(), {}, 'clusters')
+```
+
+```{python}
+#| eval: false
+legend_keys = ['One', 'Two', 'Three', 'Four', 'ect']
+legend_colors = ['#8DD3C7', '#FFFFB3', '#BEBADA', '#FB8072', '#80B1D3']
+
+# Reclassify the map
+result = result.remap([0, 1, 2, 3, 4], [1, 2, 3, 4, 5])
+
+Map.addLayer(
+    result, {'min': 1, 'max': 5, 'palette': legend_colors}, 'Labelled clusters'
+)
+Map.add_legend(
+    legend_keys=legend_keys, legend_colors=legend_colors, position='bottomright'
+)
+```
+
+```{python}
+#| eval: false
+Map
+```
 
 ## Other Resources
 
-- [GEE Code Editor](https://code.earthengine.google.com/),a web-based IDE for using GEE (JavaScript)
-- [`earthengine-api` installation instructions](https://developers.google.com/earth-engine/guides/python_install)
-- [Creating and managing Google Cloud projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
-- [Troubleshooting authentication issues](https://developers.google.com/earth-engine/guides/python_install#troubleshooting-authentication-issues)
-- [An Intro to the Earth Engine Python API](https://developers.google.com/earth-engine/tutorials/community/intro-to-python-api)
+**Tools:**  
+-  [GEE Code Editor](https://code.earthengine.google.com/), a web-based IDE for using GEE (JavaScript)  
+
+**Data:**  
+-  [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets), the main resource for "official" GEE Datasets  
+-  [awesome-gee-community-datasets](https://samapriya.github.io/awesome-gee-community-datasets/), the main resource for "community" GEE Datasets  
+
+**Documentation, Tutorials, & Help:**    
+-  [`earthengine-api` installation instructions](https://developers.google.com/earth-engine/guides/python_install)  
+-  [Creating and managing Google Cloud projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects)  
+-  [Troubleshooting authentication issues](https://developers.google.com/earth-engine/guides/python_install#troubleshooting-authentication-issues)  
+-  [An Intro to the Earth Engine Python API](https://developers.google.com/earth-engine/tutorials/community/intro-to-python-api)  
+-  [geemap documentation](https://geemap.org/)
+-  [Qiusheng Wu's YouTube channel for GEE & geemap Python tutorials](https://www.youtube.com/c/Qiushengwu)
+-  [GEE on StackExhange](https://gis.stackexchange.com/questions/tagged/google-earth-engine)
+
