@@ -140,7 +140,7 @@ Using a global variable in a function creates a side-effect that makes it an imp
 
 Task dependencies occur when one task in the code depends on the results of another task or computation in the code.
 
-# Locks
+## Locks
 
 Locks are a mechanism to manage access to a resource so that multiple threads can access the resource. By adding locks to an otherwise parallel process, we introduce a degree of serial execution to the locked portion of the process. Basically, each thread can only access the resource when it has the lock, and only one lock is given out at a time.  Take this example of what happens without locking:
 
