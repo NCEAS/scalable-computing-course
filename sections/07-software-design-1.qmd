@@ -1,24 +1,43 @@
 ---
-title: "Software Design I: Functions, Packages, and Testing"
+title: "Software Design I: Functions and Concurrency"
 ---
 
 ## Learning Objectives
 
-The goal of this module is to gain some useful approaches to software design and modularity that will help with building scalable, portable, and reusable code. We will cover:
+The goal of this module is to gain some useful approaches to software design and modularity that will help with building scalable, portable, and reusable code. We will cover several key aspects of software design for concurrency:
 
-- Functions, pure functions, and globals
-- Python packages
-- Using `poetry` to manage packages
-- Testing with pytest
+- Functions as objects
+- Global variables
+- Pure functions
+- Task dependencies
+- Locks, deadlocks, and race conditions
+
+## Why functions?
+
+::: {layout="[45,55]" layout-valign="center"}
+
+[ {{< fa ban >}} DRY: Don’t Repeat Yourself]{.stats}
+
+![](../images/repeat-bberry-jeremy-bezanger-u_bQ_vHqAYM-unsplash.jpg)
+
+:::
+
+By creating small functions that handle only one logical task and do it well, we quickly gain:
+
+- Improved understanding
+- Reuse via decomposing tasks into bite-sized chunks
+- Improved error testing
+- Improved concurrency
+
+When writing functions that are to be used in concurrent programming, it is best to keep them short and focused on a single, well-defined task. This enables you test the function thoroughly, and reuse it in multiple contexts. It also enables you to more easily debug what is happening in the function when trying to understands parallel execution. 
 
 ## Functions as objects
 
-Functions are first-class objects in Python (and many other languages). This has some real ebnefits for and implications for parallel programming. Because a function is an object, it means that it can be 1) stored in a variable, and 2) passed as an argument to another function.  We saw that in the module on pleasingly parallel codes when we used `ThreadPoolExecutor.map()`, which takes a function and an iterable object as arguments. Let's check out how you can use and manipulate functions as objects.  First, let's define a simple function, assign it to another variable, and then use both:
+Functions are first-class objects in Python (and many other languages). This has some real benefits for and implications for parallel programming. Because a function is an object, it means that it can be 1) stored in a variable, and 2) passed as an argument to another function.  We saw that in the module on pleasingly parallel codes when we used `ThreadPoolExecutor.map()`, which takes a function and an iterable object as arguments. Let's check out how you can use and manipulate functions as objects.  First, let's define a simple function, assign it to another variable, and then use both:
 
 ```{python}
 def double(x):
-    p = 2*x
-    return p
+    return 2*x
 
 # also assign the function to the `twotimes` variable
 twotimes = double
@@ -36,7 +55,6 @@ print(double(5) == twotimes(5))
 This representation of a function as an object comes in handy when we want to invoke a function in multiple different contexts, such as in a parallel execution environment via a `map()` function. 
 
 ```{python}
-#| eval: false
 list(map(twotimes, [2,3,4]))
 ```
 
@@ -55,39 +73,127 @@ wrapper(some_function)
 ```
 
 ::: {.callout-note}
-Note how we passed the `func_inside` as a variable name without the parentheses.
+
+Note how we passed the `some_function` as a variable name without the parentheses.
+
 :::
 
 ::: {.callout-note}
+
 ### Decorators
 This approach to function composition is exactly what is used by [Python decorator](https://docs.python.org/3/glossary.html#term-decorator) functions.
+
 :::
 
-### Pure functions
+## Global variables
+
+When executing a function, the variables that are in scope to that function are local, meaning that the presence of another variable with the same name in another scope will not affect a calculation. For example:
+
+```{python}
+def do_task():
+    x = 10
+
+x = 5
+do_task()
+print(x)
+```
+
+However, if that same variable is declared as global inside the function, then the assignment will have global impact on the value of the parent scope:
+
+```{python}
+def do_task():
+    global x
+    x = 10
+
+x = 5
+do_task()
+print(x)
+```
+
+So, you can see that writing a function that uses global variables can have effects outside of the scope of the function call. This can have drastic consequences on concurrent code, as the order in which function calls are made when operating concurrently are not deterministic, and so the impact of global variables will also not be deterministic.
+
+A related issue arises when code in a function depends on its enclosing namespace, such as when a function is defined inside of another function. When resolving a variable, python first looks in the Local namespace, and then in the Enclosing namespace, Global namespace, and Built-in namespace. So, even if a variable is not defined locally, it might still be resolved by one of the other namespaces in surprising ways.
+
+```{python}
+a = 3
+def do_stuff(b):
+    return a*b
+
+do_stuff(6)
+```
+
+## Pure functions
 
 A **pure function** is a function that depends only on its input arguments, and it has no *side effects*. In other words, a pure function returns the same value if called repeatedly with the same arguments. Pure functions are particularly amenable to concurrency. For example, the `double(x)` function above is a pure function, because in all cases calling `double(2)` will always return `4`. 
 
 In contrast, a non-pure function is a function in which the return value may change if the function is called repeatedly, typically because it depends on some particular state that affects the outcome but is not part of the input arguments. For example, the `time.time()` function returns different values based on the current state of the system clock.
 
+Using a global variable in a function creates a side-effect that makes it an impure function, as would other operations that modify an external state variable.
 
+:::{.callout-important}
 
-### Perils of globals
+**Pure functions** make writing concurrent code much easier.
 
+:::
 
+## Task dependencies
 
-## Python packages
+Task dependencies occur when one task in the code depends on the results of another task or computation in the code.
 
-## Managing packages with `poetry`
+# Locks
 
-### Installation
+Locks are a mechanism to manage access to a resource so that multiple threads can access the resource. By adding locks to an otherwise parallel process, we introduce a degree of serial execution to the locked portion of the process. Basically, each thread can only access the resource when it has the lock, and only one lock is given out at a time.  Take this example of what happens without locking:
 
-```bash
-# pip install poetry pytest black
-$ pip install -r requirements.txt
+```{python}
+from concurrent.futures import ProcessPoolExecutor
+import time
+
+def hello(i):
+    print(i, 'Hello')
+    print(i, 'world')
+
+executor = ProcessPoolExecutor()
+futures = [executor.submit(hello, i) for i in range(3)]
+for future in futures:
+    future.result()
 ```
 
+You can see that the results come back in a semi-random order, and the call to `sleep` creates a delay between printing the two words, which means that the three messages get jumbled when printed. To fix this, we can introduce a lock from the `multiprocessing` package.
+
+```{python}
+from concurrent.futures import ProcessPoolExecutor
+import time
+import multiprocessing
+
+def hello(i, lock):
+    with lock:
+        print(i, 'Hello')
+        print(i, 'world')
+
+lock = multiprocessing.Manager().Lock()
+executor = ProcessPoolExecutor()
+futures = [executor.submit(hello, i, lock) for i in range(3)]
+for future in futures:
+    future.result()
+```
+
+The lock is generated and then passed to each invocation of the hello function. Using `with` triggers the use of the context manager for the lock, which allows the manager to synchronize use of the lock. This ensures that only one process can be printing at the same time, ensuring that the outputs are properly ordered.
+
+:::{.callout-warning}
+
+Synchronizing with a Lock turns a parallel process back into a serial process, at least while the lock is in use. So use with care lest you lose all benefits of concurrency.
+
+:::
+
+## Race conditions
+
+Race conditions occur when two tasks execute in parallel, but produce different results based on which task finishes first. Ensuring that results are correct under different timing situations requires careful testing.
+
+## Deadlocks
+
+Deadlocks occur when two concurrent tasks block on the output of the other. Deadlocks cause parallel programs to lock up indefinitely, can be difficult to track down, and will often require the program to be killed.
 
 
 ## Further reading
 
-- [Python Packages](https://py-pkgs.org) by Tomas Beuzen & Tiffany Timbers
+- [With Statement Context Managers](https://docs.python.org/3/reference/datamodel.html#context-managers)
