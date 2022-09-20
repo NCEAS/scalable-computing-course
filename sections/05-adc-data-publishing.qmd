@@ -246,6 +246,54 @@ When uploading your data files using SFTP, either through the command line or a 
 For more complex folder structures, it is wise to include a README file that explicitly walks users through the structure and provides a basic understanding of what is available. Generally speaking, we recommend structuring your data in an easy to understand way such that a README isn't completely necessary.
 :::
 
+## Data transfer tools
+
+Now that we've talked about what types of large datasets you might have that need to get published on the Arctic Data Center, let's discuss how to actually get the data there. If you have even on the order of only 50GB, or more than 500 files, it will likely be more expedient for you to transfer your files via a command line tool than uploading them via our webform. So you know that you need to move a lot of data, how are you going to do it? More importantly, how can you do it in an efficient way?
+
+There are three key elements to data transfer efficiency:
+
+- endpoints
+- network
+- transfer tool
+
+#### Endpoints {-}
+
+The from and to locations of the transfer, an endpoint is a remote computing device that can communicate back and forth with the network to which it is connected. The speed with which an endpoint can communicate with the network varies depending on how it is configured. Performance depends on the CPU, RAM, OS, and disk configuration. One key factor that affects data transfer speed is how quickly that machine can write data to disk. Slow write speeds will throttle a data transfer on even the fastest internet connection with the most streamlined transfer tool. Examples of endpoints could be:
+
+- NCEAS `included-crab` server
+- Your standard laptop
+- A cloud service like AWS
+
+#### Network speed {-}
+
+Network speed determines how quickly information can be sent between endpoints. It is largely, but not enitrely, dependent on what you pay for. Importantly, not all networks are created equal, even if they nominally have the same speed capability. Wired networks get significantly more speed than wireless. Networks with lots of "stuff" along the pipe (like switches or firewalls) can perform worse than those that don't. Even the length and type of network cabling used can matter.
+
+#### Transfer tools {-}
+
+Poll: what data transfer tools do you use regularly?
+
+Finally, the tool or software that you use to transfer data can also significantly affect your transfer speed. There are a lot of tools out there that can move data around, both GUI driven and command line. We'll discuss a few here, and their pros and cons.
+
+##### `scp` {-}
+
+`scp` or secure copy uses `ssh` for authentication and transfer, and it is included with both unix and linux. It requires no setup (unless you are on a Windows machine and need to install), and if you can `ssh` to a server, you can probably use `scp` to move files without any other setup. `scp` copies all files linearly and simply. If a transfer fails in the middle, it is difficult to know exactly what files didn't make it, so you might have to start the whole thing over and re-transfer all the files. This, obviously, would not be ideal for large data transfers. For a file or two, `scp` is a fine tool to use.
+
+##### `rsync` {-}
+
+`rsync` is similar to `scp`, but syncs files/directories as opposed to copying. This means that `rsync` checks the destination to see if that file (with the same size and modified date) already exists. If it does, `rsync` will skip the file. This means that if an `rsync` transfer fails, it can be restarted again and will pick up where it left off, essentially. Neat!
+
+##### Globus {-}
+
+Globus is a software that uses multiple network sockets simultaneously on endpoints, such that data transfers can run in parallel. As you can imagine, that parallelization can dramatically speed up data transfers. Globus, like `rsync` can also fail gracefully, and even restart itself. Globus does require that each endpoint be configured as a Globus node, which is more setup than is required of either `scp` or `rsync`. Many instituions computing resources may have endpoints already configured as Globus endpoints, so it is always worth checking in with any existing resources that might already be set up before setting up your own. Although Globus is a free software, there are [paid options](https://www.globus.org/subscriptions) which provide support for configuring your local workstation as a Globus node. Globus is a fantastic tool, but remember the other two factors controlling data transfer, it can only help so much in overcoming slow network or write speeds. 
+
+#### AWS `sync`
+
+Amazon Web Services (AWS) has a Command Line Interface (CLI) that includes a `sync` utility. This works much like `rsync` does in that it only copies new or updated files to the destination. The difference, of course, is that AWS `sync` is specifically built to work with interacting with the AWS cloud, and is compatible with S3 buckets.
+
+#### `nc`
+
+`nc` (or netcat) is a low level file transfer utility that is extremely efficient when moving files around on nodes in a cluster. It is not the easiest of these tools to use, however, in certain situations it might be the best option because it has the least overhead, and therefore can run extremely efficiently.
+
 ## Summary
 
 In this lesson we learned about metadata and the structure of a data package; how to submit narrative metadata; how to upload data and when to use different services; how to document file and attribute-level metadata; and best practices for data organization and management. As mentioned earlier, more in-depth information on uploading data to our servers using Globus and RSync can be found in [Session 18](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/18-arctic-data-staging.html).
