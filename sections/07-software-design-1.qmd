@@ -1,3 +1,86 @@
 ---
-title: "Software Design I"
+title: "Software Design I: Functions, Packages, and Testing"
 ---
+
+## Learning Objectives
+
+The goal of this module is to gain some useful approaches to software design and modularity that will help with building scalable, portable, and reusable code. We will cover:
+
+- Functions, pure functions, and globals
+- Python packages
+- Using `poetry` to manage packages
+- Testing with pytest
+
+## Functions as objects
+
+Functions are first-class objects in Python (and many other languages). This has some real ebnefits for and implications for parallel programming. Because a function is an object, it means that it can be 1) stored in a variable, and 2) passed as an argument to another function.  We saw that in the module on pleasingly parallel codes when we used `ThreadPoolExecutor.map()`, which takes a function and an iterable object as arguments. Let's check out how you can use and manipulate functions as objects.  First, let's define a simple function, assign it to another variable, and then use both:
+
+```{python}
+def double(x):
+    p = 2*x
+    return p
+
+# also assign the function to the `twotimes` variable
+twotimes = double
+type(twotimes)
+```
+
+Note that when we print it to screen, we see that `prod` is of type `function`, and when we use the two instances, we get identical results:
+
+```{python}
+print(double(7))
+print(twotimes(7))
+print(double(5) == twotimes(5))
+```
+
+This representation of a function as an object comes in handy when we want to invoke a function in multiple different contexts, such as in a parallel execution environment via a `map()` function. 
+
+```{python}
+#| eval: false
+list(map(twotimes, [2,3,4]))
+```
+
+This works because the function `twotimes` can be passed to `map` and executed from within `map`. When you execute a function that is passed in via an argument, it is called **function composition**. We can easily illustrate this by creating some function and passing it to a wrapper function to be executed:
+
+```{python}
+def some_function():
+    print("Ran some_function")
+
+def wrapper(func_to_run):
+    print("Ran wrapper")
+    func_to_run()
+    print("Finished wrapper")
+
+wrapper(some_function)
+```
+
+Note how we passed the `func_inside` as a variable name without the parentheses.
+
+### Pure functions
+
+A **pure function** is a function that depends only on its input arguments, and it has no *side effects*. In other words, a pure function returns the same value if called repeatedly with the same arguments. Pure functions are particularly amenable to concurrency. For example, the `double(x)` function above is a pure function, because in all cases calling `double(2)` will always return `4`. 
+
+In contrast, a non-pure function is a function in which the return value may change if the function is called repeatedly, typically because it depends on some particular state that affects the outcome but is not part of the input arguments. For example, the `time.time()` function returns different values based on the current state of the system clock.
+
+
+
+### Perils of globals
+
+
+
+## Python packages
+
+## Managing packages with `poetry`
+
+### Installation
+
+```bash
+# pip install poetry pytest black
+$ pip install -r requirements.txt
+```
+
+
+
+## Further reading
+
+- [Python Packages](https://py-pkgs.org) by Tomas Beuzen & Tiffany Timbers
