@@ -54,7 +54,14 @@ def wrapper(func_to_run):
 wrapper(some_function)
 ```
 
+::: {.callout-note}
 Note how we passed the `func_inside` as a variable name without the parentheses.
+:::
+
+::: {.callout-note}
+### Decorators
+This approach to function composition is exactly what is used by [Python decorator](https://docs.python.org/3/glossary.html#term-decorator) functions.
+:::
 
 ### Pure functions
 
