@@ -24,3 +24,5 @@ skimpy
 xarray==2022.6
 pdgraster @ git+https://github.com/PermafrostDiscoveryGateway/viz-raster.git@scalable-computing-course
 pdgstaging @ git+https://github.com/PermafrostDiscoveryGateway/viz-staging.git@scalable-computing-course
+poetry>=1.2.1
+black
