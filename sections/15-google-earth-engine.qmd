@@ -9,6 +9,8 @@ title: "Google Earth Engine"
 - Learn about some real-world applications of Google Earth Engine in the geosciences
 ## Introduction 
 
+## Introduction 
+
 [Google Earth Engine](https://earthengine.google.com/) (GEE) is a geospatial processing platform powered by Google Cloud Platform. It contains over 30 years (and multiple petabytes) of satellite imagery and geospatial datasets that are continually updated and available instantly. Users can process data using Google Cloud Platform and built-in algorithms or by using the Earth Engine API, which is available in Python (and JavaScript) for anyone with an account (Earth Engine is free to use for research, education, and nonprofit use). 
 <br> 
 
@@ -212,11 +214,20 @@ myMap
 
 <center><iframe src="../images/precip_map.html" height="600" width="600" title="GEE Precipitation Map"></iframe></center>
 
-In just five lines of code (and mere seconds of execution time), we've applied and visualized a global precipitation model. We can zoom in/out across our interactive map while Google Earth Engine recalculates and revisualizes our model in near real-time.
-
 ::: {.callout-important}
 ## TODO
-While GEE does have its limitations as a closed platform service, it provides researchers with quick and easy access many analysis-ready geospatial datasets...
+#### Takeaways:
+
+In just five lines of code (and mere seconds of execution time), we've applied and visualized a global precipitation model. We can zoom in/out across our interactive map while Google Earth Engine recalculates and revisualizes our model in near real-time.
+
+GEE does have its limitations. To name a few: 
+
+- it's a closed platform service, so GEE software can only be run on Google's infrastructure, as opposed to other open source options, like Pangeo 
+- it's only free for non-commercial use
+- there are memory and storage limits
+- etc...
+
+...Despite these limitations, GEE provides researchers with quick and easy access many analysis-ready geospatial datasets...
 :::
 
 ## **Exercise 2:** Visualize and analyze fire dynamics in the Arctic using GEE
