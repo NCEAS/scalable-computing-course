@@ -7,7 +7,6 @@ title: "Google Earth Engine"
 - Understand what Google Earth Engine provides and its applications
 - Learn how to search for, import, manipulate, and visualize Google Earth Engine Data
 - Learn about some real-world applications of Google Earth Engine in the geosciences
-## Introduction 
 
 ## Introduction 
 
@@ -143,7 +142,7 @@ Plotting an **Image** will produce a static visualization (e.g. total precipitat
 precip = weatherData.select("total_precipitation")
 ```
 
--  We can look at our `precip` object metadata using the `print` method to see that it's still an *ImageCollection*. 
+-  We can look at our `precip` object metadata using the `print` method to see that we've isolated the `total_precipitation` band, but it's still an *ImageCollection*. 
 
 ```{python}
 #| eval: false
@@ -151,10 +150,10 @@ print(precip)
 ```
 
 ::: {.callout-note}
-You may see a message in the VS Code Interactive pane that says, **"Output exceeds the size limit. Open the full output data in a text editor"** when printing your image object. Click here to see the entire output, which includes date range information.
+You may see a message in that says, **"Output exceeds the size limit. Open the full output data in a text editor"** when printing your image object metadata. Click here to see the entire output, which includes date range information.
 :::
 
--  Let's say that we want to look at data for a particular time of interest -- e.g. January 1, 2019 - December 31, 2019. We can apply the `filterDate` method to our selected `total_precipitation` parameter to filter for data from our chosen date range. We can also apply the `mean` method, which takes whatever precedes it and calculates the average.
+-  Let's say that we want to look at data for a particular time of interest -- e.g. January 1, 2019 - December 31, 2019. We can apply the `filterDate` method to our selected `total_precipitation` parameter to filter for data from our chosen date range. We can also apply the `mean` method, which takes whatever precedes it and calculates the average -- this step reduces our `ImageCollection` to a single `Image`.
 
 ```{python}
 #| eval: false
@@ -164,11 +163,11 @@ i_date = '2019-01-01'
 # final data of interest (exclusive)
 f_date = '2020-01-01'
 
-# select apporpriate bands (total_preciptation), dates, and calculate mean precipitation across that date range
+# select desired bands (total_preciptation), dates, and calculate mean precipitation across that date range
 precip = weatherData.select("total_precipitation").filterDate(i_date, f_date).mean()
 ```
 
--  Use the `print` method again to check out your new `precip` object -- notice that it's now an `ee.Image` (rather than `ee.ImageCollection`) and the start and end date values are as we specified.
+-  Use the `print` method again to check out your new `precip` object -- notice that it's now an `ee.Image` (rather than `ee.ImageCollection`) and the start and end date values over which the average is taken are as we specified.
 
 ```{python}
 #| eval: false
@@ -177,7 +176,7 @@ print(precip)
 
 4. Add the precipitation Image to the basemap
 
--  We can first use the `setCenter` method to tell the map where to center itself (here, we center it over Cook Inlet, Alaska). It takes the longitude and latitude as the first two arguments, followed by the zoom level.
+-  We can use the `setCenter` method again to center our map, `myMap` over an area of interest -- here, we've chosen coordinates for Cook Inlet, Alaska. `setCenter` takes the longitude and latitude as the first two arguments, followed by the zoom level.
 
 ```{python}
 #| eval: false
