@@ -214,7 +214,7 @@ shipc_meta.update({"driver": "GTiff",
                  "compress": "lzw"})
 ```
 
-Next, we'll use a spatial inner join for the vector data to select polygons that are within the bounding box.
+Now we'll do a similar task with the vector data. Tin this case, we use a spatial join. The join will be an inner join, and select only rows from the left side (our fishing districts) that are **within** the right side (our bounding box). I chose this method as opposed to a clipping type operation because it ensures that we don't end up with any open polygons at the boundaries of our box, which could cause problems for us down the road.
 
 ```{python}
 comm_clip = gpd.sjoin(comm_3338,
