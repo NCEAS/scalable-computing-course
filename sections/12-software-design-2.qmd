@@ -1,3 +1,218 @@
 ---
-title: "Software Design II"
+title: "Software Design II: Modules, Packages, and Testing"
 ---
+
+## Learning objectives
+
+- Python modules and packages 
+- Managing packages with `poetry`
+- Testing: why, how, and when
+
+## Python modules and packages
+
+The [Python Package Index](https://pypi.org) currently houses over 400,000 software projects that you can install, reuse, and extend to accelerate your work. If you've worked in python for long at all, you have certainly used the `import` statement to to load **modules** that you need in your code.
+
+```{python}
+import numpy as np
+np.pi*np.power(3, 2)
+```
+
+This lesson is a first primer on building your own modules and packages in python, and provides some core tools to get started building your own packages. For a deeper dive, check out the [Python Packages](https://py-pkgs.org/) book, which is freely available online. First, a few definitions:
+
+**Module**
+: A [python `module`](https://docs.python.org/3/tutorial/modules.html) is a file containing commands that create functions, variables, and other definitions that can be reused in other code that you write.
+
+**Package**
+: A [python `package`](https://py-pkgs.org/01-introduction) represents a way to bundle python modules, documentation, and related resources as reusable and sharable code, both for your own use and to collaborate with others.
+
+ Building reusable code though modules and packages is key to the scietific reporducibility theme that weaves through this course. Creating your own modules and bundling them into packages will help you (and future you) in so many ways:
+
+- to keep you organized, making it easier for you and others to understand and use your code
+- to provide consistent approaches for documentation
+- to easily import your code into your own projects in a portable way that promotes code reuse
+- to formally document and manage software dependencies
+- to share your software with colleagues aand the community
+
+## Anatomy of modules and packages
+
+Modules in python are loaded from the definitions stored in files of the same name with a `.py` file extension. Within each file are definitions of objects which can be access when the module is imported. For example, imagine you have a file named *hello.py* in your current directory that contains a function called `helloworld` with the following contents:
+
+```{python}
+def helloworld():
+  """
+  Print a hello message
+  """
+  print("Hello world!")
+```
+
+With that in place, you can then import and use that function in othere code you write:
+
+```{python}
+#| eval: false
+import helloworld
+helloworld()
+```
+
+Packages help organize thes modules into a directory structure so that they can be predictably named and utilized. Packages can contain subpackages to keep modules organized into logical groups. Packages also provide structured metadata so that we can document the package and its dependencies so that it can be reliably installed and correctly used. The structure of a package is a simple directory tree containing the packages modules and subpackages. Two common structures are supported. First, with modules in the root directory:
+
+```
+adcmodel
+  ├── README.md
+  ├── adcmodel
+  │   ├── __init__.py
+  │   ├── affine.py
+  │   ├── data.py
+  │   └── reports
+  │       ├── __init__.py
+  │       └── pdf.py
+  └── tests
+```
+
+Alternatively, the module code is often put in it's own `src` directory, like:
+
+```
+adcmodel
+  ├── README.md
+  ├── src
+  │   └── adcmodel
+  │       ├── __init__.py
+  │       ├── affine.py
+  │       ├── data.py
+  │       └── reports
+  │           ├── __init__.py
+  │           └── pdf.py
+  └── tests
+```
+
+The presence of the file `__init__.py` in each module directory indicates that that directory is a module. We won't get into the details of this special file, but it is often used to load code to initialize a package.
+
+## Managing packages with `poetry`
+
+![](../images/poetry-banner-small.png){fig-align="center"}
+
+While this structure and organization can be created manually, tools like [Python Poetry](https://python-poetry.org/) provide a simple way to create and manage packages and their dependencies. Poetry is but one of many tools for managing packages in the python ecosystem, but we think it is useful and straightforward to use, and it tames some of the complexity of the python packaging ecosystem.
+
+In the rest of this tutorial we will:
+
+- Create a new virutal environment for our package
+- Set up a new VS Code workspace to develop the package
+- Get Poetry installed and create a skeleton package
+- Add some code to the package and run it
+- Talk through testing strategies for the package
+
+### Get poetry in a new virtual environment
+
+To get started, we're using `virtualenvwrapper` to manage virtual environments in the course, so let's be sure it is installed in your environment. We're starting from the `scalable-computing-examples` workspace, so you should be in the `scomp` virtual environment in your terminal. So, make sure virtualenvwrapper is installed, and install it if not in `scomp`, using:
+
+```bash
+$ pip install virtualenvwrapper
+```
+
+The example package we will create is called `adcmodel`, and we will create a virtual environment of the same name to manage its dependencies. We'll also install poetry into that `adcmodel` virtual environment.
+
+```bash
+$ cd ~
+$ mkvirtualenv -p python3.9 adcmodel
+$ pip install poetry
+```
+
+Once that is done, we're going to return our current workspace to the `scomp` virtual environment (so that future lessons continue to work), and create a new workspace for our project work. To reset the venv, run the following from your terminal:
+
+```bash
+$ workon scomp
+$ cd ~/scalable-computing-examples
+```
+
+Now we have a virtual environment. Next we'll use it to create our new package.
+
+## Setup package workspace
+
+### Open VS Code window
+
+- Open a new VS Code window by connecting to included-crab
+- Command-Shift-P "Connect to Host..."
+  - select included-crab
+- Open a new Terminal if one doesn't open
+- Switch to our new venv
+
+```workon adcmodel```
+
+Window should look like:
+
+![VS Code remote with a virtual environment enabled.](../images/vscode-remote-with-venv.png)
+
+### Create a new package
+
+```bash
+(adcmodel) jones@included-crab:~$ poetry new adcmodel
+Created package adcmodel in adcmodel
+(adcmodel) jones@included-crab:~$ cd adcmodel/
+(adcmodel) jones@included-crab:~/adcmodel$ tree
+.
+├── README.md
+├── adcmodel
+│   └── __init__.py
+├── pyproject.toml
+└── tests
+    └── __init__.py
+
+2 directories, 4 files
+```
+
+### Setup the workspace
+
+- open the `adcmodel` folder
+- Save workspace
+- workon adcmodel
+- mkdir .vscode
+- Save a new settings file as `.vscode/settings.json` with the following content
+```js
+{
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.defaultInterpreterPath": "~/.virtualenvs/adcmodel/bin/python"
+}
+```
+- Close the window, and open "New Window" under VS Code, then using `Ctrl-R` shortcut, open the recent admodel workspace on included crab
+  - if this all goes well, your session should be set to open up this `adcmodel` each time that you open the workspace
+
+  Let's do some coding!
+
+
+## Write some code
+
+## Install software packages we need
+
+```bash
+(adcmodel) jones@included-crab:~/adcmodel$ poetry add numpy
+Using version ^1.23.3 for numpy
+
+Updating dependencies
+Resolving dependencies... (0.1s)
+
+Writing lock file
+
+Package operations: 1 install, 0 updates, 0 removals
+
+  • Installing numpy (1.23.3)
+```
+
+### Add development packages
+
+- Keeps things clean
+
+poetry add -D pytest black flack8
+
+## Testing
+
+
+## Incorporating your package into workflows
+
+- Publish to github
+  - generally, each package gets its own git repo
+- Publish to PyPI
+  - poetry makes this easier
+
+## Further reading
+
+- [Python Packages](https://py-pkgs.org) by Tomas Beuzen & Tiffany Timbers
+- [Python Poetry](https://python-poetry.org/)
