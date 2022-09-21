@@ -461,7 +461,7 @@ Based on our previous answer, this maximum is:
 ```{python}
 #| eval: false
 x_max = member2.loc[2022:2100].max()
-xmax.item(0)
+x_max.item(0)
 ```
 Notice we had to use `item` to transform the array into a number.
 :::
