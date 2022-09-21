@@ -26,3 +26,4 @@ pdgraster @ git+https://github.com/PermafrostDiscoveryGateway/viz-raster.git@sca
 pdgstaging @ git+https://github.com/PermafrostDiscoveryGateway/viz-staging.git@scalable-computing-course
 black
 poetry
+virtualenvwrapper
