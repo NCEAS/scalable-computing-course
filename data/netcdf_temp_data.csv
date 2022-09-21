@@ -1,4 +1,4 @@
-date,longitude,latitude,temperature
+time,longitude,latitude,temperature
 2022-09-01,30,60,0
 2022-09-01,30,70,0
 2022-09-01,40,60,0
