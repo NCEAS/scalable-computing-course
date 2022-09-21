@@ -102,7 +102,7 @@ In the rest of this tutorial we will:
 
 ### Get poetry in a new virtual environment
 
-To get started, we're using `virtualenvwrapper` to manage virtual environments in the course, so let's be sure it is installed in your environment. We're starting from the `scalable-computing-examples` workspace, so you should be in the `scomp` virtual environment in your terminal. So, make sure virtualenvwrapper is installed, and install it if not in `scomp`, using:
+To get started, we're using `virtualenvwrapper` to manage virtual environments in the course, so let's be sure it is installed in your environment. We're starting from the `scalable-computing-examples` workspace, so you should be in the `scomp` virtual environment in your terminal. So, make sure virtualenvwrapper is installed, and install it if it is not in `scomp`, using:
 
 ```bash
 $ pip install virtualenvwrapper
@@ -129,19 +129,20 @@ Now we have a virtual environment. Next we'll use it to create our new package.
 
 ### Open VS Code window
 
-- Open a new VS Code window by connecting to included-crab
-- Command-Shift-P "Connect to Host..."
-  - select included-crab
-- Open a new Terminal if one doesn't open
-- Switch to our new venv
+Now that we havea virtual environment set up, let's create a new VS Code window, connect to `included-crab, and get our workspace set up.
+
+- Start by opening a new VS Code window by connecting to included-crab using `Command-Shift-P` and then select "Connect to Host..." and choose `included-crab.nceas.ucsb.edu`
+- Once the window opens, open a new Terminal if one doesn't open, and switch to our new `adcmodel` venv using:
 
 ```workon adcmodel```
 
-Window should look like:
+When that is complete, your VS Code window should look like:
 
 ![VS Code remote with a virtual environment enabled.](../images/vscode-remote-with-venv.png)
 
 ### Create a new package
+
+Now we will create a skeleton for our package with `poetry new`, and take a look at what it produces:
 
 ```bash
 (adcmodel) jones@included-crab:~$ poetry new adcmodel
@@ -159,26 +160,35 @@ Created package adcmodel in adcmodel
 2 directories, 4 files
 ```
 
+You'll see it created a README, an `adcmodel` directory for our source code (with the accompanying `++init__.py` to indicate this is a module), a metadata file defining our project metadata and dependencies, and a `tests` directory that we'll come back to later when we explore testing.
+
 ### Setup the workspace
 
-- open the `adcmodel` folder
-- Save workspace
-- workon adcmodel
-- mkdir .vscode
-- Save a new settings file as `.vscode/settings.json` with the following content
+To make it easy to open up the project in VS Code, it is helpful to setup a workspace file, and configure VS Code to automatically activiate our `adcmodel` virtual environment. First, let's set up the workspace by opening the project folder and saving a workspace file:
+
+- Click "Open Folder" to open the `adcmodel` folder and display it in the VS Code file exporer
+- Select "File | Save Workspace As..." to save the workspace configuration file
+- Next, open the Terminal window and type `workon adcmodel` if it hasn't already been done
+- Finally, save a new settings file for our virtual environment:
+    - create a directory called `.vscode` using `mkdir .vscode`
+    - Save a new settings file as `.vscode/settings.json` with the following content
+
 ```js
 {
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.defaultInterpreterPath": "~/.virtualenvs/adcmodel/bin/python"
 }
 ```
-- Close the window, and open "New Window" under VS Code, then using `Ctrl-R` shortcut, open the recent admodel workspace on included crab
-  - if this all goes well, your session should be set to open up this `adcmodel` each time that you open the workspace
 
-  Let's do some coding!
+- Close the window, and open "New Window" under VS Code, then using `Ctrl-R` shortcut, open the recent `adcmodel` workspace on included-crab. If this all goes well, your session should be set to open up this `adcmodel` virtualenv each time that you open the workspace, and you should be able to see the contents of the skeleton package that you created.
 
+Let's do some coding!
+
+![](../images/vscode-pkg-skeleton.png)
 
 ## Write some code
+
+## The `pyproject.toml` configuration file
 
 ## Install software packages we need
 
