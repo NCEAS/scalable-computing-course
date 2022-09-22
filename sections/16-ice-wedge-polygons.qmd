@@ -7,3 +7,11 @@ title: "Billions of Ice Wedge Polygons"
 The Permafrost Discovery Gateway (PDG) is an online platform for creation, archiving, processing, analysis, and visualization of permafrost big imagery products to enable discovery and knowledge-generation. The new online scientific gateway will make information of changing permafrost conditions available throughout the Arctic by providing access to very high resolution satellite data products and new visualization tools that will allow exploration and discovery for researchers, educators, and the public at large. 
 
 Knowledge discovery through AI, big imagery, high-performance computing (HPC) is just starting to be realized in Arctic permafrost science. Chandi Witharana and the PDG team have developed a novel high- performance image analysis framework – Mapping application for Arctic Permafrost Land Environment (MAPLE) that enables the integration of operational-scale GeoAI capabilities into Arctic permafrost modeling. Interoperability across heterogeneous HPC systems, optimal usage of computational resource, and extensibility of mapping workflows are some of the key design goals of MAPLE. MAPLE was recently deployed across the Arctic tundra to map ice-wedge polygons from thousands of Maxar imagery. This mapping exercise has produced the first pan-Arctic ice-wedge polygon map, which consists of more than one billion individual ice-wedge polygons.
+
+## Billions of Ice Wedge Polygons
+
+Chandi's slides are available to download [here](../images/Billions%20of%20Ice%20Wedge%20Polygons_Version_1_PowerPoint.pptx-compressed.pdf)
+
+## Developing Science Gateways with Clowder for the Permafrost Discover Gateway
+
+Luigi's slides are available to download [here](../images/Arctic%20Data%20Center%20Workshop%20MAPLE%20Clowder-compressed.pdf)

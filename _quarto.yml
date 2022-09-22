@@ -35,6 +35,7 @@ book:
     - sections/13-group-project-2.qmd
     - sections/14-data-ethics.qmd
     - sections/15-google-earth-engine.qmd
+    - sections/16-ice-wedge-polygons.qmd
     - sections/17-group-project-3.qmd
     - sections/18-arctic-data-staging.qmd
     - sections/19-cloud-computing.qmd
