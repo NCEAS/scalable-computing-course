@@ -12,7 +12,7 @@ This 5-day in-person workshop will provide researchers with an introduction to a
 ### Schedule {-}
 
 :::{.column-page}
-![](images/00-schedule.png)
+![](images/schedule.png)
 :::
 
 ### Code of Conduct {-}
