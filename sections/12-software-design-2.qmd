@@ -136,6 +136,8 @@ Now that we havea virtual environment set up, let's create a new VS Code window,
 
 ```workon adcmodel```
 
+Finally, choose the Python version to use with `Command-Shift-P`, then choose `Python: Select Interpreter`, and choose the python version that lists your `adcmodel` virtual environment.
+
 When that is complete, your VS Code window should look like:
 
 ![VS Code remote with a virtual environment enabled.](../images/vscode-remote-with-venv.png)
@@ -186,24 +188,66 @@ Let's do some coding!
 
 ![](../images/vscode-pkg-skeleton.png)
 
-## Write some code
+## The `adcmodel` example package
 
-## The `pyproject.toml` configuration file
+So, imagine this `adcmodel` package is intended to hold the code for one of our research projects in which we need to load data from a variety of sources, handle quality analysis and data cleaning, and then integrate, analyze and visualize those data. While there are many useful and general functions you might want to build into a package such as this, we're going to keep it simple and show how to build a single function that consistenly loads and caches CSV-formatted data from the Arctic Data Center based on the identifier of the data object. 
 
-## Install software packages we need
+For this, we'll create a module called `adcmodel.data` that contains our data handling functions, one of which will be a `load_adc_csv()` function that takes an Arctic Data Center Identifier as input.  
 
-```bash
-(adcmodel) jones@included-crab:~/adcmodel$ poetry add numpy
-Using version ^1.23.3 for numpy
+### Load software dependencies
 
-Updating dependencies
-Resolving dependencies... (0.1s)
+To create this functionality, we'll make use of existing data loading functions and data retrieval functions from the `pandas` package, and operating system utilities from the `os` package. Almost all packages and functions you write will make use of the existing ecosystem of python packages, and we need to keep track of those dependencies in our package.
 
-Writing lock file
+Luckily, Poetry provides simple command line utilities for adding, removing, and installing dependent packages into your virtual environment. For each package that you need, use `poetry add` to register that package in your dependencies list and install it in your `adcmodel` virtual environment. We'll do this for `pandas`, but don't need to register `os` because it is a base package that ships with python.
 
-Package operations: 1 install, 0 updates, 0 removals
+![](../images/vscode-poetry-pandas.png)
 
-  • Installing numpy (1.23.3)
+::: {.callout-note} 
+
+### The `pyproject.toml` configuration file
+
+Dependency metadata that is added to the project and other information about the project is found in the `pyproject.toml` configuration file that is managed by poetry. In this file you'll find key metadata about the project like it's name and description and authors, as well as the list of specific dependencies that the package needs installed to work correctly. You should open this file and edit the key metadata, but `poetry add` and `poetry remove` are probably better for adding and removing dependencies.
+
+```yaml
+[tool.poetry]
+name = "adcmodel"
+version = "0.1.0"
+description = "Arctic Data Center example package for scalable computing course"
+authors = ["Matt Jones <gitcode@magisa.org>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "^1.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+```
+
+::: 
+
+### Adding code to modules
+
+Let's write some module code! In this case, we want to implement the `adcmodel.data.load_adc_csv(identifier)` function that we'll use for data loading and caching. We do this by creating a new file called `data.py` in the `adcmodel` directory, and then implementing the function. Create a new python file called `data.py` and save it to the `adcmodel` module directory, with the following function implementation:
+
+```{python}
+import pandas as pd
+import os
+
+
+def load_adc_csv(identifier):
+    """
+    Load and cache a CSV data file from the Arctic Data Center as a pandas.DataFrame
+    """
+    if not os.path.exists("data/"):
+        os.mkdir("data/")
+    if not os.path.exists("data/discharge_timeseries.csv"):
+        url = "https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Ae248467d-e1f9-4a32-9e38-a9b4fb17cefb"
+        msg = urllib.request.urlretrieve(url, "data/discharge_timeseries.csv")
+    df = pd.read_csv("data/discharge_timeseries.csv")
+    return df
 ```
 
 ### Add development packages
