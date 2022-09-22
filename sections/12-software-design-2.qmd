@@ -1,5 +1,6 @@
 ---
 title: "Software Design II: Modules, Packages, and Testing"
+from: markdown+emoji
 ---
 
 ## Learning objectives
@@ -45,12 +46,12 @@ def helloworld():
   print("Hello world!")
 ```
 
-With that in place, you can then import and use that function in othere code you write:
+With that in place, you can then import and use that function in other code you write:
 
 ```{python}
 #| eval: false
 import helloworld
-helloworld()
+print(helloworld())
 ```
 
 Packages help organize thes modules into a directory structure so that they can be predictably named and utilized. Packages can contain subpackages to keep modules organized into logical groups. Packages also provide structured metadata so that we can document the package and its dependencies so that it can be reliably installed and correctly used. The structure of a package is a simple directory tree containing the packages modules and subpackages. Two common structures are supported. First, with modules in the root directory:
@@ -198,7 +199,7 @@ For this, we'll create a module called `adcmodel.data` that contains our data ha
 
 To create this functionality, we'll make use of existing data loading functions and data retrieval functions from the `pandas` package, and operating system utilities from the `os` package. Almost all packages and functions you write will make use of the existing ecosystem of python packages, and we need to keep track of those dependencies in our package.
 
-Luckily, Poetry provides simple command line utilities for adding, removing, and installing dependent packages into your virtual environment. For each package that you need, use `poetry add` to register that package in your dependencies list and install it in your `adcmodel` virtual environment. We'll do this for `pandas`, but don't need to register `os` because it is a base package that ships with python.
+Luckily, Poetry provides simple command line utilities for adding, removing, and installing dependent packages into your virtual environment. For each package that you need, use `poetry add` to register that package in your dependencies list and install it in your `adcmodel` virtual environment. We'll do this for `pandas`, but don't need to register `urllib` or `os` because these base packages ship with python.
 
 ![](../images/vscode-poetry-pandas.png)
 
@@ -234,6 +235,8 @@ Let's write some module code! In this case, we want to implement the `adcmodel.d
 
 ```{python}
 import pandas as pd
+import urllib
+import hashlib
 import os
 
 
@@ -241,20 +244,39 @@ def load_adc_csv(identifier):
     """
     Load and cache a CSV data file from the Arctic Data Center as a pandas.DataFrame
     """
+    hashval = hashlib.sha256(bytes(identifier, 'utf-8')).hexdigest()
+    path = "data/" + hashval
     if not os.path.exists("data/"):
         os.mkdir("data/")
-    if not os.path.exists("data/discharge_timeseries.csv"):
-        url = "https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Ae248467d-e1f9-4a32-9e38-a9b4fb17cefb"
-        msg = urllib.request.urlretrieve(url, "data/discharge_timeseries.csv")
-    df = pd.read_csv("data/discharge_timeseries.csv")
+    if not os.path.exists(path):
+        service = "https://arcticdata.io/metacat/d1/mn/v2/object/"
+        url = service + identifier
+        msg = urllib.request.urlretrieve(url, path)
+    df = pd.read_csv(path)
     return df
 ```
 
+Once you save the file, we can use `poetry install` to install the package and try running the function in an interactive session. Check it out by opening a new Jupyter notebook and running the following in the first cell (after you install the needed jupyter packages):
+
+```{python}
+#| eval: false
+from adcmodel.data import load_adc_csv
+
+df = load_adc_csv("urn:uuid:e248467d-e1f9-4a32-9e38-a9b4fb17cefb")
+df.head()
+```
+
+:tada: Congratulations, you've created your first package! :tada:
+
 ### Add development packages
 
-- Keeps things clean
+Utilities like python linters and code formatters can make coding faster, more consistent, and more reliable. Poetry supports the use of development packages that are available in the virtual environment during the development cycle but are nto required for runtime use of the package. Like regular dependencies, development packages can be added with `poetry add`, but we also pass in a qualifier to add it to `--group dev`, which marks as only for use during development.
 
-poetry add -D pytest black flack8
+```bash
+poetry add --group dev pytest black
+```
+
+You can now use `black` to format your code (via `Command-Shift-P Format Document`) and `pytest to run tests. Next, let's get into testing.
 
 ## Testing
 
