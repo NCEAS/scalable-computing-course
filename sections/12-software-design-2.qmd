@@ -26,7 +26,7 @@ This lesson is a first primer on building your own modules and packages in pytho
 **Package**
 : A [python `package`](https://py-pkgs.org/01-introduction) represents a way to bundle python modules, documentation, and related resources as reusable and sharable code, both for your own use and to collaborate with others.
 
- Building reusable code though modules and packages is key to the scietific reporducibility theme that weaves through this course. Creating your own modules and bundling them into packages will help you (and future you) in so many ways:
+ Building reusable code though modules and packages is key to the scientific reproducibility theme that weaves throughout this course. Creating your own modules and bundling them into packages will help you (and future you) in so many ways:
 
 - to keep you organized, making it easier for you and others to understand and use your code
 - to provide consistent approaches for documentation
@@ -36,7 +36,7 @@ This lesson is a first primer on building your own modules and packages in pytho
 
 ## Anatomy of modules and packages
 
-Modules in python are loaded from the definitions stored in files of the same name with a `.py` file extension. Within each file are definitions of objects which can be access when the module is imported. For example, imagine you have a file named *hello.py* in your current directory that contains a function called `helloworld` with the following contents:
+Modules in python are loaded from the definitions stored in files of the same name with a `.py` file extension. Within each file are definitions of objects which can be accessed when the module is imported. For example, imagine you have a file named *hello.py* in your current directory that contains a function called `helloworld` with the following contents:
 
 ```{python}
 def helloworld():
@@ -51,10 +51,10 @@ With that in place, you can then import and use that function in other code you 
 ```{python}
 #| eval: false
 import helloworld
-print(helloworld())
+helloworld()
 ```
 
-Packages help organize thes modules into a directory structure so that they can be predictably named and utilized. Packages can contain subpackages to keep modules organized into logical groups. Packages also provide structured metadata so that we can document the package and its dependencies so that it can be reliably installed and correctly used. The structure of a package is a simple directory tree containing the packages modules and subpackages. Two common structures are supported. First, with modules in the root directory:
+Packages help organize these modules into a directory structure so that they can be predictably named and utilized. Packages can contain subpackages to keep modules organized into logical groups. Packages also provide structured metadata so that we can document the package and its dependencies so that it can be reliably installed and correctly used. The structure of a package is a simple directory tree containing the package modules and subpackages. Two common structures are supported. First, with modules in the root directory:
 
 ```
 adcmodel
@@ -163,11 +163,11 @@ Created package adcmodel in adcmodel
 2 directories, 4 files
 ```
 
-You'll see it created a README, an `adcmodel` directory for our source code (with the accompanying `++init__.py` to indicate this is a module), a metadata file defining our project metadata and dependencies, and a `tests` directory that we'll come back to later when we explore testing.
+You'll see it created a README, an `adcmodel` directory for our source code (with the accompanying `__init__.py` to indicate this is a module), a metadata file defining our project metadata and dependencies, and a `tests` directory that we'll come back to later when we explore testing.
 
 ### Setup the workspace
 
-To make it easy to open up the project in VS Code, it is helpful to setup a workspace file, and configure VS Code to automatically activiate our `adcmodel` virtual environment. First, let's set up the workspace by opening the project folder and saving a workspace file:
+To make it easy to open up the project in VS Code, it is helpful to setup a workspace file, and configure VS Code to automatically activate our `adcmodel` virtual environment. First, let's set up the workspace by opening the project folder and saving a workspace file:
 
 - Click "Open Folder" to open the `adcmodel` folder and display it in the VS Code file exporer
 - Select "File | Save Workspace As..." to save the workspace configuration file
@@ -270,23 +270,23 @@ df.head()
 
 ### Add development packages
 
-Utilities like python linters and code formatters can make coding faster, more consistent, and more reliable. Poetry supports the use of development packages that are available in the virtual environment during the development cycle but are nto required for runtime use of the package. Like regular dependencies, development packages can be added with `poetry add`, but we also pass in a qualifier to add it to `--group dev`, which marks as only for use during development.
+Utilities like python linters and code formatters can make coding faster, more consistent, and more reliable. Poetry supports the use of development packages that are available in the virtual environment during the development cycle but are not required for runtime use of the package. Like regular dependencies, development packages can be added with `poetry add`, but we also pass in a qualifier to add it to `--group dev`, which marks it as only for use during development.
 
 ```bash
 poetry add --group dev pytest black
 ```
 
-You can now use `black` to format your code (via `Command-Shift-P Format Document`) and `pytest to run tests. Next, let's get into testing.
+You can now use `black` to format your code (via `Command-Shift-P Format Document`) and `pytest` to run tests. Next, let's get into testing.
 
 ## Testing
 
-A major advantage of writing packages is that you can thoroughly test each of the functions that you write, thereby ensuring that they operate correctly both with good data and bad data. While it's always helpful to confirm that a function returns the correct value within the bounds that it is normally meant to operate, it is also important to pass it data that it wouldn't normally see. For example, does your linear model produce the correct results when it is passed a normal dataset? How about if it is passed a dataset with only one observation, or with all the same value, or with 0 or negative numbers? Does it produce an understandable error if some of the values are character values when they should be numeric? Does it continue operating in the face of bad data? Should it, or shoud it produce an exception? These and others are the questions you need to ask when testing your packages.
+A major advantage of writing packages is that you can thoroughly test each of the functions that you write, thereby ensuring that they operate correctly both with good data and bad data. While it's always helpful to confirm that a function returns the correct value within the bounds that it is normally meant to operate, it is also important to pass it data that it wouldn't normally see. For example, does your linear model produce the correct results when it is passed a normal dataset? How about if it is passed a dataset with only one observation, or with all the same value, or with 0 or negative numbers? Does it produce an understandable error if some of the values are character values when they should be numeric? Does it continue operating in the face of bad data? Should it, or should it not produce an exception? These and others are the questions you need to ask when testing your packages.
 
 Python provides a number of robust testing frameworks, but we will work with `pytest`, one of the common ones used for unit testing. The `poetry new` command already set up our package to be ready for testing, so now all we need to do is to add some test files in the `tests` directory. 
 
-In pytest and other frameworks, the common pattern is to use the python `assert` function to determine whether a value produced from your code matches expectations. For example, given a function that produces a product of two numbers, we could assert that `product(5, 6) == 30` and that `product(-3, -9) == 9`.
+In pytest and other frameworks, the common pattern is to use the python `assert` function to determine whether a value produced from your code matches expectations. For example, given a function that produces a product of two numbers, we could assert that `product(5, 6) == 30` and that `product(-3, -2) == 6`.
 
-Generally, it is good practice to produce at least one test file for each of your package source files, and their names are prefixed with `test_`. So, for our `data.py` source file, we might expect to build tests in a file called `test_data.py`. Let's create that file in the `tests` directory and walk through populating it with some simple tests. The functions in the test file are also named with `test_` as the prefix on the function name, and generally each test function atomically tests one aspect of the code. That way, when a test function fails, it should be quickly clear what type of an error would produce that kind of error.
+Generally, it is good practice to produce at least one test file for each of your package source files, and their names are prefixed with `test_`. So, for our `data.py` source file, we might expect to build tests in a file called `test_data.py`. Let's create that file in the `tests` directory and walk through populating it with some simple tests. The functions in the test file are also named with `test_` as the prefix on the function name, and generally each test function atomically tests one aspect of the code. That way, when a test function fails, it should be quickly clear what type of an error would produce that kind of failure, and how to locate it in the code.
 
 To get started, create `tests/test_data.py` and populate it with our first test function:
 
