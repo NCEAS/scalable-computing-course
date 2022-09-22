@@ -240,7 +240,7 @@ import hashlib
 import os
 
 
-def load_adc_csv(identifier):
+def load_adc_csv(identifier=None):
     """
     Load and cache a CSV data file from the Arctic Data Center as a pandas.DataFrame
     """
@@ -280,6 +280,38 @@ You can now use `black` to format your code (via `Command-Shift-P Format Documen
 
 ## Testing
 
+A major advantage of writing packages is that you can thoroughly test each of the functions that you write, thereby ensuring that they operate correctly both with good data and bad data. While it's always helpful to confirm that a function returns the correct value within the bounds that it is normally meant to operate, it is also important to pass it data that it wouldn't normally see. For example, does your linear model produce the correct results when it is passed a normal dataset? How about if it is passed a dataset with only one observation, or with all the same value, or with 0 or negative numbers? Does it produce an understandable error if some of the values are character values when they should be numeric? Does it continue operating in the face of bad data? Should it, or shoud it produce an exception? These and others are the questions you need to ask when testing your packages.
+
+Python provides a number of robust testing frameworks, but we will work with `pytest`, one of the common ones used for unit testing. The `poetry new` command already set up our package to be ready for testing, so now all we need to do is to add some test files in the `tests` directory. 
+
+In pytest and other frameworks, the common pattern is to use the python `assert` function to determine whether a value produced from your code matches expectations. For example, given a function that produces a product of two numbers, we could assert that `product(5, 6) == 30` and that `product(-3, -9) == 9`.
+
+Generally, it is good practice to produce at least one test file for each of your package source files, and their names are prefixed with `test_`. So, for our `data.py` source file, we might expect to build tests in a file called `test_data.py`. Let's create that file in the `tests` directory and walk through populating it with some simple tests. The functions in the test file are also named with `test_` as the prefix on the function name, and generally each test function atomically tests one aspect of the code. That way, when a test function fails, it should be quickly clear what type of an error would produce that kind of error.
+
+To get started, create `tests/test_data.py` and populate it with our first test function:
+
+```{python}
+#| eval: false
+from adcmodel.data import load_adc_csv
+
+def test_load_adc_csv():
+    df = load_adc_csv("urn:uuid:e248467d-e1f9-4a32-9e38-a9b4fb17cefb")
+    assert df is not None
+```
+
+You can run the tests after saving the file by running `pytest` on the commandline, which will produce output indicating which tests passed and failed.
+
+We can add other tests that test multiple conditions, and we can use any of the features of python to creatively test that our code will produce correct results. Here's another test to check that the data file we loaded has the right number of rows and columns:
+
+```{python}
+#| eval: false
+def test_load_adc_csv_shape():
+    df = load_adc_csv("urn:uuid:e248467d-e1f9-4a32-9e38-a9b4fb17cefb")
+    assert df is not None
+    assert (df.shape[0] == 17856) & (df.shape[1] == 6)
+```
+
+![](../images/vscode-pytest-results.png)
 
 ## Incorporating your package into workflows
 
