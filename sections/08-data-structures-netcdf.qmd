@@ -240,6 +240,8 @@ import numpy as np
 import xarray as xr   # This is the package we'll explore
 ```
 
+**Variable Values**
+
 The underlying data in the `xarray.DataArray` is a `numpy.ndarray` that holds the variable values. So we can start by making a `numpy.ndarray` with our mock temperature data:
 
 ```{python}
@@ -263,20 +265,53 @@ Keeping track of all this information separately could quickly get messy and cou
 This is what the netCDF data model and `xarray` aim to simplify. 
 We can get data and its descriptors together in an `xarray.DataArray` by adding the dimensions over which the variable is being measured and including attributes that appropriately describe dimensions and variables.
 
+**Dimensions and Coordinates**
+
+![](../images/netcdf_xarray_indexing.png)
+
 ```{python}
 # names of the dimensions
 dims = ('time', 'lat', 'lon')
 
-# coordinates (tick labels) to use for indexing along each dimension 
-coords = {'time' : pd.date_range("2022-09-01", "2022-09-03"),
-          'lat' : np.arange(30,80,10),
-          'lon' : np.arange(60,110,10)}  
+# create coordinates to use for indexing along each dimension 
 
+# time coordinates are straight-forward:
+time_coords = pd.date_range("2022-09-01", "2022-09-03")
+
+# for the lat and lon coordinates we need to remember the following:
+# we are assigning values to the indices of temp_data, which is a numpy.array 
+# this means that the indexing in every 2-dimensional array:
+#       - starts at the top-left corner, and
+#       - is ordered by rows first, columns second (like matrices)
+# then: 
+
+# lat (y-axis) values start at the top of the array and go down
+# so we arange the lat values in decreasing order: 70, 60, 50, 40, 30:
+lat_coords = np.arange(70, 20, -10)
+
+# lon (x-axis) values start at the left of the array and go right
+# so we arange the lon values in increasing order: 60, 70, 80, 90, 100:
+lon_coords = np.arange(60, 110, 10)
+
+
+coords = {'time' : time_coords,
+          'lat' : lat_coords,
+          'lon' : lon_coords}  
+```
+
+
+**Attributes**
+
+```{python}
 # attributes (metadata) of the data array 
 attrs = { 'title' : 'temperature across weather stations',
           'standard_name' : 'air_temperature',
           'units' : 'degree_c'}
+```
 
+
+**Putting It All Together**
+```{python}
 # initialize xarray.DataArray
 temp = xr.DataArray(data = temp_data, 
                     dims = dims,
