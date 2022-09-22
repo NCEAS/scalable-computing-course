@@ -176,7 +176,7 @@ print(precip)
 
 4. Add the precipitation Image to the basemap
 
--  We can use the `setCenter` method again to center our map, `myMap` over an area of interest -- here, we've chosen coordinates for Cook Inlet, Alaska. `setCenter` takes the longitude and latitude as the first two arguments, followed by the zoom level.
+-  We can use the `setCenter` method to center our map, `myMap`, over an area of interest -- here, we've chosen coordinates for Cook Inlet, Alaska. `setCenter` takes the longitude and latitude as the first two arguments, followed by the zoom level.
 
 ```{python}
 #| eval: false
@@ -213,21 +213,17 @@ myMap
 
 <center><iframe src="../images/precip_map.html" height="600" width="600" title="GEE Precipitation Map"></iframe></center>
 
-::: {.callout-important}
-## TODO
-#### Takeaways:
+### **Part iv.** Takeaways
 
-In just five lines of code (and mere seconds of execution time), we've applied and visualized a global precipitation model. We can zoom in/out across our interactive map while Google Earth Engine recalculates and revisualizes our model in near real-time.
+In just about five lines of code (and mere seconds of execution time), we've applied and visualized a global precipitation model (that's pretty cool, right??). We can zoom in/out across our interactive map while Google Earth Engine recalculates and revisualizes our model in near real-time.
 
-GEE does have its limitations. To name a few: 
+GEE does have some limitations. To name a few: 
 
 - it's a closed platform service, so GEE software can only be run on Google's infrastructure, as opposed to other open source options, like Pangeo 
 - it's only free for non-commercial use
 - there are memory and storage limits
-- etc...
 
-...Despite these limitations, GEE provides researchers with quick and easy access many analysis-ready geospatial datasets...
-:::
+Despite these limitations, GEE's data catelog and cloud computing resources can vastly streamline and expedite analyzing and visualizing large geospatial datasets.
 
 ## **Exercise 2:** Visualize and analyze fire dynamics in the Arctic using GEE
 
@@ -515,16 +511,19 @@ Map.add_legend(
 Map
 ```
 
-## Other Resources
+## Additional Resources
 
 **Tools:**  
+
 -  [GEE Code Editor](https://code.earthengine.google.com/), a web-based IDE for using GEE (JavaScript)  
 
 **Data:**  
+
 -  [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets), the main resource for "official" GEE Datasets  
 -  [awesome-gee-community-datasets](https://samapriya.github.io/awesome-gee-community-datasets/), the main resource for "community" GEE Datasets  
 
 **Documentation, Tutorials, & Help:**    
+
 -  [`earthengine-api` installation instructions](https://developers.google.com/earth-engine/guides/python_install)  
 -  [Creating and managing Google Cloud projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects)  
 -  [Troubleshooting authentication issues](https://developers.google.com/earth-engine/guides/python_install#troubleshooting-authentication-issues)  
@@ -533,3 +532,6 @@ Map
 -  [Qiusheng Wu's YouTube channel for GEE & geemap Python tutorials](https://www.youtube.com/c/Qiushengwu)
 -  [GEE on StackExhange](https://gis.stackexchange.com/questions/tagged/google-earth-engine)
 
+**Other:**
+
+- [Climate Engine App](https://app.climateengine.com/climateEngine), a no-code user interface to Google Earth Engine for quickly and easily visualizing various Earth observation processes and variables
