@@ -313,12 +313,20 @@ def test_load_adc_csv_shape():
 
 ![](../images/vscode-pytest-results.png)
 
-## Incorporating your package into workflows
+Finally, what happens when tests are run that fail? Try adding the following test, and determine if the failure is due to the code, the test, or the data? What would you change to make this test reliably pass, or fail more gracefully?
 
-- Publish to github
-  - generally, each package gets its own git repo
-- Publish to PyPI
-  - poetry makes this easier
+```{python}
+#| eval: false
+def test_load_adc_csv_inputs():
+    df = load_adc_csv()
+    assert df is not None
+```
+
+The answer to this and other more detailed questions on testing are covered in the excellent overview of testing provided by the ["Chapter 5: Testing" of "Python Packages"](https://py-pkgs.org/05-testing). 
+
+## Summary and next steps
+
+Python packages are an excellent mechanism to organize your modules for reuse both within your local code projects and with your colleagues and the broader science community. Adopting a structured approach to organizing, documenting, and testing your code can ultimately save you a lot of time and also increase the quality of your work. Scientific software is also a first-class product of the research enterprise, and is critical for fully understanding the lineage of derived data and research results. The emerging consensus is that publishing open source software packages to GitHub or other source code control systems, and then archiving them in repositories like [Software Heritage](https://www.softwareheritage.org/), the [Arctic Data Center](https://arcticdata.io), [Zenodo](https://zenodo.org/), or the [Python Package Index](https://pypi.org) increases the robustness, transparency, and reproducibility of research results. And it also provides a robust starting point for research teams to build upon and amplify each other's work. Using tools like Poetry and pytest to organize and build packages makes the process quick and efficient.
 
 ## Further reading
 
