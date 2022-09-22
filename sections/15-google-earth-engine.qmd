@@ -259,6 +259,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import plotly.express as px
 ```
 
 2. Authenticate & Initialize
@@ -268,27 +269,28 @@ ee.Authenticate()
 ee.Initialize() 
 ```
 
-2. Create basemap displaying the Batagay region
+3. Create basemap displaying the Batagay region
 
 ```{python}
 #| eval: false
 # site coordinates
 xy = [134.6, 67.66]
-poi = ee.Geometry.Point(xy)
+poi = ee.Geometry.Point(xy) # Point
+bbox = ee.Geometry.BBox(134.45, 67.7, 134.8, 67.5970) # Polygon
 ```
 
 ```{python}
 #| eval: false
 # create map
 Map = geemap.Map()
-Map.addLayer(poi)
+Map.addLayer(bbox, {}, 'AOI')
 Map.centerObject(poi, zoom=3)
 Map
 ```
 
 ### **Part ii.** Visualize NDVI and NBF spectral indices
 
-We'll plot *Image* data using two different multispectral indices: (1) **Normalized Difference Vegetation Index (NDVI)** for visualizing vegegation, using RGB (Red - Green - Blue), and (2) **Normalized Burn Ratio (NBF)** for visualizing burned areas, using Color-Infrared (NIR - Red - Green). 
+We'll plot *Image* data from the [Sentinel-2 MSI](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR#description) dataset using two different multispectral indices: (1) **Normalized Difference Vegetation Index (NDVI)** for visualizing vegegation, using RGB (Red - Green - Blue), and (2) **Normalized Burn Ratio (NBF)** for visualizing burned areas, using Color-Infrared (NIR - Red - Green). 
 
 1. Instantiate map 
 
@@ -300,7 +302,7 @@ Map = geemap.Map()
 2. Load map
 
 ::: {.callout-important}
-## TODO: code below this point erroring out
+## TODO: `.spectralIndices()` line not working -- may need to upgrade [`eemont`](https://github.com/davemlz/eemont) library in `requirements.txt`
 :::
 
 ```{python}
@@ -312,27 +314,25 @@ S2_Image = (ee.Image('COPERNICUS/S2_SR/20210805T030551_20210805T030545_T53WMR')
            )
 
 # Show
-Map.addLayer(S2_Image, dict(min=0.0, max=0.15, gamma=1.5, bands=['B2', 'B3', 'B2']), 'RGB')
+Map.addLayer(S2_Image, dict(min=0.0, max=0.1, gamma=1.5, bands=['B4', 'B3', 'B2']), 'RGB')
 Map.addLayer(S2_Image, dict(min=0.0, max=0.3, gamma=1.5, bands=['B8', 'B4', 'B3']), 'Color-Infrared', False)
 
 RdYlGn = ['#d7191c','#fdae61','#ffffbf','#a6d96a','#1a9641']
-Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NDVI'], palette=RdYlGn), 'NDVI')
-Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NBR'], palette=RdYlGn), 'NBR')
+Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NDVI'], palette=RdYlGn), 'NDVI', False)
+Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NBR'], palette=RdYlGn), 'NBR', False)
 
 Map.centerObject(S2_Image, zoom=8)
-
-Map
 ```
 
 3. Select point on the map above and pull location as an `ee.Feature`
 
 ```{python}
 #| eval: false
-point_selected = Map.draw_last_feature
-point_selected
+point_fire = Map.draw_last_feature
+point_fire
 
 # or alternatively, use this code:
-point_fire = ee.Geometry.Point([134.6339, 68.0397])
+# point_fire = ee.Geometry.Point([134.6339, 68.0397])
 ```
 
 ### **Part iii.** Load more than one image (i.e. an ImageCollection) to analyze
@@ -358,11 +358,12 @@ S2 = (ee.ImageCollection(ds)
       .maskClouds()
       .sort('CLOUDY_PIXEL_PERCENTAGE')
      )#.first()
+
 # calculate indices (e.g. NDVI, NBR)
 print(f'Number of images {S2.size().getInfo()}') # Print number of images
 ```
 
-2. Visualize satellite data
+2. Visualize satellite data - GET RID OF THIS
 
 ```{python}
 #| eval: false
@@ -387,10 +388,11 @@ Map
 
 ```{python}
 #| eval: false
+# function to load and prepare landsat data
 def load_and_prepare_Landsat(collection_name):
     collection = (ee.ImageCollection(collection_name)
       ### Filters ###
-      .filterBounds(poi) # only images, which intersect our point/region
+      .filterBounds(bbox) # only images, which intersect our point/region
       .filter(ee.Filter.calendarRange(7,8,'month')) # only June through September, Summer only
       .filter(ee.Filter.lt('CLOUD_COVER_LAND', 10)) # only images with less that 10 % clouds
       #.filterDate('2022-07-01','2022-12-31')
@@ -404,6 +406,7 @@ def load_and_prepare_Landsat(collection_name):
 
 ```{python}
 #| eval: false
+# load data and merge 
 L9 = load_and_prepare_Landsat("LANDSAT/LC09/C02/T1_L2")
 L8 = load_and_prepare_Landsat("LANDSAT/LC08/C02/T1_L2")
 L7 = load_and_prepare_Landsat("LANDSAT/LE07/C02/T1_L2")
@@ -432,7 +435,6 @@ tsPandas[tsPandas == -9999] = np.nan
 tsPandas['date'] = pd.to_datetime(tsPandas['date'],infer_datetime_format = True)
 
 tsPandas = tsPandas.sort_values(by='date').dropna(axis=0).reset_index()
-
 tsPandas
 ```
 
@@ -447,6 +449,72 @@ px.scatter(tsPandas, x='date', y=['NDVI', 'NBR'])
 #| eval: false
 # line plot
 px.line(tsPandas, x='date', y=['NDVI', 'NBR'])
+```
+
+### **Part v.** Annual Composite
+
+```{python}
+#| eval: false
+LS_2020 = LS.filterDate('2020-01-01', '2020-12-31')
+LS_2019 = LS.filterDate('2019-01-01', '2019-12-31')
+```
+
+- 
+```{python}
+#| eval: false
+LS_2020_reduced = LS_2020.reduce(ee.Reducer.median())
+LS_2019_reduced = LS_2019.reduce(ee.Reducer.median())
+```
+
+```{python}
+#| eval: false
+Map = geemap.Map()
+Map.addLayer(LS_2020_reduced,dict(min=-1, max=1, bands=['NDVI_median']), 'Median NDVI 2020')
+Map.addLayer(LS_2019_reduced,dict(min=-1, max=1, bands=['NDVI_median']), 'Median NDVI 2019')
+#Map.centerObject(LS_2020_reduced, 9)
+Map
+```
+
+### **Part vi.** Calculate trend
+
+```{python}
+def make_dateband(image):
+  factor = ee.Number(864000000000) # seconds to years
+  time = ee.Number(image.get("system:time_start"))
+  time2 = time.toDouble().divide(factor)
+  date_image = ee.Image.constant(time2).toFloat().select([0], ['Date'])
+  #TODO: rename to 'Date'
+  return image.addBands(date_image)
+```
+
+```{python}
+LS = LS.map(make_dateband)
+```
+
+```{python}
+index = 'NDVI'
+trend_image = ee.Image()
+trend = ee.ImageCollection(LS.select(['Date', index])).reduce(ee.Reducer.linearFit().unweighted())
+trend_image = trend_image.addBands(trend)
+```
+
+```{python}
+palette = geemap.get_palette_colors(cmap_name='RdYlGn')
+```
+
+```{python}
+Map = geemap.Map()
+Map.addLayer(trend_image.clip(bbox), dict(min=-0.3, max=0.3, palette=palette, bands=['scale']))
+#Map.centerObject(trend_image, 8)
+Map
+```
+
+```{python}
+#| eval: false
+# Add some nice temporal data
+# Tasseled Cap Trends: 2001-2020
+TCVIS = ee.ImageCollection('users/ingmarnitze/TCTrend_SR_2001-2020_TCVIS')
+Map.addLayer(TCVIS, {}, 'TCVIS')
 ```
 
 ### **Part v.** Clustering
@@ -504,10 +572,7 @@ Map.addLayer(
 Map.add_legend(
     legend_keys=legend_keys, legend_colors=legend_colors, position='bottomright'
 )
-```
 
-```{python}
-#| eval: false
 Map
 ```
 
