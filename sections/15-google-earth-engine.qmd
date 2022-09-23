@@ -478,6 +478,7 @@ Map
 ### **Part vi.** Calculate trend
 
 ```{python}
+#| eval: false
 def make_dateband(image):
   factor = ee.Number(864000000000) # seconds to years
   time = ee.Number(image.get("system:time_start"))
@@ -488,10 +489,12 @@ def make_dateband(image):
 ```
 
 ```{python}
+#| eval: false
 LS = LS.map(make_dateband)
 ```
 
 ```{python}
+#| eval: false
 index = 'NDVI'
 trend_image = ee.Image()
 trend = ee.ImageCollection(LS.select(['Date', index])).reduce(ee.Reducer.linearFit().unweighted())
@@ -499,10 +502,12 @@ trend_image = trend_image.addBands(trend)
 ```
 
 ```{python}
+#| eval: false
 palette = geemap.get_palette_colors(cmap_name='RdYlGn')
 ```
 
 ```{python}
+#| eval: false
 Map = geemap.Map()
 Map.addLayer(trend_image.clip(bbox), dict(min=-0.3, max=0.3, palette=palette, bands=['scale']))
 #Map.centerObject(trend_image, 8)
