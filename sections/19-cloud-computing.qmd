@@ -123,5 +123,3 @@ As servers grow in size, we have increasing amounts of power and resources, but 
 ![](../images/docker-small-logo.png)
 
 :::
-
-## Hands-on with Containers and Docker
