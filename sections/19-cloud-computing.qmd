@@ -29,8 +29,6 @@ The buzzword we all hear, but maybe don't quite understand.
 
 :::
 
-![](../images/cloud.png)
-
 Check out this article by Ingrid Burrington in The Atlantic, [Why Amazon's Data Centers are Hidden in Spy Country](https://www.theatlantic.com/technology/archive/2016/01/amazon-web-services-data-center/423147/), for some interesting insight into one of the largest cloud provider's data centers.
 
 ## Commercial clouds
@@ -118,7 +116,7 @@ As servers grow in size, we have increasing amounts of power and resources, but 
 
 ::: {layout="[[100],[70,30]]"}
 
-**Virtual machines** Virtualization is an approach to isolate the environments of the various users and services of a system so that we can make better use of the resource, and protect processes. In a virtualized environment, the host server still runs a host operating system, which includes a hypervisor process that can mediate between guest hosts on the machine and the underlying host operating system and hardware. This is effective at creating multiple **virtual machines** (VMs) running side-by-side on the same hardware. From the outside, and to most users, virtual machines appear to be a regular host on the network, when in fact they are virtual hosts that share the same underlying physical resources. But it also results in a fair amount of redundancy, in that each virtual machine must have its own operating system, libraries, and other resources. And calls pass through the guest operating system through the hypervisor to the physical layer, whi8ch can impose a performance penalty.
+**Virtual machines** Virtualization is an approach to isolate the environments of the various users and services of a system so that we can make better use of the resource, and protect processes. In a virtualized environment, the host server still runs a host operating system, which includes a hypervisor process that can mediate between guest hosts on the machine and the underlying host operating system and hardware. This is effective at creating multiple **virtual machines** (VMs) running side-by-side on the same hardware. From the outside, and to most users, virtual machines appear to be a regular host on the network, when in fact they are virtual hosts that share the same underlying physical resources. But it also results in a fair amount of redundancy, in that each virtual machine must have its own operating system, libraries, and other resources. And calls pass through the guest operating system through the hypervisor to the physical layer, which can impose a performance penalty.
 
 **Containers** A further step down the isolation road is to use a Container Runtime such as [`containerd`](https://containerd.io/) or [Docker Engine](https://docs.docker.com/engine/). Like virtual machines, containers provide mechanisms to create images that can be executed by a container runtime, and which provide stronger isolation among deployments. But they are also more lightweight, as the container only contains the libraries and executables needed to execute a target application, and not an entire guest operating system. They also are built using a layered file system, which allows multiple images to be layered together to create a composite that provides rich services withot as much duplication. This means that applications run with fewer resources, start up and shut down more quickly, and can be migrated easily to other hosts in a network.
 
@@ -126,3 +124,4 @@ As servers grow in size, we have increasing amounts of power and resources, but 
 
 :::
 
+## Hands-on with Containers and Docker
