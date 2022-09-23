@@ -234,8 +234,9 @@ build-backend = "poetry.core.masonry.api"
 Let's write some module code! In this case, we want to implement the `adcmodel.data.load_adc_csv(identifier)` function that we'll use for data loading and caching. We do this by creating a new file called `data.py` in the `adcmodel` directory, and then implementing the function. Create a new python file called `data.py` and save it to the `adcmodel` module directory, with the following function implementation:
 
 ```{python}
+#| eval: false
 import pandas as pd
-import urllib
+import urllib.request
 import hashlib
 import os
 
