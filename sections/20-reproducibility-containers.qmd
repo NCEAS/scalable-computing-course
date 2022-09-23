@@ -8,6 +8,7 @@ title: "Reproducibility and Containers"
 - Become familiar with containers as a tool to improve computational reproducibility
 - Discuss how the techniques from this class can improve reproducibility
 
+- Slides: [Accelerating synthesis science through reproducible science](../images/2022-09-repro-sci.pdf)
 
 ## Software collapse
 
