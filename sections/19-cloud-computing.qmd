@@ -48,10 +48,10 @@ There are a lots of different cloud computing platforms, but the big ones are:
 
 ::: {layout-ncol="2"}
 
-![](../images/access-logo.svg){fig-align="center"}<br>
+![](../images/access-logo.png){fig-align="center"}<br>
 ![](../images/nersc-logo.png){fig-align="center"}<br>
 ![](../images/cyverse-logo.png){fig-align="center"}<br>
-![](../images/pangeo_simple.svg){fig-align="center"}<br>
+![](../images/pangeo_simple.png){fig-align="center"}<br>
 
 Federal agencies in the US and other institutions also support massive computing facilities supporting cloud computing. While there are too many to fully list, programs such as the National Science Foundation's [ACCESS](https://access-ci.org) program, the Department of Energy's [National Energy Research Scientific Computing Center (NERSC)](https://cs.lbl.gov/about/divisions-and-facilities/national-energy-research-scientific-computing-center/), and the [CyVerse](https://cyverse.org/) platform  provide massive cloud computing resources to academic and agency researchers. The huge advantage is that these resources are generally free-for-use for affiliated researchers. When you need access to massive CPU and GPU hours, an application for access to these facilities can be extremely effective.
 
