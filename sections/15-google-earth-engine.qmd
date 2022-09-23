@@ -262,7 +262,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 ```
 
-2. Authenticate & Initialize
+2. Authenticate & Initialize (if you haven't done so already in your work session)
 ```{python}
 #| eval: false
 ee.Authenticate()
@@ -302,7 +302,7 @@ Map = geemap.Map()
 2. Load map
 
 ::: {.callout-important}
-## TODO: `.spectralIndices()` line not working -- may need to upgrade [`eemont`](https://github.com/davemlz/eemont) library in `requirements.txt`
+## TODO: errors out at `.spectralIndices()` line 
 :::
 
 ```{python}
