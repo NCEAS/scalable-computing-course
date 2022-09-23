@@ -61,6 +61,6 @@ There are many different tools you can use with docker, including the Docker eng
 To wrap up this week, let's kick off a discussion with a couple of key questions.
 
 - As we learn new tools for scalable and reproducible computing, what can we as software creators do to improve robustness and ease maintenance of our packages?
-- Given the fragility of software ecosystems, are you worried about investing a lot of time in learning and building cod efor proprietary cloud systems? Can we compel vendors to keep their systems open?
+- Given the fragility of software ecosystems, are you worried about investing a lot of time in learning and building code for proprietary cloud systems? Can we compel vendors to keep their systems open?
 - How much can technological solutions such as containers truly address the issues around depencies, maintainability, and sustainability of scientific software? 
 - What relative fraction of the research budget should funders invest in software infrastructure, data infrastructure, and research outcomes?
