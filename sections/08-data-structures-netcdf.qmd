@@ -267,40 +267,34 @@ We can get data and its descriptors together in an `xarray.DataArray` by adding 
 
 **Dimensions and Coordinates**
 
+To specify the dimensions of our upcoming `xarray.DataArray`, we must examine how we've constructed the `numpy.ndarray` holding the temperature data. 
+The diagram below shows how the dimensions of `temp_data` are ordered: the first dimension is time, the second is latitude, and the third is longitude. 
+
 ![](../images/netcdf_xarray_indexing.png)
 
+Remember that indexing in 2-dimensional `numpy.ndarrays` starts at the top-left corner of the array, and it is done by rows first and columns second (like matrices). 
+This is why latitude is the second dimension and longitude the third. 
+From the diagram, we can also see that the coordinates (values of each dimension) are as follow:
+
+- date coordinates are 2022-09-01, 2022-09-02, 2022-09-03
+- latitude coordinates are 70, 60, 50, 40, 30 (notice decreasing order)
+- longitude coordinates are 60, 70, 80, 90, 100 (notice increasing order)
+
+We add the dimensions as a tuple of strings and coordinates as a dictionary:
 ```{python}
-# names of the dimensions
+# names of the dimensions in the required order
 dims = ('time', 'lat', 'lon')
 
 # create coordinates to use for indexing along each dimension 
-
-# time coordinates are straight-forward:
-time_coords = pd.date_range("2022-09-01", "2022-09-03")
-
-# for the lat and lon coordinates we need to remember the following:
-# we are assigning values to the indices of temp_data, which is a numpy.array 
-# this means that the indexing in every 2-dimensional array:
-#       - starts at the top-left corner, and
-#       - is ordered by rows first, columns second (like matrices)
-# then: 
-
-# lat (y-axis) values start at the top of the array and go down
-# so we arange the lat values in decreasing order: 70, 60, 50, 40, 30:
-lat_coords = np.arange(70, 20, -10)
-
-# lon (x-axis) values start at the left of the array and go right
-# so we arange the lon values in increasing order: 60, 70, 80, 90, 100:
-lon_coords = np.arange(60, 110, 10)
-
-
-coords = {'time' : time_coords,
-          'lat' : lat_coords,
-          'lon' : lon_coords}  
+coords = {'time' : pd.date_range("2022-09-01", "2022-09-03"),
+          'lat' : np.arange(70, 20, -10),
+          'lon' : np.arange(60, 110, 10)}  
 ```
 
 
 **Attributes**
+
+Next, we add the attributes (metadata) for our temperature data as a dictionary:
 
 ```{python}
 # attributes (metadata) of the data array 
@@ -311,6 +305,9 @@ attrs = { 'title' : 'temperature across weather stations',
 
 
 **Putting It All Together**
+
+Finally, we put all these pieces together (data, dimensions, coordinates, and attributes) to create an `xarray.DataArray`:
+
 ```{python}
 # initialize xarray.DataArray
 temp = xr.DataArray(data = temp_data, 

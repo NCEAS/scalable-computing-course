@@ -137,7 +137,9 @@ df
 ```
 
 
-:::{.callout-note collapse=True}
+:::{.callout-note collapse="true"}
+# Encoding?
+
 *About the encoding parameter:* If we try to import the file directly, we will receive an `UnicodeDecodeError`. 
 We can run the following code to find the file's encoding and add the appropriate encoding to `dask.dataframe.read_csv`.
 ```{python}
