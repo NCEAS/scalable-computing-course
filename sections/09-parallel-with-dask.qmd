@@ -23,7 +23,7 @@ execute:
 Dask is a library for parallel computing in Python. 
 It can scale up code to use your personal computer's full capacity or distribute work in a cloud cluster. 
 By mirroring APIs of other commonly used Python libraries, such as Pandas and NumPy, Dask provides a familiar interface that makes it easier to parallelize your code. 
-In this lesson, we will get acquainted with some of Dask's most commonly used objects and Dask's way of distributing and evaluating computations.
+In this lesson, we will get acquainted with Dask’s way of distributing and evaluating computations and some of its most commonly used objects.
 
 ![ ](../images/dask_logo.png)
 
@@ -37,10 +37,14 @@ These are the *client*, the *scheduler* and the *workers*.
 
 - After receiving the tasks from the client, the **scheduler** determines how tasks will be distributed among the workers and coordinates them to process tasks in parallel.
 
-- Finally, the **workers** compute tasks and store and return computations results. Workers can be threads, processes, or separate machines in a cluster. We won't go into how to choose between threads and processes, but there are best practices to select the right one. You can read more about [threads and processes here](https://towardsdatascience.com/which-is-faster-python-threads-or-processes-some-insightful-examples-26074e90848f).
+- Finally, the **workers** compute tasks and store and return computations results. 
+Workers can be threads, processes, or separate machines in a cluster. 
+Here you can read more about what are [threads and processes](https://towardsdatascience.com/which-is-faster-python-threads-or-processes-some-insightful-examples-26074e90848f) and some [best practices for selecting one or the other](https://docs.dask.org/en/latest/scheduling.html).
 
-To interact with the client and generate tasks that can be processed in parallel we need to use Dasks' objects to read our data. 
-In this lesson, we will see examples of how to use `dask.dataframes` and `dask.arrays`. Apart from data frames and arrays, [other Dask objects](https://docs.dask.org/en/stable/api.html) can be used to parallelize your workflow.
+To interact with the client and generate tasks that can be processed in parallel we need to use [Dask objects](https://docs.dask.org/en/stable/api.html) to read and process our data. 
+<!--
+In this lesson, we will see examples of how to use `dask.dataframes` and `dask.arrays`. Apart from data frames and arrays,  can be used to parallelize your workflow.
+-->
 
 ![[M. Schmitt, *Understanding Dask Architecture: The Client, Scheduler and Workers*](https://www.datarevenue.com/en-blog/understanding-dask-architecture-client-scheduler-workers)](../images/dask_cluster.png)
 
@@ -70,13 +74,17 @@ client
 ```
 ![](../images/dask_client.png)
 
-This is a good place to learn more about different [Dask clusters](https://docs.dask.org/en/latest/deploying.html).
+
 
 
 ### Dask Dashboard
 We chose to use the Dask cluster in this lesson instead of the default Dask scheduler to take advantage of the **cluster dashboard**, which offers live monitoring of the performance and progress of our computations. 
-When we set up a cluster, we can see the dashboard's address by looking at either the client or the cluster. 
-The dashboard's main page shows diagnostics about:
+You can learn more about different [Dask clusters here](https://docs.dask.org/en/latest/deploying.html).
+
+As seen in the images above, when we set up a cluster we can see the cluster dashboard address by looking at either the client or the cluster. 
+In this example the dashboard address is `http://128.111.85.28:8787/status`. 
+When we go that address in a web browser we can see the dashboard's main page. 
+This page shows diagnostics about:
 
 - the cluster's and individual worker's memory usage,
 
@@ -86,7 +94,7 @@ The dashboard's main page shows diagnostics about:
     
 - progress towards completion of individual tasks.
 
-There's much to talk about interpreting the Dask dashboard's diagnostics. 
+There's much to say about interpreting the Dask dashboard's diagnostics. 
 We recommend this documentation to understand the [basics of the dashboard diagnostics](https://docs.dask.org/en/latest/dashboard.html#dashboard-memory) and [this video](https://www.youtube.com/watch?v=N_GqzcuGLCY) as a deeper dive into the dashboard's functions.
 
 ![A Dask dashboard.](../images/dask_dashboard.png)
@@ -154,17 +162,21 @@ result
 :::
 
 Notice that we cannot see any values in the data frame. 
-This is because Dask has not really loaded the data. It will wait until we explicitly ask it to print or compute something to do so. 
+This is because Dask has not really loaded the data. It will wait until we explicitly ask it to print or compute something to do so.
+
+<!-- 
 However, we can still do `df.head()`. It's not costly for memory to access a few data frame rows. 
 
 ```{python}
 #| eval: false
 df.head(2)
 ```
+-->
 
 ### Lazy Computations  
 The application programming interface (API) of a `dask.dataframe` is a subset of the `pandas.DataFrame` API.
 So if you are familiar with pandas, many of the core `pandas.DataFrame` methods directly translate to `dask.dataframes`. 
+For example:
 
 ```{python}
 #| eval: false
@@ -185,10 +197,6 @@ Before calling `compute` on an object, open the Dask dashboard to see how the pa
 #| eval: false
 averages.compute()
 ```
-
-<!--
-![](../images/dask_mean_df.png)
--->
 
 ## `dask.arrays`
 Another common object we might want to parallelize is a NumPy array. 
