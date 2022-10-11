@@ -120,6 +120,7 @@ Just as we did in the previous lesson, we will download the data using the `requ
 
 
 ```{python}
+#| eval: false
 import os              
 import urllib 
 
@@ -164,14 +165,12 @@ result
 Notice that we cannot see any values in the data frame. 
 This is because Dask has not really loaded the data. It will wait until we explicitly ask it to print or compute something to do so.
 
-<!-- 
 However, we can still do `df.head()`. It's not costly for memory to access a few data frame rows. 
 
 ```{python}
 #| eval: false
-df.head(2)
+df.head(3)
 ```
--->
 
 ### Lazy Computations  
 The application programming interface (API) of a `dask.dataframe` is a subset of the `pandas.DataFrame` API.
@@ -211,6 +210,7 @@ Here you can find more information about [chunks](https://docs.dask.org/en/lates
 In this short example we will create a 200x500 `dask.array` by specifying chunk sizes of 100x100.
 
 ```{python}
+#| eval: false
 import numpy as np
 
 import dask.array as da
@@ -218,6 +218,7 @@ import dask.array as da
 
 
 ```{python}
+#| eval: false
 data = np.arange(100_000).reshape(200, 500)
 a = da.from_array(data, chunks=(100, 100))
 ```
@@ -254,6 +255,7 @@ $$NDVI = \frac{NIR - Red}{NIR + Red}.$$
 First, we download the data for the near-infrared (NIR) and red bands from the Arctic Data Center:
 
 ```{python}
+#| eval: false
 # download red band
 url = 'https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3Aac25a399-b174-41c1-b6d3-09974b161e5a'
 msg = urllib.request.urlretrieve(url, "RU_ANS_TR2_FL005M_red.tif")
@@ -273,11 +275,14 @@ To indicate we will open these .tif files with `dask.arrays` as the underlying o
 Both files are 76 MB, so let's have chunks of 15 MB to have roughly six chunks.
 
 ```{python}
+#| eval: false
 import rioxarray as rioxr
 ```
 
 
-```{python}   
+
+```{python}
+#| eval: false
 # read in the file
 fp_red = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_red.tif")
 red = rioxr.open_rasterio(fp_red, chunks = '15MB')
@@ -290,6 +295,7 @@ We can see a lot of useful information here:
 - There is an unnecessary dimension: a constant value for the band. So our next step is to squeeze the array to flatten it.
 
 ```{python}
+#| eval: false
 # getting rid of unnecessary dimension
 red = red.squeeze()
 ```
@@ -297,6 +303,7 @@ red = red.squeeze()
 Next, we read in the NIR band and do the same pre-processing:
 
 ```{python}
+#| eval: false
 # open data
 fp_nir = os.path.join(os.getcwd(),"RU_ANS_TR2_FL005M_nir.tif")
 nir = rioxr.open_rasterio(fp_nir, chunks = '15MB')
@@ -311,6 +318,7 @@ This step is easy because we can handle xarrays and Dask arrays as NumPy arrays 
 Also, both bands have values of type float32, so we won't have trouble with the division. 
 
 ```{python}
+#| eval: false
 ndvi = (nir - red) / (nir + red)
 ```
 
@@ -318,6 +326,7 @@ When we look at the NDVI we can see the result is another `dask.array`, nothing 
 Remember, Dask computations are lazy, so we need to call `compute()` to bring the results to memory. 
 
 ```{python}
+#| eval: false
 ndvi_values = ndvi.compute()
 ```
 
