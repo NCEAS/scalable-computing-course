@@ -21,7 +21,7 @@ Metadata are documentation describing the content, context, and structure of dat
 
 For consistency, metadata are typically structured following metadata content standards such as the [Ecological Metadata Language (EML)](https://knb.ecoinformatics.org/tools/eml). For example, here's an excerpt of the machine-readable version of the metadata for a [sockeye salmon dataset](https://knb.ecoinformatics.org/view/doi:10.5063/F1F18WN4):
 
-```{r, eval=FALSE}
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <eml:eml packageId="df35d.442.6" system="knb" 
     xmlns:eml="eml://ecoinformatics.org/eml-2.1.1">
