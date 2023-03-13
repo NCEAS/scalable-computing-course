@@ -3,8 +3,8 @@ project:
 
 book:
   title: "Scalable and Computationally Reproducible Approaches to Arctic Research"
-  author: "S. Jeanette Clark, Matthew B. Jones, Samantha Csik, Carmen Galaz García, Bryce Mecum, Natasha Haycock-Chavez, Daphne Virlar-Knight, Ingmar Nitze, Chandi Witharana"
-  date: "September 19, 2022"
+  author: "S. Jeanette Clark, Juliet Cohen, Matthew B. Jones, Anna Liljedahl, Daphne Virlar-Knight"
+  date: "March 27, 2023"
   reader-mode: false
   sidebar:
     title: "Course Materials"
@@ -20,26 +20,25 @@ book:
 
   chapters:
     - index.qmd
-    - sections/01-adc-intro.qmd
-    - sections/02-remote-computing.qmd
-    - sections/03-python-intro.qmd
-    - sections/04-parallel-programming.qmd
-    - sections/05-adc-data-publishing.qmd
-    - sections/06-group-project-1.qmd
-    - sections/07-software-design-1.qmd
-    - sections/08-data-structures-netcdf.qmd
-    - sections/09-parallel-with-dask.qmd
-    - sections/10-geopandas.qmd
-    - sections/11-parquet-arrow.qmd
-    - sections/12-software-design-2.qmd
-    - sections/13-group-project-2.qmd
-    - sections/14-data-ethics.qmd
-    - sections/15-google-earth-engine.qmd
-    - sections/16-ice-wedge-polygons.qmd
-    - sections/17-group-project-3.qmd
-    - sections/18-arctic-data-staging.qmd
-    - sections/19-cloud-computing.qmd
-    - sections/20-reproducibility-containers.qmd
+    - sections/adc-intro.qmd
+    - sections/remote-computing.qmd
+    - sections/python-intro.qmd
+    - sections/parallel-programming.qmd
+    - sections/data-structures-netcdf.qmd
+    - sections/parallel-with-dask.qmd
+    - sections/group-project-1.qmd
+    - sections/software-design-1.qmd
+    - sections/geopandas.qmd
+    - sections/ice-wedge-polygons.qmd
+    - sections/group-project-2.qmd
+    - sections/data-ethics.qmd
+    - sections/google-earth-engine.qmd
+    - sections/adc-data-publishing.qmd
+    - sections/group-project-3.qmd
+    - sections/software-design-2.qmd
+    - sections/cloud-computing.qmd
+    - sections/reproducibility-containers.qmd
+    - sections/parquet-arrow.qmd
 
 bibliography: references.bib
 
@@ -49,6 +48,7 @@ format:
     css: styles.css
   pdf:
     documentclass: scrreprt
+    
 
 
 
