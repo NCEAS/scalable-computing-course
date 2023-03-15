@@ -5,17 +5,17 @@ title: 'Group Project: Staging and Preprocessing'
 ## Learning Objectives
 
 - Get familiarized with the overall group project workflow
-- Write a parsl app that will stage and tile the IWP example data in parallel
+- Write a `parsl` app that will stage and tile the IWP example data in parallel
 
 ## Introduction
 
-[The Permafrost Discovery Gateway](https://arcticdata.io/catalog/portals/permafrost/About) is an online platform for archiving, processing, analysis, and visualization of permafrost big imagery products to enable discovery and knowledge-generation. The PDG utilizes and makes available products derived from high resolution satellite imagrey from the Polar Geospatial Center, Planet (3m), Sentinel (10 m), Landsat (30 m), and MODIS (250 m). One of these products is a dataset showing Ice Wedge Polygons (IWP) that form in melting permafrost.
+[The Permafrost Discovery Gateway](https://arcticdata.io/catalog/portals/permafrost/About) is an online platform for archiving, processing, analysis, and visualization of permafrost big imagery products to enable discovery and knowledge-generation. The PDG utilizes and makes available products derived from high resolution satellite imagery from the Polar Geospatial Center, Planet (3 meter resolution), Sentinel (10 meter resolution), Landsat (30 meter resolution), and MODIS (250 meter resolution). One of these products is a dataset showing Ice Wedge Polygons (IWP) that form in melting permafrost.
 
-Ice wedges form as a result of thermal contraction during melt/freeze cycles of permafrost. They can form very distinctive geometries clearly visible in satellite images. The PDG is using advanced analysis and computational tools to take high resolution satellite imagery and automatically dectect where ice wedge polygons form. Below is an example of a satellite image (left) and the detected ice wedge polygons in geospatial vector format (right) of that same image.
+Ice wedges form as a result of cycles of thermal contraction during long-term melting and freezing cycles of permafrost. They can form very distinctive enclosed geometries that are clearly visible in high-resolution satellite images. The PDG team is using advanced analysis and computational tools to process high-resolution satellite imagery and automatically dectect where ice wedge polygons form. Below is an example of a satellite image (left) and the detected ice wedge polygons in geospatial vector format (right) of that same image.
 
 ![](../images/iwp-example.png)
 
-In the group project, we are going to use a subset of the high resolution dataset of these detected ice wedge polygons in order to learn some of the reproducible, scalable techniques that will allow us to process it. Our workflow will start with a set of large geopackage files that contain the detected ice wedge polygons. These files all have irregular extents due to the variation in satellite coverage, clouds, etc. Our first processing step will take these files and "tile" them into smaller files which have regular extents. 
+In the group project, we are going to use a subset of the high-resolution dataset of these detected ice wedge polygons in order to learn some of the reproducible, scalable techniques that will allow us to process it. Our workflow will start with a set of large geopackage files that contain the detected ice wedge polygons. These files all have irregular extents due to the variation in satellite coverage, clouds, etc. Our first processing step will take these files and "tile" them into smaller files which have regular extents. 
 
 ![](../images/gp-step1.png)
 
@@ -26,7 +26,6 @@ In step two of the workflow, we will take those regularly tiled geopackage files
 In the final step of the workflow, we will take the raster files and resample them to create a set of raster tiles at different resolutions. This last step is what will enable us to visualize our raster data dynamically, such that we look at lower resolutions when very zoomed out (and high resolution data would take too long to load), and higher resolution data when zoomed in and the extent is smaller.
 
 ![](../images/gp-step3.png)
-
 
 ## Staging and Tiling
 
