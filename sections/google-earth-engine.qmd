@@ -62,7 +62,7 @@ ee.Authenticate() # triggers the authentication process
 
 a. **Notebook Authenticator:** choose an active Google account and Cloud Project (you may have to create one if this is your first time authenticating) and click "Generate Token"  
 b. **Choose an account:** if prompted, select the same Google account as above
-c. **Google hasn't verified this app:** You may be temped to click the blue "Back to saftey" button, but don't! Click "Continue"  
+c. **Google hasn't verified this app:** You may be temped to click the blue "Back to safety" button, but don't! Click "Continue"  
 d. **Select what Earth Engine Notebook Client can access:** click both check boxes, then "Continue"  
 e. **Copy your authorization code** to your clipboard to paste into the VS Code command palette
 
@@ -103,11 +103,11 @@ Take a few moments to explore the metadata record for this dataset. You'll notic
 
 1. Create an interactive basemap
 
--  The default basemap is (you guessed it) Google Maps. The following code displays an empty Google Map that you can manipulate just like you would in the typical Google Maps interface. Do this using the `Map` method from the `geemap` library. We'll also center the map at a specified latitude and longitude (here, 40N, 100E), set a zoom level, and save our map as an object called `myMap`.
+-  The default basemap is (you guessed it) Google Maps. The following code displays an empty Google Map that you can manipulate just like you would in the typical Google Maps interface. Do this using the `Map` method from the `geemap` library. We'll also center the map at a specified latitude and longitude (here, 50N, 151E), set a zoom level, and save our map as an object called `myMap`.
 
 ```{python}
 #| eval: false
-myMap = geemap.Map(center = [40, -100], zoom = 2)
+myMap = geemap.Map(center = [60, -151], zoom = 4)
 myMap
 ```
 
@@ -176,15 +176,8 @@ print(precip)
 
 4. Add the precipitation Image to the basemap
 
--  We can use the `setCenter` method to center our map, `myMap`, over an area of interest -- here, we've chosen coordinates for Cook Inlet, Alaska. `setCenter` takes the longitude and latitude as the first two arguments, followed by the zoom level.
 
-```{python}
-#| eval: false
-myMap.setCenter(lat = 60, lon = -151, zoom = 4)
-myMap
-```
-
--  Next, set a color palette to use when plotting the data layer. The following is a palette specified for ERA5 precipitation data (scroll down to the example code, available on the [landing page for the ERA5 metadata](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY) in the Earth Engine Data Catelog). Here, we adjusted the max value to change the range of pixel values to which the palette should be applied -- this will make our colors stand out a bit more when we layer our precipitation data on our basemap, below.
+-  First, set a color palette to use when plotting the data layer. The following is a palette specified for ERA5 precipitation data (scroll down to the example code, available on the [landing page for the ERA5 metadata](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY) in the Earth Engine Data Catelog). Here, we adjusted the max value to change the range of pixel values to which the palette should be applied -- this will make our colors stand out a bit more when we layer our precipitation data on our basemap, below.
 
 ::: {.column-margin}
 Learn more about GEE color palettes and Image visualization [here](https://developers.google.com/earth-engine/guides/image_visualization).
@@ -225,361 +218,47 @@ GEE does have some limitations. To name a few:
 
 Despite these limitations, GEE's data catelog and cloud computing resources can vastly streamline and expedite analyzing and visualizing large geospatial datasets.
 
-## **Exercise 2:** Visualize and analyze fire dynamics in the Arctic using GEE
+## **Exercise 2:** Visualize fire dynamics in the Arctic using GEE
 
-Landscape changes in Arctic permafrost regions can occur as the result of a variety of processes including slope processes (thaw slumps, landslides), wildfires, hydrological changes, and coastal dynamics. 
+In this exercise, use the [Google Earth Engine datasets listing](https://developers.google.com/earth-engine/datasets/) to find 
+a dataset showing burn areas, that includes a day burned layer. 
 
-In this exercise, we’ll explore fire dynamics Batagay, Russia, the location of the largest permafrost crater in the world -- the [Batagaika crater](https://en.wikipedia.org/wiki/Batagaika_crater).
-<br>
+Create a map of your dataset using methods similar to above. Look to the dataset landing page on GEE for palette help, or create your own!
 
-<center><img src="../images/main_batagai.jpeg" alt="" width="300"/><br><img src="../images/MODIS_snapshot-2021-08-13T00_00_00Z.jpeg" alt="" width="300"/></center>
-
-<center><span style = 'font-size: 85%; color: #6e6d6d;'>Top image source: <https://www.science.org/do/10.1126/science.abe0581/full/main_batagai_1280p2.jpg>. Bottom image source: <https://worldview.earthdata.nasa.gov/></span></center>
-
-<br>
-
-Using the following code, we'll demonstrate how to:  
-
--  load and visualize image data  
--  calculate and visualize indices  
--  work with ImageCollections  
--  extract time-series  
--  clustering / unsupervized classification  
-
-### **Part i.** Setup
-
-1. Import libraries
+Below is one solution. Don't peek unless you are stuck!
 
 ```{python}
 #| eval: false
-import ee 
-import geemap
-import eemont
-import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-import plotly.express as px
+#| code-fold: true
+#| code-summary: "Show the code"
+
+burn = ee.ImageCollection("ESA/CCI/FireCCI/5_1")
+burn_2020 = burn.select('BurnDate').filterDate('2019-01-01', '2019-12-31').max()
+fire_pal = {
+  'min': 1,
+  'max': 366,
+  'palette': [
+    'ff0000', 'fd4100', 'fb8200', 'f9c400', 'f2ff00', 'b6ff05',
+    '7aff0a', '3eff0f', '02ff15', '00ff55', '00ff99', '00ffdd',
+    '00ddff', '0098ff', '0052ff', '0210ff', '3a0dfb', '7209f6',
+    'a905f1', 'e102ed', 'ff00cc', 'ff0089', 'ff0047', 'ff0004'
+  ]
+}
+
+
+myMap2 = geemap.Map(center = [66,-145], zoom = 7)
+
+myMap2.addLayer(burn_2020, fire_pal, "Burned area with date burned", opacity = 1)
+legend_dict = {
+    "January 1" : '#ff0000',
+    "March 1" : '#7aff0a',
+    "June 1" : '#00ddff',
+    "Sept 1" : '#a905f1'
+}
+
+myMap2.add_legend(legend_title="Burn Day", legend_dict=legend_dict)
 ```
 
-2. Authenticate & Initialize (if you haven't done so already in your work session)
-```{python}
-#| eval: false
-ee.Authenticate()
-ee.Initialize() 
-```
-
-3. Create basemap displaying the Batagay region
-
-```{python}
-#| eval: false
-# site coordinates
-xy = [134.6, 67.66]
-poi = ee.Geometry.Point(xy) # Point
-bbox = ee.Geometry.BBox(134.45, 67.7, 134.8, 67.5970) # Polygon
-```
-
-```{python}
-#| eval: false
-# create map
-Map = geemap.Map()
-Map.addLayer(bbox, {}, 'AOI')
-Map.centerObject(poi, zoom=3)
-Map
-```
-
-### **Part ii.** Visualize NDVI and NBF spectral indices
-
-We'll plot *Image* data from the [Sentinel-2 MSI](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR#description) dataset using two different multispectral indices: (1) **Normalized Difference Vegetation Index (NDVI)** for visualizing vegegation, using RGB (Red - Green - Blue), and (2) **Normalized Burn Ratio (NBF)** for visualizing burned areas, using Color-Infrared (NIR - Red - Green). 
-
-1. Instantiate map 
-
-```{python}
-#| eval: false
-Map = geemap.Map()
-```
-
-2. Load map
-
-::: {.callout-important}
-## TODO: errors out at `.spectralIndices()` line 
-:::
-
-```{python}
-#| eval: false
-# load image
-S2_Image = (ee.Image('COPERNICUS/S2_SR/20210805T030551_20210805T030545_T53WMR')
-            .scaleAndOffset()
-            .spectralIndices(['NDVI', 'NBR']) # Calculate multispectral indices
-           )
-
-# Show
-Map.addLayer(S2_Image, dict(min=0.0, max=0.1, gamma=1.5, bands=['B4', 'B3', 'B2']), 'RGB')
-Map.addLayer(S2_Image, dict(min=0.0, max=0.3, gamma=1.5, bands=['B8', 'B4', 'B3']), 'Color-Infrared', False)
-
-RdYlGn = ['#d7191c','#fdae61','#ffffbf','#a6d96a','#1a9641']
-Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NDVI'], palette=RdYlGn), 'NDVI', False)
-Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NBR'], palette=RdYlGn), 'NBR', False)
-
-Map.centerObject(S2_Image, zoom=8)
-```
-
-3. Select point on the map above and pull location as an `ee.Feature`
-
-```{python}
-#| eval: false
-point_fire = Map.draw_last_feature
-point_fire
-
-# or alternatively, use this code:
-# point_fire = ee.Geometry.Point([134.6339, 68.0397])
-```
-
-### **Part iii.** Load more than one image (i.e. an ImageCollection) to analyze
-
-You can do the same analysis with an *ImageCollection* (stacks of images of the same type). 
-
-1. Here, we'll load the full Sentinel-2 (S2) series and filter for our data of interest (Location: Batagay & Dates: months June - September). We'll also filter out cloud cover, which can obstruct our spectral indices analysis.:
-
-```{python}
-#| eval: false
-# Image Collection
-ds = 'COPERNICUS/S2_SR'
-
-S2 = (ee.ImageCollection(ds)
-      ### Filters ###
-      .filterBounds(poi) # only images, which intersect our point/region
-      .filter(ee.Filter.calendarRange(6,9,'month')) # only June through September, Summer only
-      .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10)) # only images with less that 10 % clouds
-      #.filterDate('2022-07-01','2022-12-31')
-      ### PreProcessing ###
-      .scaleAndOffset()
-      .spectralIndices(['NDVI', 'NBR'])
-      .maskClouds()
-      .sort('CLOUDY_PIXEL_PERCENTAGE')
-     )#.first()
-
-# calculate indices (e.g. NDVI, NBR)
-print(f'Number of images {S2.size().getInfo()}') # Print number of images
-```
-
-2. Visualize satellite data - GET RID OF THIS
-
-```{python}
-#| eval: false
-#Map = geemap.Map()
-Map.addLayer(S2, dict(min=0.0, max=0.15, gamma=1.5, bands=['B2', 'B3', 'B2']), 'RGB_Collection')
-Map.addLayer(S2, dict(min=0.0, max=0.3, gamma=1.5, bands=['B8', 'B4', 'B3']), 'Color-Infrared_Collection')
-RdYlGn = ['#d7191c','#fdae61','#ffffbf','#a6d96a','#1a9641']
-
-# Show NDVI
-#Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NDVI'], palette=RdYlGn), 'NDVI')
-# Show NDVI 
-#Map.addLayer(S2_Image, dict(min=0.0, max=0.8, bands=['NBR'], palette=RdYlGn), 'NBR')
-Map.centerObject(S2_Image, zoom=8)
-Map
-```
-
-### **Part iv.** Make a timeseries 
-
-*Example taken from <https://eemont.readthedocs.io/en/0.2.0/guide/timeSeries.html>.
-
-1. Create timeseries & clean data
-
-```{python}
-#| eval: false
-# function to load and prepare landsat data
-def load_and_prepare_Landsat(collection_name):
-    collection = (ee.ImageCollection(collection_name)
-      ### Filters ###
-      .filterBounds(bbox) # only images, which intersect our point/region
-      .filter(ee.Filter.calendarRange(7,8,'month')) # only June through September, Summer only
-      .filter(ee.Filter.lt('CLOUD_COVER_LAND', 10)) # only images with less that 10 % clouds
-      #.filterDate('2022-07-01','2022-12-31')
-      ### PreProcessing ###
-      .scaleAndOffset()
-      .spectralIndices(['NDVI', 'NBR'])
-      .maskClouds()
-     )
-    return collection
-```
-
-```{python}
-#| eval: false
-# load data and merge 
-L9 = load_and_prepare_Landsat("LANDSAT/LC09/C02/T1_L2")
-L8 = load_and_prepare_Landsat("LANDSAT/LC08/C02/T1_L2")
-L7 = load_and_prepare_Landsat("LANDSAT/LE07/C02/T1_L2")
-L5 = load_and_prepare_Landsat("LANDSAT/LT05/C02/T1_L2")
-LS = L9.merge(L8).merge(L7).merge(L5)
-```
-
-```{python}
-#| eval: false
-ts = LS.getTimeSeriesByRegion(reducer = ee.Reducer.mean(),
-                              geometry = point_fire,
-                              bands = ['NBR','NDVI'],
-                              scale = 10)
-```
-
-```{python}
-#| eval: false
-tsPandas = geemap.ee_to_pandas(ts)
-tsPandas
-```
-
-```{python}
-#| eval: false
-# a little more cleaning is necessary
-tsPandas[tsPandas == -9999] = np.nan
-tsPandas['date'] = pd.to_datetime(tsPandas['date'],infer_datetime_format = True)
-
-tsPandas = tsPandas.sort_values(by='date').dropna(axis=0).reset_index()
-tsPandas
-```
-
-2. Visualize output (example using plotly, but can use library of your choice e.g. matplotlib, seaborn, etc.)
-```{python}
-#| eval: false
-# scatterplot
-px.scatter(tsPandas, x='date', y=['NDVI', 'NBR'])
-```
-
-```{python}
-#| eval: false
-# line plot
-px.line(tsPandas, x='date', y=['NDVI', 'NBR'])
-```
-
-### **Part v.** Annual Composite
-
-```{python}
-#| eval: false
-LS_2020 = LS.filterDate('2020-01-01', '2020-12-31')
-LS_2019 = LS.filterDate('2019-01-01', '2019-12-31')
-```
-
-- 
-```{python}
-#| eval: false
-LS_2020_reduced = LS_2020.reduce(ee.Reducer.median())
-LS_2019_reduced = LS_2019.reduce(ee.Reducer.median())
-```
-
-```{python}
-#| eval: false
-Map = geemap.Map()
-Map.addLayer(LS_2020_reduced,dict(min=-1, max=1, bands=['NDVI_median']), 'Median NDVI 2020')
-Map.addLayer(LS_2019_reduced,dict(min=-1, max=1, bands=['NDVI_median']), 'Median NDVI 2019')
-#Map.centerObject(LS_2020_reduced, 9)
-Map
-```
-
-### **Part vi.** Calculate trend
-
-```{python}
-#| eval: false
-def make_dateband(image):
-  factor = ee.Number(864000000000) # seconds to years
-  time = ee.Number(image.get("system:time_start"))
-  time2 = time.toDouble().divide(factor)
-  date_image = ee.Image.constant(time2).toFloat().select([0], ['Date'])
-  #TODO: rename to 'Date'
-  return image.addBands(date_image)
-```
-
-```{python}
-#| eval: false
-LS = LS.map(make_dateband)
-```
-
-```{python}
-#| eval: false
-index = 'NDVI'
-trend_image = ee.Image()
-trend = ee.ImageCollection(LS.select(['Date', index])).reduce(ee.Reducer.linearFit().unweighted())
-trend_image = trend_image.addBands(trend)
-```
-
-```{python}
-#| eval: false
-palette = geemap.get_palette_colors(cmap_name='RdYlGn')
-```
-
-```{python}
-#| eval: false
-Map = geemap.Map()
-Map.addLayer(trend_image.clip(bbox), dict(min=-0.3, max=0.3, palette=palette, bands=['scale']))
-#Map.centerObject(trend_image, 8)
-Map
-```
-
-```{python}
-#| eval: false
-# Add some nice temporal data
-# Tasseled Cap Trends: 2001-2020
-TCVIS = ee.ImageCollection('users/ingmarnitze/TCTrend_SR_2001-2020_TCVIS')
-Map.addLayer(TCVIS, {}, 'TCVIS')
-```
-
-### **Part v.** Clustering
-
-*Example taken from <https://geemap.org/notebooks/31_unsupervised_classification/#make-training-dataset>*.
-
-1. Group individual images into several "similar" objects
-
-```{python}
-#| eval: false
-image = S2_Image
-```
-
-```{python}
-#| eval: false
-# Make the training dataset.
-training = image.sample(
-    **{
-        #     'region': region,
-        'scale': 10,
-        'numPixels': 5000,
-        'seed': 0,
-        'geometries': True,  # Set this to False to ignore geometries
-    }
-)
-```
-
-```{python}
-#| eval: false
-# Instantiate the clusterer and train it.
-n_clusters = 5
-clusterer = ee.Clusterer.wekaKMeans(n_clusters).train(training)
-```
-
-```{python}
-#| eval: false
-# Cluster the input using the trained clusterer.
-result = image.cluster(clusterer)
-
-# # Display the clusters with random colors.
-Map.addLayer(result.randomVisualizer(), {}, 'clusters')
-```
-
-```{python}
-#| eval: false
-legend_keys = ['One', 'Two', 'Three', 'Four', 'ect']
-legend_colors = ['#8DD3C7', '#FFFFB3', '#BEBADA', '#FB8072', '#80B1D3']
-
-# Reclassify the map
-result = result.remap([0, 1, 2, 3, 4], [1, 2, 3, 4, 5])
-
-Map.addLayer(
-    result, {'min': 1, 'max': 5, 'palette': legend_colors}, 'Labelled clusters'
-)
-Map.add_legend(
-    legend_keys=legend_keys, legend_colors=legend_colors, position='bottomright'
-)
-
-Map
-```
 
 ## Additional Resources
 
