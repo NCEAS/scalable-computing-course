@@ -110,7 +110,7 @@ Let's do a short practice now that we have reviewed the classic NetCDF model and
 Imagine the following scenario: we have a network of 25 weather stations. 
 They are located in a square grid: starting at 30°0′N 60°0′E, there is a station every 10° North and every 10° East. 
 Each station measures the air temperature at a set time for three days, starting on September 1st, 2022. 
-On the first day, all stations record a temperature of 0°C. On the second day, all temperatures are 1°C, and on the third day, all temperatures are 2°C. 
+On the first day, all stations record a temperature of 0°C. On the second day, all temperatures are 1°C, and on the third day, all temperatures are 2°C.
 What are the *variables*, *dimensions* and *attributes* for this data? 
 
 
@@ -493,7 +493,7 @@ Based on our previous answer, this maximum is:
 ```{python}
 #| eval: false
 x_max = member2.loc[2022:2100].max()
-x_max.item(0)
+x_max.item()
 ```
 Notice we had to use `item` to transform the array into a number.
 :::
