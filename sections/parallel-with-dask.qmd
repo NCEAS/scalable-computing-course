@@ -50,6 +50,15 @@ In this lesson, we will see examples of how to use `dask.dataframes` and `dask.a
 
 
 ### Setting up a Local Cluster
+
+First, we need to set up a Dask configuration file. In your `~/.config` directory, create a directory called `dask` (`mkdir -p ~/.config/dask`). In that directory create a file called `dask.yaml` (`touch dask.yaml`). In that file, insert just one line:
+
+```
+temporary-directory: ~/tmp
+```
+
+Then create that temporary directory (`mkdir ~/tmp`). This will prevent permissions problems while working on the shared cluster.
+
 We can create a **local cluster** as follows:
 
 ```{python}
@@ -59,7 +68,7 @@ from dask.distributed import LocalCluster, Client
 
 ```{python}
 #| eval: false
-cluster = LocalCluster(n_workers=5, memory_limit=0.1, processes=False)
+cluster = LocalCluster(n_workers=5, memory_limit=0.1, processes=True)
 cluster
 ```
 
