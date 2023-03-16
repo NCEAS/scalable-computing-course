@@ -47,6 +47,7 @@ to find instructions on creating a GEE account.
 #| eval: false
 import ee
 import geemap
+import pandas as pd
 ```
 
 3. Authenticate your GEE account
@@ -163,8 +164,8 @@ i_date = '2019-01-01'
 # final data of interest (exclusive)
 f_date = '2020-01-01'
 
-# select desired bands (total_preciptation), dates, and calculate mean precipitation across that date range
-precip = weatherData.select("total_precipitation").filterDate(i_date, f_date).mean()
+# select desired bands (total_preciptation), dates, and calculate total precipitation across that date range
+precip = weatherData.select("total_precipitation").filterDate(i_date, f_date).sum()
 ```
 
 -  Use the `print` method again to check out your new `precip` object -- notice that it's now an `ee.Image` (rather than `ee.ImageCollection`) and the start and end date values over which the average is taken are as we specified.
@@ -187,7 +188,7 @@ Learn more about GEE color palettes and Image visualization [here](https://devel
 #| eval: false
 precip_palette = {
     'min':0,
-    'max':0.01,
+    'max':5,
     'palette': ['#FFFFFF', '#00FFFF', '#0080FF', '#DA00FF', '#FFA400', '#FF0000']
 }
 ```
@@ -200,13 +201,73 @@ GEE has lots of pre-defined color palettes to choose from based on the type of d
 
 ```{python}
 #| eval: false
-myMap.addLayer(precip, precip_palette, 'total precipitation', opacity = 0.3)
+myMap.addLayer(precip, precip_palette, 'total precipitation', opacity = 0.7)
 myMap
 ```
 
 <center><iframe src="../images/precip_map.html" height="600" width="600" title="GEE Precipitation Map"></iframe></center>
 
-### **Part iv.** Takeaways
+### **Part iv.** Extract annual sum of precipitation data from points
+
+We probably don't want to just plot the data, extracting it at points of interest to use in analysis would be helpful too. I'll show a simple example here of how to extract raster values from a set of point geometries. 
+
+First, we'll create a `pandas` data frame with some locations in Alaska.
+
+```{python}
+#| eval: false
+# initialize data frame of points
+data = [['anc', 61.2, -150.1 ], ['fai', 64.8, -147.6], ['jun', 58.3, -134.4]]
+  
+# Create the pandas DataFrame
+df = pd.DataFrame(data, columns=['loc', 'lat', 'lon'])
+```
+
+Next we need to convert the rows in the data frame to a GEE `FeatureCollection`. To do this, we will run a loop over every row in the data frame which:
+
+1. creates a point geometry from the lat/lon coordinates
+2. creates an attribute dictionary from the row
+3. uses the attribute dictionary and geom in the `Feature` function
+
+```{python}
+#| eval: false
+# convert data frame to list of GEE features
+features=[]
+
+for index, row in df.iterrows():
+    p_geom = ee.Geometry.Point([row['lon'], row['lat']])
+    # construct attributes for each row
+    p_props = dict(row)
+    p_feature = ee.Feature(p_geom, p_props)
+    features.append(p_feature)
+
+```
+
+We then pass that features list into the `FeatureCollection` function
+
+```{python}
+#| eval: false
+ee_fc = ee.FeatureCollection(features)
+```
+
+Now, we can use the `sampleRegions` method on our `precip` image, passing the feature collection we just created to the collection argument.
+
+```{python}
+#| eval: false
+res = precip.sampleRegions(collection = ee_fc)
+```
+
+This returns another feature collection, which we can convert back to a `pandas` data frame with just one function call.
+
+```{python}
+#| eval: false
+res_df = geemap.ee_to_pandas(res)
+```
+
+Of note, by default GEE data is in maps mercator (EPSG:3857). [The documentation](https://developers.google.com/earth-engine/guides/projections) has many more details on how to handle projections, but in this case it is okay for us to use the default value since our input data were also in EPSG:3857.
+
+This was a simple example but you can do much more with these methods, including extracing timeseries data, extracting data from regions with polygon geometries (as opposed to point geometries), buffering features, and more. The GEE documentation is excellent, and examples abound.
+
+### **Part v.** Takeaways
 
 In just about five lines of code (and mere seconds of execution time), we've applied and visualized a global precipitation model (that's pretty cool, right??). We can zoom in/out across our interactive map while Google Earth Engine recalculates and revisualizes our model in near real-time.
 
