@@ -46,8 +46,6 @@ format:
   html:
     theme: cosmo
     css: styles.css
-  pdf:
-    documentclass: scrreprt
     
 
 
