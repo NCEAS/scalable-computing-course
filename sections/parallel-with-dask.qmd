@@ -92,6 +92,9 @@ You can learn more about different [Dask clusters here](https://docs.dask.org/en
 
 As seen in the images above, when we set up a cluster we can see the cluster dashboard address by looking at either the client or the cluster. 
 In this example the dashboard address is `http://128.111.85.28:8787/status`. 
+
+In order to get access to the dashboard, click the "ports" tab net to terminal. Add the port `8787` so that it is forwarded to your localhost.
+
 When we go that address in a web browser we can see the dashboard's main page. 
 This page shows diagnostics about:
 

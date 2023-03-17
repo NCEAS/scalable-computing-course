@@ -1,6 +1,7 @@
 bokeh==2.4.3
 chardet==4
-dask==2021.4
+dask==2023.3
+dask[distributed]
 distributed==2021.4
 ee==0.2
 eemont==0.3
@@ -14,7 +15,7 @@ jupyter==1
 matplotlib==3.5
 numpy==1.23
 netCDF4==1.6     
-pandas==1.4
+pandas==1.5
 parsl==1.2
 pyarrow==9
 rasterio==1.3
