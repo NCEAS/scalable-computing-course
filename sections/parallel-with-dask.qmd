@@ -49,42 +49,34 @@ In this lesson, we will see examples of how to use `dask.dataframes` and `dask.a
 ![[M. Schmitt, *Understanding Dask Architecture: The Client, Scheduler and Workers*](https://www.datarevenue.com/en-blog/understanding-dask-architecture-client-scheduler-workers)](../images/dask_cluster.png)
 
 
-### Setting up a Local Cluster
+## Connect to an existing cluster
 
-First, we need to set up a Dask configuration file. In your `~/.config` directory, create a directory called `dask` (`mkdir -p ~/.config/dask`). In that directory create a file called `dask.yaml` (`touch dask.yaml`). In that file, insert just one line:
+The instructor is going to start a local cluster on the server that everyone can connect to. This scenario is a realistic simulation of what it would look like for you to connect to a shared Dask resource. You can create your own local cluster running on your laptop using code at the end of this lesson.
 
-```
-temporary-directory: ~/tmp
-```
-
-Then create that temporary directory (`mkdir ~/tmp`). This will prevent permissions problems while working on the shared cluster.
-
-We can create a **local cluster** as follows:
+First, the instructor (and only the instructor!) will run:
 
 ```{python}
 #| eval: false
 from dask.distributed import LocalCluster, Client
-```
-
-```{python}
-#| eval: false
 cluster = LocalCluster(n_workers=5, memory_limit=0.1, processes=True)
-cluster
 ```
 
-![](../images/dask_cluster_panel.png)
-
-And then we create a client to connect to our cluster:
+To connect to it, we will use the address that the scheduler is listening on. The port is generated randomly, so first the instructor needs to get address for you to use in your code. In a 'real world' scenario, this address would be given to you by the administrator of the Dask cluster.
 
 ```{python}
 #| eval: false
-client = Client(cluster)
+cluster.scheduler_address
+```
+
+Now, you can pass the address to the `Client` function, which sets up your session as a client of the Dask cluster,
+
+```{python}
+#| eval: false
+# if you are copy pasting this from the book, make sure the address is the same that the instructor gave in the lesson!
+address = 'tcp://127.0.0.1:40869'
+client = Client(address)
 client
 ```
-![](../images/dask_client.png)
-
-
-
 
 ### Dask Dashboard
 We chose to use the Dask cluster in this lesson instead of the default Dask scheduler to take advantage of the **cluster dashboard**, which offers live monitoring of the performance and progress of our computations. 
@@ -351,7 +343,36 @@ We use `robust=True` to ignore the no-data values when plotting.
 ndvi_values.plot(robust=True)
 ```
 
+## Setting up your own local cluster
 
+### Setting up a Local Cluster
+
+
+We can create a **local cluster** as follows:
+
+```{python}
+#| eval: false
+from dask.distributed import LocalCluster, Client
+```
+
+```{python}
+#| eval: false
+cluster = LocalCluster(n_workers=4, memory_limit=0.1, processes=True)
+cluster
+```
+
+![](../images/dask_cluster_panel.png)
+
+And then we create a client to connect to our cluster, passing the `Client` function the cluster object.
+
+```{python}
+#| eval: false
+client = Client(cluster)
+client
+```
+![](../images/dask_client.png)
+
+From here, you can continue to run Dask commands as normal.
 
 ## Best Practices
 
