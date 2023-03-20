@@ -188,6 +188,12 @@ The only update we need to do is add the attributes for our new average temperat
 
 Our next step is to see how we can translate all this information into something we can store and handle on our computers.
 
+:::{.callout-tip collapse="true"}
+### Going further with `zarr`
+
+[Zarr](https://zarr.readthedocs.io/en/stable/) is a file storate format for chunked, compressed N-dimensional arrays based on an open source specification. It is very similar to NetCDF. The key is in the "chunked." Zarr stores chunks of data in separate files, so that parallel operations (like reading and writing data) can be done much, much faster than working with NetCDF. This format is gaining lots of popularity for working with big data.
+:::
+
 ## `xarray`
 
 `xarray` is an open source project and Python package that augments NumPy arrays by adding labeled dimensions, coordinates and attributes. 
