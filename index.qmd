@@ -63,6 +63,14 @@ After connecting to the server, in the extensions pane (View > Extensions) searc
 
 Note that these extensions will be installed on the server, and not locally. 
 
+### Create a (free) Google Earth Engine (GEE) account
+
+In order to code along during the Google Earth Engine lesson ([Ch 15]()) on Thursday, you'll need to sign up for an account at <https://signup.earthengine.google.com>. Once submitted, you'll receive an email with some helpful links and a message that it may take a few days for your account to be up and running. **Please be sure to do this a few days ahead of needing to use GEE.**
+
+::: {.callout-important}
+GEE authentication (more on that in [Lesson 15](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/15-google-earth-engine.html)) uses [Cloud Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Some organizations control who can create Cloud Projects, which may prevent you from completing the authentication process. To circumvent authentication issues, we recommend creating your GEE account using a non-organizational account (e.g. a personal email account). Check out GEE's [authentication troubleshooting recommendations](https://developers.google.com/earth-engine/guides/python_install#troubleshooting-authentication-issues) if you continue to run into issues.
+:::
+
 ### Test your local setup (Optional)
 
 We are going to be working on the server exclusively, but if you are interested in setting up VS Code to work for you locally with Python, you can follow these instructions. This local setup section summarizes the official VS Code tutorial. For more detailed instructions and screenshots, see the [source material.](https://code.visualstudio.com/docs/python/python-tutorial) This step is 100% optional, if you already have an IDE set up to work locally that you like, or already have VS code set up to work locally, you are welcome to skip this.
@@ -113,13 +121,6 @@ Finally, to test Jupyter, download the [Jupyter extension](https://marketplace.v
 
 You can create a test Jupyter Notebook document from the command pallete by typing "Create: New Jupyter Notebook" and selecting the command. This will open up a code editor pane with a notebook that you can test.
 
-### Create a (free) Google Earth Engine (GEE) account
-
-In order to code along during the Google Earth Engine lesson ([Ch 15]()) on Thursday, you'll need to sign up for an account at <https://signup.earthengine.google.com>. Once submitted, you'll receive an email with some helpful links and a message that it may take a few days for your account to be up and running. **Please be sure to do this a few days ahead of needing to use GEE.**
-
-::: {.callout-important}
-GEE authentication (more on that in [Lesson 15](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/15-google-earth-engine.html)) uses [Cloud Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Some organizations control who can create Cloud Projects, which may prevent you from completing the authentication process. To circumvent authentication issues, we recommend creating your GEE account using a non-organizational account (e.g. a personal email account). Check out GEE's [authentication troubleshooting recommendations](https://developers.google.com/earth-engine/guides/python_install#troubleshooting-authentication-issues) if you continue to run into issues.
-:::
 
 ## About this book
 
