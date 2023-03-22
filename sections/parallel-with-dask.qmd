@@ -57,7 +57,7 @@ First, the instructor (and only the instructor!) will run:
 
 ```{python}
 #| eval: false
-from dask.distributed import LocalCluster, Client
+from dask.distributed import LocalCluster
 cluster = LocalCluster(n_workers=5, memory_limit=0.1, processes=True)
 ```
 
@@ -72,7 +72,11 @@ Now, you can pass the address to the `Client` function, which sets up your sessi
 
 ```{python}
 #| eval: false
-# if you are copy pasting this from the book, make sure the address is the same that the instructor gave in the lesson!
+
+from dask.distributed import LocalCluster, Client
+
+# if you are copy pasting this from the book, make sure 
+# the address is the same that the instructor gave in the lesson!
 address = 'tcp://127.0.0.1:40869'
 client = Client(address)
 client

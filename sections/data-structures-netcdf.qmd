@@ -36,7 +36,7 @@ In this lesson, we will
 
 ## NetCDF Data Format
 
-[NetCDF](https://docs.unidata.ucar.edu/netcdf-c/current/index.html) (network Common Data Form) is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. NetCDF was initially developed at the Unidata Program Center and is supported on almost all platforms, and parsers exist for most scientific programming languages. 
+[NetCDF](https://docs.unidata.ucar.edu/netcdf-c/current/index.html) (Network Common Data Form) is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. NetCDF was initially developed at the Unidata Program Center, is supported on almost all platforms, and parsers exist for most scientific programming languages. 
 
 The [NetCDF documentation](https://docs.unidata.ucar.edu/netcdf-c/current/faq.html#ncFAQGeneral) outlines that this data format is desgined to be: 
 
@@ -188,7 +188,7 @@ The only update we need to do is add the attributes for our new average temperat
 
 Our next step is to see how we can translate all this information into something we can store and handle on our computers.
 
-:::{.callout-tip collapse="true"}
+:::{.callout-note collapse="false"}
 ### Going further with `zarr`
 
 [Zarr](https://zarr.readthedocs.io/en/stable/) is a file storate format for chunked, compressed N-dimensional arrays based on an open source specification. It is very similar to NetCDF. The key is in the "chunked." Zarr stores chunks of data in separate files, so that parallel operations (like reading and writing data) can be done much, much faster than working with NetCDF. This format is gaining lots of popularity for working with big data.
