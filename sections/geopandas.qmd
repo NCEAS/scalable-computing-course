@@ -132,7 +132,7 @@ comm.columns.values
 We can also look at the head of the data frame:
 
 ```{python}
-comm.head
+comm.head()
 ```
 
 Note the existence of the `geometry` column. This is where the actual geospatial points that comprise the vector data are stored, and this brings up the important difference between raster and vector data - while raster data is regularly gridded at a specific resolution, vector data are just points in space.
@@ -153,11 +153,16 @@ So, now we know where our x,y points are, where is all of the other information 
 comm.crs
 ```
 
+We can also plot one geometry cell by simply calling it:
+
+```{python}
+comm['geometry'][8]
+```
 
 Now that we know a little about what we are working with, let's get this data ready to analyze. First, we can make a plot of it just to see what we have.
 
 ```{python}
-comm.plot()
+comm.plot(figsize=(9,9))
 ```
 
 
