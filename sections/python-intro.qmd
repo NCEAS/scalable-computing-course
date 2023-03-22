@@ -336,7 +336,7 @@ clean_df['date'] = clean_df['datetime'].dt.date
 Finally, we use group by to split the data into groups according to the date. We can then apply the `mean` method to calculate the mean value across all of the columns. Note that there are other methods you can use to calculate different statistics across different columns (eg: `clean_df.groupby('date').agg({'discharge_m_3_s': 'max'})`).
 
 ```{python}
-daily_flow = clean_df.groupby('date', as_index = False).mean()
+daily_flow = clean_df.groupby('date', as_index = False).mean(numeric_only = True)
 ```
 
 * create a simple plot
