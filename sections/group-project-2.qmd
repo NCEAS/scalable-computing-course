@@ -13,3 +13,13 @@ In your small groups, work together to write the solution, but everyone should a
 In the last lession, we staged the input files into Geopackages. Now we will import those `.gpkg` files and write each as a raster. The resulting rasters will have 2 bands, one for each statistic we calculate based on the vector geometries in each pixel.
 
 We need to create the highest zoom level rasters before we create the lower zoom levels in the next lesson. This brings us one step closer to visualizing the ice wedge polygons on a basemap!
+
+### Package Citations
+
+os
+parsl
+pdgstaging
+pdgraster
+geopandas
+random
+matplotlib

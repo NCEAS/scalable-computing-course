@@ -28,3 +28,14 @@ Check out the [Permafrost Discovery Gateway Imagery Viewer]() and zoom in and ou
 ![Ice wedge polygons at high resolution, visible when zoomed-in to the Permafrost Discovery Gateway Imagery Viewer.](../images/zoom_in_IWP.png)
 
 The higher resolution tiles are the "child" tiles, and the lower resolution tiles are the "parent" tiles.
+
+### Package Citations
+
+os
+parsl
+pdgstaging
+pdgraster
+geopandas
+random
+matplotlib
+ipyleaflet

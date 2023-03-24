@@ -11,7 +11,9 @@ title: 'Group Project: Staging and Preprocessing'
 
 [The Permafrost Discovery Gateway](https://arcticdata.io/catalog/portals/permafrost/About) is an online platform for archiving, processing, analysis, and visualization of permafrost big imagery products to enable discovery and knowledge-generation. The PDG utilizes and makes available products derived from high resolution satellite imagery from the Polar Geospatial Center, Planet (3 meter resolution), Sentinel (10 meter resolution), Landsat (30 meter resolution), and MODIS (250 meter resolution). One of these products is a dataset showing Ice Wedge Polygons (IWP) that form in melting permafrost.
 
-Ice wedges form as a result of cycles of thermal contraction during long-term melting and freezing cycles of permafrost. They can form very distinctive enclosed geometries that are clearly visible in high-resolution satellite images. The PDG team is using advanced analysis and computational tools to process high-resolution satellite imagery and automatically dectect where ice wedge polygons form. Below is an example of a satellite image (left) and the detected ice wedge polygons in geospatial vector format (right) of that same image.
+Ice wedges form as a result of cycles of thermal contraction during long-term melting and freezing cycles of permafrost. This environmental feature is a sign of permafrost thaw over time, which is a result of the warming climate. Identifying where these features exist is important to understanding how the Arctic landscape is changing, and will help researchers, community members, and policy-makers protect address threats to the biota and architecture throughout the region. To learn more about how this data was produced, see [this](https://doi.org/10.5194/isprs-archives-XLIV-M-3-2021-175-2021) publication.
+
+Ice wedges can form very distinctive enclosed geometries that are clearly visible in high-resolution satellite images. The PDG team is using advanced analysis and computational tools to process high-resolution satellite imagery and automatically dectect where ice wedge polygons form. Below is an example of a satellite image (left) and the detected ice wedge polygons in geospatial vector format (right) of that same image.
 
 ![](../images/iwp-example.png)
 
@@ -23,7 +25,7 @@ In step two of the workflow, we will take those regularly tiled geopackage files
 
 ![](../images/gp-step2.png)
 
-In the final step of the workflow, we will take the raster files and resample them to create a set of raster tiles at different resolutions. This last step is what will enable us to visualize our raster data dynamically, such that we look at lower resolutions when very zoomed out (and high resolution data would take too long to load), and higher resolution data when zoomed in and the extent is smaller.
+In the final step of the workflow, we will take the raster files and resample them to create a set of raster tiles at different resolutions. This last step is what will enable us to visualize our raster data dynamically, such that we look at lower resolutions when very zoomed out (and high resolution data would take too long to load), and higher resolution data when zoomed in and the extent is smaller. Then we convert each of these `.tif` files into PNG files that we can visualize on a basemap.
 
 ![](../images/gp-step3.png)
 
@@ -35,4 +37,13 @@ Today we will undertake the first step of the workflow, staging and tiling the d
 
 In your fork of the [`scalable-computing-examples`](https://github.com/NCEAS/scalable-computing-examples) repository, open the Jupyter notebook in the `group-project` directory called `session-06.ipynb`. This workbook will serve as a skeleton for you to work in. It will load in all the libraries you need, including a few helper functions we wrote for the course, show an example for how to use the method on one file, and then lays out blocks for you and your group to fill in with code that will run that method in parallel.
 
-In your small groups, work together to write the solution, but everyone should aim to have a working solution on their own fork of the repository. In other words, everyone should type out the solution themselves as part of the group effort. Writing the code out yourself (even if others are contributing to the content) is a great way to get "mileage" as you develop these skills. 
+In your small groups, work together to write the solution, but everyone should aim to have a working solution on their own fork of the repository. In other words, everyone should type out the solution themselves as part of the group effort. Writing the code out yourself (even if others are contributing to the content) is a great way to get "mileage" as you develop these skills.
+
+### Package Citations
+
+os
+parsl
+pdgstaging
+geopandas
+random
+matplotlib
