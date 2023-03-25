@@ -97,15 +97,36 @@ NUMA node0 CPU(s):               0-87
 
 Now that's more compute power!  `included-crab` has 384 GB of RAM, and ample storage. All still under the control of a single operating system.
 
-Finally, maybe one of these NSF-sponsored high performance computing clusters (HPC) is looking attractive about now:
+Finally, maybe one of these [NSF-sponsored high performance computing clusters (HPC)](https://allocations.access-ci.org/resources) is looking attractive about now:
 
-- [JetStream](https://jetstream-cloud.org/)
-    - 640 nodes, 15,360 cores, 80TB RAM
+::: {.grid}
+
+::: {.g-col-6}
+
 - [Stampede2](https://www.tacc.utexas.edu/systems/stampede2) at TACC
     - 4200 KNL nodes: 285,600 cores
     - 1736 SKX nodes: 83,328 cores
     - 224 ICX nodes: 17,920 cores
     - TOTAL: **386,848** cores
+- [Delta](https://www.ncsa.illinois.edu/research/project-highlights/delta/) at NCSA
+    - 124 CPU Milan nodes (15,872 cores)
+    - 100 quad A100 GPU nodes (6400 cores + 400 GPUs)
+    - 100 quad A40 GPU nodes (6400 cores + 400 GPUs)
+    - 5 eight-way A100 GPU nodes (640 cores + 40 GPUs):
+    - 1 MI100 GPU node (128 cores + 8 GPUs)
+    - 7 PB of disk-based Lustre storage
+    - 3 PB of flash based storage
+    - TOTAL: **29,440** cores, **848** gpus
+
+:::
+
+::: {.g-col-6}
+
+![Delta Supercomputer](https://access-ci.org/wp-content/uploads/2022/10/Delta_System.jpg)
+
+:::
+
+:::
 
 Note that these clusters have multiple nodes (hosts), and each host has multiple cores. So this is really multiple computers clustered together to act in a coordinated fashion, but each node runs its own copy of the operating system, and is in many ways independent of the other nodes in the cluster.  One way to use such a cluster would be to use just one of the nodes, and use a multi-core approach to parallelization to use all of the cores on that single machine.  But to truly make use of the whole cluster, one must use parallelization tools that let us spread out our computations across multiple host nodes in the cluster.
 
