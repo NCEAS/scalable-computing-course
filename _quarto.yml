@@ -3,8 +3,10 @@ project:
 
 book:
   title: "Scalable and Computationally Reproducible Approaches to Arctic Research"
-  author: "S. Jeanette Clark, Juliet Cohen, Matthew B. Jones, Anna Liljedahl, Daphne Virlar-Knight"
+  doi: 10.18739/A2QF8JM2V
+  author: "S. Jeanette Clark, Matthew B. Jones, Samantha Csik, Carmen Galaz García, Bryce Mecum, Natasha Haycock-Chavez, Daphne Virlar-Knight, Juliet Cohen, Anna Liljedahl"
   date: "March 27, 2023"
+  issued: 2023
   reader-mode: false
   sidebar:
     title: "Course Materials"

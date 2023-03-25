@@ -128,9 +128,9 @@ These written materials reflect the continuous development of learning materials
 
 This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
-**Citation**:  S. Jeanette Clark, Matthew B. Jones, Samantha Csik, Carmen Galaz García, Bryce Mecum, Natasha Haycock-ChavezDaphne Virlar-Knight. 2022. Scalable and Computationally Reproducible Approaches to Arctic Research.
+**Citation**:  S. Jeanette Clark, Matthew B. Jones, Samantha Csik, Carmen Galaz García, Bryce Mecum, Natasha Haycock-Chavez, Daphne Virlar-Knight, Juliet Cohen, Anna Liljedahl. 2023. Scalable and Computationally Reproducible Approaches to Arctic Research. Arctic Data Center. [doi:10.18739/A2QF8JM2V](https://doi.org/10.18739/A2QF8JM2V)
 
-**Additional contributors**: Amber E. Budden, Noor Johnson
+**Additional contributors**: Amber E. Budden, Noor Johnson, Robyn Thiessen-Bock
 
 
 
