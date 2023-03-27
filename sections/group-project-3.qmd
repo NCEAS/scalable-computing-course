@@ -5,9 +5,11 @@ title: 'Group Project: Visualization'
 
 ## Setup
 
-In your fork of the [`scalable-computing-examples`](https://github.com/NCEAS/scalable-computing-examples) repository, open the Jupyter notebook in the `group-project` directory called `session-17.ipynb`. This workbook will serve as a skeleton for you to work in. It will load in all the libraries you need, including a few helper functions we wrote for the course, show an example for how to use the method on one file, and then lays out blocks for you and your group to fill in with code that will run that method in parallel.
+In your fork of the [`scalable-computing-examples`](https://github.com/NCEAS/scalable-computing-examples) repository, open the Jupyter notebook in the `group-project` directory called `session-15.ipynb`. This workbook will serve as a skeleton for you to work in. It will load in all the libraries you need, including a few helper functions we wrote for the course, show an example for how to use the method on one file, and then lays out blocks for you and your group to fill in with code that will run that method in parallel.
 
 In your small groups, work together to write the solution, but everyone should aim to have a working solution on their own fork of the repository. In other words, everyone should type out the solution themselves as part of the group effort. Writing the code out yourself (even if others are contributing to the content) is a great way to get "mileage" as you develop these skills. 
+
+Only one person in the group should run the parallel code.
 
 ## Resampling rasters
 
@@ -29,13 +31,15 @@ Check out the [Permafrost Discovery Gateway Imagery Viewer]() and zoom in and ou
 
 The higher resolution tiles are the "child" tiles, and the lower resolution tiles are the "parent" tiles.
 
-### Package Citations
+### Packages, Libraries, and Modules
 
-os
-parsl
-pdgstaging
-pdgraster
-geopandas
-random
-matplotlib
-ipyleaflet
+- [os 3.11.2](https://docs.python.org/3/library/os.html)
+- [parsl 2023.3.20](https://parsl.readthedocs.io/en/stable/)
+- [pdgstaging](https://github.com/PermafrostDiscoveryGateway/viz-staging)
+  - developed by Permafrost Discovery Gateway software developer and designer Robyn Thiessen-Bock
+- [pdgraster](https://github.com/PermafrostDiscoveryGateway/viz-raster/tree/main)
+  - developed by Permafrost Discovery Gateway software developer and designer Robyn Thiessen-Bock
+- [geopandas0.11](https://geopandas.org/en/stable/docs.html)
+- [random](https://docs.python.org/3/library/random.html)
+- [matplotlib 3.5](https://matplotlib.org/3.5.3/api/_as_gen/matplotlib.pyplot.html)
+- [ipyleaflet 0.17](https://ipyleaflet.readthedocs.io/en/latest/)
