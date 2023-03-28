@@ -143,7 +143,7 @@ Latitude has values 30, 40, 50, 60, and 70, measured in degrees North. Longitude
         + units: degrees_N
 
     * Longitude attributes:
-        + satandard_name: grid_longitude
+        + standard_name: grid_longitude
         + units: degree_E
 
 * Dataset attributes:
@@ -191,7 +191,7 @@ Our next step is to see how we can translate all this information into something
 :::{.callout-note collapse="false"}
 ### Going further with `zarr`
 
-[Zarr](https://zarr.readthedocs.io/en/stable/) is a file storate format for chunked, compressed N-dimensional arrays based on an open source specification. It is very similar to NetCDF. The key is in the "chunked." Zarr stores chunks of data in separate files, so that parallel operations (like reading and writing data) can be done much, much faster than working with NetCDF. This format is gaining lots of popularity for working with big data.
+[Zarr](https://zarr.readthedocs.io/en/stable/) is a file storage format for chunked, compressed N-dimensional arrays based on an open source specification. It is very similar to NetCDF. The key is in the "chunked." Zarr stores chunks of data in separate files, so that parallel operations (like reading and writing data) can be done much, much faster than working with NetCDF. This format is gaining lots of popularity for working with big data.
 :::
 
 ## `xarray`

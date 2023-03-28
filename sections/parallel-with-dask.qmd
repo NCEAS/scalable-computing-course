@@ -58,7 +58,7 @@ First, the instructor (and only the instructor!) will run:
 ```{python}
 #| eval: false
 from dask.distributed import LocalCluster
-cluster = LocalCluster(n_workers=5, memory_limit=0.1, processes=True)
+cluster = LocalCluster(n_workers=70, memory_limit='auto', processes=True)
 ```
 
 To connect to it, we will use the address that the scheduler is listening on. The port is generated randomly, so first the instructor needs to get address for you to use in your code. In a 'real world' scenario, this address would be given to you by the administrator of the Dask cluster.
