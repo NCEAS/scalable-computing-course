@@ -101,6 +101,15 @@ In the rest of this tutorial we will:
 - Add some code to the package and run it
 - Talk through testing strategies for the package
 
+:::{.callout-tip collapse="false"}
+
+### Sidebar on other package managers
+
+Poetry is a great packaging tool, especially for pure python packages that don't include libraries in other languages or require more complex build configurations. In those situations, there are many other tools in the python ecosystem that are useful, includeing tools like Hatch and PDM. The [pyOpenSci](https://www.pyopensci.org) initiative has created a great flow chart to help guide the choice of packaging tools, especially if you need to create more complex artifacts like wheels.
+
+![Image credit: pyOpenSci](https://www.pyopensci.org/python-package-guide/_images/python-package-tools-decision-tree.png)
+:::
+
 ### Get poetry in a new virtual environment
 
 To get started, we're using `virtualenvwrapper` to manage virtual environments in the course, so let's be sure it is installed in your environment. We're starting from the `scalable-computing-examples` workspace, so you should be in the `scomp` virtual environment in your terminal. So, make sure virtualenvwrapper is installed, and install it if it is not in `scomp`, using:
@@ -331,5 +340,6 @@ Python packages are an excellent mechanism to organize your modules for reuse bo
 
 ## Further reading
 
+- pyOpenSci [Python Package Guide](https://www.pyopensci.org/python-package-guide)
 - [Python Packages](https://py-pkgs.org) by Tomas Beuzen & Tiffany Timbers
 - [Python Poetry](https://python-poetry.org/)
