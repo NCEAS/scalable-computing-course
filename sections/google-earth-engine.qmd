@@ -323,6 +323,10 @@ myMap2.add_legend(legend_title="Burn Day", legend_dict=legend_dict)
 
 ## Additional Resources
 
+**Textbook:**
+
+- [Cloud-Based Remote Sensing with Google Earth Engine Book](https://www.eefabook.org/go-to-the-book.html)
+
 **Tools:**  
 
 -  [GEE Code Editor](https://code.earthengine.google.com/), a web-based IDE for using GEE (JavaScript)  
