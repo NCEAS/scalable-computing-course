@@ -253,7 +253,7 @@ Now, we can use the `sampleRegions` method on our `precip` image, passing the fe
 
 ```{python}
 #| eval: false
-res = precip.sampleRegions(collection = ee_fc)
+res = precip.sampleRegions(collection = ee_fc, scale = 30)
 ```
 
 This returns another feature collection, which we can convert back to a `pandas` data frame with just one function call.
