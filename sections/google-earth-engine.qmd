@@ -349,3 +349,4 @@ myMap2.add_legend(legend_title="Burn Day", legend_dict=legend_dict)
 **Other:**
 
 - [Climate Engine App](https://app.climateengine.com/climateEngine), a no-code user interface to Google Earth Engine for quickly and easily visualizing various Earth observation processes and variables
+- [Qiusheng Wu](https://github.com/giswqs)
