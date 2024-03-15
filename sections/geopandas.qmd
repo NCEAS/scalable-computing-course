@@ -2,6 +2,7 @@
 title: "Spatial and Image Data Using GeoPandas"
 execute:
   freeze: auto
+  eval: false
 ---
 
 ## Learning Objectives
