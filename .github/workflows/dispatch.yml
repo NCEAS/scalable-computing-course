@@ -1,0 +1,20 @@
+# Webook to build course website
+
+name: Dispatcher
+
+on:
+  push:
+    branches: ['**']  
+    
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Repository Dispatch
+      uses: peter-evans/repository-dispatch@v2.1.1
+      with:
+        token: ${{ secrets.TOKEN }}
+        repository: nceas/repro-research-course
+        event-type: quarto
+        client-payload: '{"branch": "${{ github.ref_name }}", "repo": "scalable-computing-course"}'
