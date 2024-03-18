@@ -2,7 +2,6 @@
 title: "Spatial and Image Data Using GeoPandas"
 execute:
   freeze: auto
-  eval: false
 ---
 
 ## Learning Objectives
@@ -381,7 +380,8 @@ From here we can do any additional `geopandas` operations we might be interested
 
 ```{python}
 reg_area = res_full.dissolve(by = "REGISTRATION_AREA_NAME", 
-                             aggfunc = 'sum')
+                             aggfunc = 'sum',
+                             numeric_only = True)
 ```
 
 
