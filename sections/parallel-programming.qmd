@@ -476,7 +476,7 @@ A set of tasks is considered 'pleasingly parallel' when large portions of the co
 occur when one task in the code depends on the results of another task or computation in the code.
 
 + **Race conditions**:
-ooccur when two tasks execute in parallel, but produce different results based on which task finishes first. Ensuring that results are correct under different timing situations requires careful testing.
+occur when two tasks execute in parallel, but produce different results based on which task finishes first. Ensuring that results are correct under different timing situations requires careful testing.
 
 + **Deadlocks**:
 occur when two concurrent tasks block on the output of the other. Deadlocks cause parallel programs to lock up indefinitely, and can be difficult to track down.
