@@ -5,8 +5,8 @@ book:
   title: "Scalable and Computationally Reproducible Approaches to Arctic Research"
   doi: 10.18739/A2QF8JM2V
   author: "S. Jeanette Clark, Matthew B. Jones, Samantha Csik, Carmen Galaz García, Bryce Mecum, Natasha Haycock-Chavez, Daphne Virlar-Knight, Juliet Cohen, Anna Liljedahl"
-  date: "March 27, 2023"
-  issued: 2023
+  date: "March 25, 2024"
+  issued: 2024
   reader-mode: false
   sidebar:
     title: "Course Materials"
@@ -38,7 +38,6 @@ book:
     - sections/adc-data-publishing.qmd
     - sections/group-project-3.qmd
     - sections/software-design-2.qmd
-    - sections/cloud-computing.qmd
     - sections/reproducibility-containers.qmd
     - sections/parquet-arrow.qmd
 
