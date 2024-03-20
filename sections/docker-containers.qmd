@@ -1,0 +1,47 @@
+---
+title: "Docker Containers"
+---
+
+## Learning Objectives
+
+- What is docker anyway?
+- Think about dependency management, reproducibility, and software
+- Become familiar with containers as a tool to improve computational reproducibility
+- Build and run docker containers to create reproducible python environments
+
+## Just what is a container?
+
+And why might I want one? 
+
+![](../images/virtualization.png)
+
+::: {layout="[[100],[70,30]]"}
+
+**Containers** A further step down the isolation road is to use a Container Runtime such as [`containerd`](https://containerd.io/) or [Docker Engine](https://docs.docker.com/engine/). Like virtual machines, containers provide mechanisms to create images that can be executed by a container runtime, and which provide stronger isolation among deployments. But they are also more lightweight, as the container only contains the libraries and executables needed to execute a target application, and not an entire guest operating system. They also are built using a layered file system, which allows multiple images to be layered together to create a composite that provides rich services without as much duplication. This means that applications run with fewer resources, start up and shut down more quickly, and can be migrated easily to other hosts in a network.
+
+![](../images/docker-small-logo.png)
+
+:::
+
+**Images**
+
+TODO: What is an image, and how does it relate to a container?
+
+## Hands-on with Containers and Docker
+
+Working with docker or containers requires a container runtime. One of the nicest lately is [Rancher Desktop](https://rancherdesktop.io/). Install the binary for you platform, and then after it starts, enter the configuration Preferences, and then deselect "Kubernetes" to disable the kubernetes distribution, which takes up a lot of resources.
+
+![](../images/rancher-k8s-config.png)
+
+There are many different tools you can use with docker, including the `docker` client tool, and the `containerd` ecosystem using `nerdctl` as a client tool. Both the `docker` command and the `nerdctl` command share the same commands.  A few quick example commands one might use in the docker ecosystem:
+
+- `docker pull python:3.9`: to grab an existing python image from the DockerHub repository
+- `docker run -it python:3.9 -- python`: to start a standard python interpreter
+- `docker build`: to build a new image from a Dockerfile configuration file
+
+Let's get started.
+
+## Your first container
+
+- `docker run hello-world`
+

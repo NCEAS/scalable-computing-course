@@ -36,6 +36,7 @@ book:
     - sections/software-design-1.qmd
     - sections/adc-data-publishing.qmd
     - sections/zarr.qmd
+    - sections/docker-containers.qmd
     - sections/software-design-2.qmd
     - sections/reproducibility-containers.qmd
 
