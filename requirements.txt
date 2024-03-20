@@ -25,8 +25,8 @@ seaborn==0.13.2
 shapely==2.0.3
 skimpy==0.0.14
 xarray==2024.2.0
-pdgraster @ git+https://github.com/jeanetteclark/viz-raster.git@develop
-pdgstaging @ git+https://github.com/jeanetteclark/viz-staging.git@develop
+pdgraster @ git+https://github.com/PermafrostDiscoveryGateway/viz-raster.git@scalable-computing-course
+pdgstaging @ git+https://github.com/PermafrostDiscoveryGateway/viz-staging.git@scalable-computing-course
 black==24.3.0
 poetry==1.8.2
 virtualenvwrapper==4.8.4
