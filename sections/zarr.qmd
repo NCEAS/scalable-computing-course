@@ -1,0 +1,8 @@
+---
+title: "Zarr"
+execute:
+  freeze: auto
+---
+
+
+## Learning Objectives

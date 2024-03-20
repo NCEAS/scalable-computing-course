@@ -29,17 +29,15 @@ book:
     - sections/data-structures-netcdf.qmd
     - sections/parallel-with-dask.qmd
     - sections/group-project-1.qmd
-    - sections/software-design-1.qmd
+    - sections/data-ethics.qmd
     - sections/geopandas.qmd
     - sections/ice-wedge-polygons.qmd
     - sections/group-project-2.qmd
-    - sections/data-ethics.qmd
-    - sections/google-earth-engine.qmd
+    - sections/software-design-1.qmd
     - sections/adc-data-publishing.qmd
-    - sections/group-project-3.qmd
+    - sections/zarr.qmd
     - sections/software-design-2.qmd
     - sections/reproducibility-containers.qmd
-    - sections/parquet-arrow.qmd
 
 bibliography: references.bib
 
