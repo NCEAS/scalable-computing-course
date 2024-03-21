@@ -33,9 +33,10 @@ In the final step of the workflow, we will take the raster files and resample th
 
 ![](../images/gp-step3.png)
 
-## Staging and Tiling
 
-Today we will undertake the first step of the workflow, staging and tiling the data. 
+Today we will undertake the first two steps of the workflow, staging and tiling the data, and then rasterizing it.
+
+## Staging and Tiling
 
 ![](../images/gp-step1.png)
 
@@ -45,11 +46,19 @@ In your small groups, work together to write the solution, but everyone should a
 
 Only one person in the group should run the parallel code.
 
+## Rasterizing GeoPackages
+
+In the last step, we staged the input files into GeoPackages. Now we will import those `.gpkg` files and write each as a raster (`.tif`). The resulting rasters will have 2 bands, one for each statistic we calculate based on the vector geometries in each pixel.
+
+We need to create the highest zoom level rasters before we create the lower zoom levels in the next lesson. This brings us one step closer to visualizing the ice wedge polygons on a basemap, with the ability to zoom in and out!
+
 ### Packages, Libraries, and Modules
 
 - [os 3.11.2](https://docs.python.org/3/library/os.html)
 - [parsl 2023.3.20](https://parsl.readthedocs.io/en/stable/)
 - [pdgstaging](https://github.com/PermafrostDiscoveryGateway/viz-staging)
+  - package developed by Permafrost Discovery Gateway software developer and designer Robyn Thiessen-Bock
+- [pdgraster](https://github.com/PermafrostDiscoveryGateway/viz-raster/tree/main)
   - package developed by Permafrost Discovery Gateway software developer and designer Robyn Thiessen-Bock
 - [geopandas0.11](https://geopandas.org/en/stable/docs.html)
 - [random](https://docs.python.org/3/library/random.html)
