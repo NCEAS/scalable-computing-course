@@ -4,5 +4,185 @@ execute:
   freeze: auto
 ---
 
-
 ## Learning Objectives
+
+## Introduction
+
+Cloud computing is distributed - meaning that files and processes are spread around different pieces of hardware that may or may not be located in the same place. There is great power in this - it enables flexibility and scalability of systems - but there are challenges associated with it too. One of those challenges is data storage and access. Medium sized datasets, like we have seen so far, work great in a netCDF file accessed by tools like xarray. What happens though, when datasets get extremely large (multiple terabytes)? Storing a couple of TB of data in a single netCDF file is not practical in most cases - especially when you are trying to leverage distributed computing where those data would be more efficiently accessed if they were in multiple files. Of course, one could (and many have) artificially split that terabyte scale dataset into multiple files, such as daily observations. This is fine -  but what if even the daily data is too large for a single file? The Zarr file format is meant to solve these problems and more, making it easier to access data on distributed systems.
+
+"[Zarr](https://zarr.readthedocs.io/en/stable/) is a file storage format for chunked, compressed, N-dimensional arrays based on an open-source specification." If this sounds familiar - it should! Zarr shares many characteristics in terms of functionality and design with NetCDF. Below is a mapping of NetCDF and Zarr terms from [the NASA earthdata wiki](https://wiki.earthdata.nasa.gov/display/ESO/Zarr+Format)
+
+| NetCDF Model | Zarr Model             |
+|--------------|------------------------|
+| File         | Store                  |
+| Group        | Group                  |
+| Variable     | Array                  |
+| Attribute    | User Attribute         |
+| Dimension    | (Not supported natively) |
+
+The first of these terms highlights the biggest difference between NetCDF and Zarr. While NetCDF is a file, the Zarr model instead considers a "store." Rather than storing all of the data in one file, Zarr stores data in a directory where each file is a chunk of data. Below is a diagram, also from [the earthdata wiki]([ESDIS](https://wiki.earthdata.nasa.gov/display/ESO/Zarr+Format)), showing an example layout.
+
+![](../images/zarr-chunks.png)
+
+In this layout diagram, key elements of the Zarr specification are introduced. 
+
+- Array: a multi-dimensional, chunked dataset
+- Attribute: ancillary data or metadata in key-value pairs
+- Group: a container for organizing multiple arrays or sub-groups within a hierarchical structure
+- Metadata: key information enabling correct interpretation of stored data format, eg shape, chunk dimensions, compression, and fill value.
+
+The chunked arrays and groups allow for easier distributed computing, and enable a high degree of parallelism. Because the chunks are in seperate files, you can run concurrent operations on different parts of the same dataset, and the dataset itself can exist on multiple nodes in a cluster or cloud computing configuration. A high degree of flexibility in compression and filtering schemes also means that chunks can be stored extremely efficiently. Finally, and importantly, Zarr integrates seamlessly into existing python tools like `xarray` and `dask` for data processing.
+
+## Using Zarr
+
+Zarr is a file format, which has implementations in several languages. The primary implementation is in Python, but there is also support in Java and R. Here, we will look at an example of how to use the Zarr format by looking at some features of the `zarr` library and how Zarr files can be opened with `xarray`.
+
+## Retrieving CMIP6 Data from Google Cloud
+
+Here, we will show how to uze Zarr and `xarray` to read in the CMIP 6 climate model data from the World Climate Research Program, hosted by [Googe Cloud](https://console.cloud.google.com/marketplace/details/noaa-public/cmip6?pli=1). This demonstration is based off of an example put together by [Pangeo](https://github.com/pangeo-data/pangeo-cmip6-examples)
+
+First, we will read in a csv file containing information about all of the stores associated with this dataset. First we'll load some libraries.
+
+```{python}
+import pandas as pd
+import numpy as np
+import zarr
+import xarray as xr
+import gcsfs
+```
+
+Next, we'll read in the csv.
+
+```{python}
+df = pd.read_csv('https://storage.googleapis.com/cmip6/cmip6-zarr-consolidated-stores.csv')
+df.head()
+```
+
+CMIP6 is an extremely large collection of datasets, with their own terminology. We'll be making a request based on the experiment id (scenario), table id (tables are organized roughly by themes), and variable id.
+
+For this example, we'll select data from a simulation of the recent past (historical) from the Ocean monthly (Omon) table, and select the sea surface height (tos) variable. We'll also only select results from NOAA Geophysical Fluid Dynamics Laboratory (NOAA-GFDL) runs.
+
+```{python}
+df_ta = df.query("activity_id=='CMIP' & table_id == 'Omon' & variable_id == 'tos' & experiment_id == 'historical' & institution_id == 'NOAA-GFDL'")
+df_ta
+```
+
+First we need to set up a connection to the Google Cloud Storage file system (GCSFS).
+
+```{python}
+#| eval: false
+gcs = gcsfs.GCSFileSystem(token='anon')
+```
+
+Now, we'll set the path to the most recent store from the table above, and create a mapping to the store using the connection to the Google Cloud Storage system.
+
+```{python}
+#| eval: false
+zstore = df_ta.zstore.values[-1]
+mapper = gcs.get_mapper(zstore)
+```
+
+Finally, we open the store using `xarray` and examine its metadata.
+
+```{python}
+#| eval: false
+ds = xr.open_zarr(mapper)
+ds
+```
+
+From here, we can easily grab a time slice and make a plot of the data.
+
+```{python}
+#| eval: false
+ds.tos.sel(time='1999-01').squeeze().plot()
+```
+
+We can also get a timeseries slice, here on the equator in the Eastern Pacific.
+
+```{python}
+#| eval: false
+ts = ds.tos.sel(lat = 0, lon = 272, method = "nearest")
+```
+
+And make a plot with a rolling annual mean.
+
+```{python}
+#| eval: false
+ts.plot(label = "monthly")
+ts.rolling(time = 12).mean().plot(label = "rolling mean")
+```
+
+## Creating a Zarr Dataset
+
+Create an array of 10,000 rows and 10,000 columns, filled with zeros, divided into chunks where each chunk is 1,000 x 1,000.
+
+```{python}
+import zarr
+import numpy as np
+z = zarr.zeros((10000, 10000), chunks=(1000, 1000), dtype='i4')
+z
+```
+
+We can then do normal numpy type things on our array:
+
+```{python}
+z[0, :] = np.arange(10000)
+z[:]
+```
+
+We can also save the file:
+
+```{python}
+zarr.save('data/example.zarr', z)
+```
+
+And open it:
+
+```{python}
+arr = zarr.open('data/example.zarr')
+arr
+```
+
+specify compression
+
+```{python}
+from numcodecs import Blosc
+
+compressor = Blosc(cname='zstd', clevel=3, shuffle=Blosc.BITSHUFFLE)
+data = np.arange(100000000, dtype='i4').reshape(10000, 10000)
+z = zarr.array(data, chunks=(1000, 1000), compressor=compressor)
+```
+
+
+can organize arrays via groups
+
+```{python}
+root = zarr.group()
+temp = root.create_group('temp')
+precip = root.create_group('precip')
+```
+
+assign arrays to groups
+
+```{python}
+t100 = temp.create_dataset('t100', shape=(10000, 10000), chunks=(1000, 1000), dtype='i4')
+t100
+```
+
+access groups
+
+```{python}
+root['temp']
+root['temp/t100'][:, 3]
+```
+
+examine the tree
+
+```{python}
+root.tree()
+```
+
+```{python}
+root.info
+```
+
