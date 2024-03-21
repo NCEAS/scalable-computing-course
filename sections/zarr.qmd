@@ -6,6 +6,10 @@ execute:
 
 ## Learning Objectives
 
+- Understand the principles of the Zarr file format
+- Recognize the primary use case for Zarr
+- Learn to access an example Zarr dataset from Google Cloud Storage
+
 ## Introduction
 
 Cloud computing is distributed - meaning that files and processes are spread around different pieces of hardware that may or may not be located in the same place. There is great power in this - it enables flexibility and scalability of systems - but there are challenges associated with it too. One of those challenges is data storage and access. Medium sized datasets, like we have seen so far, work great in a netCDF file accessed by tools like xarray. What happens though, when datasets get extremely large (multiple terabytes)? Storing a couple of TB of data in a single netCDF file is not practical in most cases - especially when you are trying to leverage distributed computing where those data would be more efficiently accessed if they were in multiple files. Of course, one could (and many have) artificially split that terabyte scale dataset into multiple files, such as daily observations. This is fine -  but what if even the daily data is too large for a single file? The Zarr file format is meant to solve these problems and more, making it easier to access data on distributed systems.
