@@ -1,5 +1,4 @@
 {
     "editor.hover.enabled": true,
-    "python.terminal.activateEnvInCurrentTerminal": true,
-    "python.defaultInterpreterPath": "~/.virtualenvs/scomp/bin/python"
+    "python.terminal.activateEnvInCurrentTerminal": true
 }

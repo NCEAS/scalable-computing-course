@@ -44,18 +44,6 @@ This approach combines the evolving approach to using a `Dockerfile` to precisel
 
 :::
 
-## Hands-off with Containers and Docker
-
-Working with docker or containers requires a container runtime. One of the nicest lately is [Rancher Desktop](https://rancherdesktop.io/). Install the binary for you platform, and then after it starts, enter the configuration Preferences, and then deselect "Kubernetes" to disable the kubernetes distribution, which takes up a lot of resources.
-
-![](../images/rancher-k8s-config.png)
-
-There are many different tools you can use with docker, including the Docker engine system from Docker.com using the `docker` client tool, and the `containerd` ecosystem using `nerdctl` as a client tool. Both the `docker` command and the `nerdctl` command share the same commands. The basics we will practice will be:
-
-- `nerdctl pull python:3.9`: to grab an existing python image from the DockerHub repository
-- `nerdctl run -it python:3.9 -- python`: to start a standard python interpreter
-- `nerdctl build`: to build a new image from a Dockerfile configuration file
-
 ## Discussion
 
 To wrap up this week, let's kick off a discussion with a couple of key questions.
