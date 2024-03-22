@@ -314,7 +314,7 @@ Now that we know the individual steps, let's run this over all of the districts.
 comm_clip['id'] = range(0,len(comm_clip))
 ```
 
- For each district (with `geometry` and `id`), we run the `features.rasterize` function. Then we calculate the sum of the values of the shipping raster `r_array` based on the indices in the raster where the district is located.
+ For each district (with `geometry` and `id`), we run the `features.rasterize` function. Then we calculate the sum of the values of the shipping raster based on the indices in the raster where the district is located.
 
 ```{python}
 #| results: false
