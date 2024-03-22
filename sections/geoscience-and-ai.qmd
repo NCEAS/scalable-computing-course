@@ -1,0 +1,19 @@
+---
+title: "AI in Arctic Science"
+---
+
+## AI in Arctic Science: Tracking and Mapping Arctic Permafrost Thaw
+
+::: {layout-ncol="2"}
+
+![](../images/cyber2a-logo.png)
+
+[Cyber2A](https://cyber2a.github.io/) is a project focused on increasing the relevance and utility of machine learning and deep learning for Arctic research. This will be accomplished bby designing a training curriculum on machine learning that focuses on Arctic researc problems, and that can introduce new epople to this field.  The Cyber2A network will serve as an important venue for collecting community input on training needs, to engage and recruit potential trainees, and to cultivate new connections with existing Arctic research communities to achieve collective and broader impacts of the Cyber2A training and education.
+
+:::
+
+## Slides
+
+Dr. Wenwen Li, 2024, **AI in Arctic Science: Tracking and Mapping Arctic Permafrost Thaw**
+
+- Download [AI in Arctic Science slides](../images/ai-in-arctic.pdf)
