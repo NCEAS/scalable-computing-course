@@ -133,7 +133,7 @@ We've been using python 3.10, which is installed on the server. What if you want
 
 :::{.column-page-right}
 ```bash
-❯ docker run -it python:3.12
+$ docker run -it python:3.12
 Unable to find image 'python:3.12' locally
 3.12: Pulling from library/python
 6ee0baa58a3d: Pull complete 
@@ -155,11 +155,55 @@ Hello from python!
 ```
 :::
 
+You can even use this image to run commands at the command prompt. The `-i` interactive and `-t` terminal options allow you to run a command interactively with terminal output.  Let's run a quick command to print the python version:
+
+:::{.column-page-right}
+```bash
+$ docker run -it --rm python:3.12 python -V
+Python 3.12.2
+```
+:::
+
+and we could run a little python command-line calculation from the image:
+
+:::{.column-page-right}
+```bash
+$ docker run -it --rm python:3.12 python -c 'print(f"Four plus one is {4+1}")'
+Four plus one is 5
+```
+:::
+
+If you were to run commands like this frequently, you'd build up a lot of container instances from your image, so instead we passed the `--rm` option to tell docker to delete the container (but not the image) when it is done executing each time.  So, at times you'll need to clean up. I've run the commands a few times interactively without remembering the `--rm` option, so now I can list and remove the containers that I don't need hanging around any more.
+
+:::{.column-page-right}
+```bash
+$ docker ps -a
+CONTAINER ID   IMAGE         COMMAND     CREATED             STATUS                           PORTS     NAMES
+d3f717354ed5   python:3.12   "python3"   About an hour ago   Exited (0) 59 minutes ago                  laughing_borg
+e882d6a89f2c   python:3.12   "python3"   About an hour ago   Exited (130) About an hour ago             interesting_elgamal
+9d984d596e4e   python:3.12   "python3"   About an hour ago   Exited (0) About an hour ago               adoring_jang
+b015e761fbab   hello-world   "/hello"    7 days ago          Exited (0) 7 days ago                      compassionate_wozniak
+1bf3a36a924c   hello-world   "/hello"    7 days ago          Exited (0) 7 days ago                      jolly_goldwasser
+
+$ docker rm laughing_borg interesting_elgamal adoring_jang compassionate_wozniak
+laughing_borg
+interesting_elgamal
+adoring_jang
+compassionate_wozniak
+
+$ docker ps -a
+CONTAINER ID   IMAGE         COMMAND    CREATED      STATUS                  PORTS     NAMES
+1bf3a36a924c   hello-world   "/hello"   7 days ago   Exited (0) 7 days ago             jolly_goldwasser
+```
+:::
+
+## Exploring available images and versions
+
 Now that version of python is available on your machine. When you list the image, you'll see that the python version is provided as the `tag`.
 
 :::{.column-page-right}
 ```bash
-❯ docker image ls
+$ docker image ls
 REPOSITORY                                          TAG       IMAGE ID       CREATED         SIZE
 python                                              3.12      ff82813aa87b   6 weeks ago     1.02GB
 hello-world                                         latest    ee301c921b8a   10 months ago   9.14kB
@@ -178,17 +222,18 @@ Be careful with images that you download from the internet -- they might contain
 
 ![](../images/dockerhub-python.png)
 
+Of course, python is just the start. You can find images for just about any software you need, including machine learning libraries like **TensorFlow** ([tensorflow/tensorflow](https://hub.docker.com/r/tensorflow/tensorflow)), databases like **Postresql** ([bitnami/postgresql](https://hub.docker.com/r/bitnami/postgresql)), search systems like **Solr** ([solr](https://hub.docker.com/_/solr)), and web servers like **nginx** ([nginx](https://hub.docker.com/_/nginx)).  Take a few mintues to explore the thousands of applications available at these image registries:
 
 
-### Spinning up ubuntu
+:::{layout-ncol="2"}
 
-- `docker run --name container1 -h myubuntu -it ubuntu:22.04`
-- `docker rm container1`
+[![](../images/dockerhub-logo.png)](https://hub.docker.com)
 
-Shell on running containers
-- `docker exec -it container1 -- bash`
+[![](../images/artifacthub-logo.png)](https://artifacthub.io/)
 
-## Dockerfiles
+:::
+
+## Build your own images
 
 - what they are and why they are important
 - basic structure
@@ -219,6 +264,14 @@ Container registries...
 Putting it all together, you can use the docker client tool to build an image from a `Dockerfile`, then run it as a container, and you can push that image to an image registry, or pull one down that you want to run on a particular machine.
 
 ![](../images/docker-workflow.png)
+
+### Spinning up ubuntu
+
+- `docker run --name container1 -h myubuntu -it ubuntu:22.04`
+- `docker rm container1`
+
+Shell on running containers
+- `docker exec -it container1 -- bash`
 
 ## Exercise
 
