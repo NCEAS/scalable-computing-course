@@ -1,5 +1,6 @@
 ---
 title: "Docker Containers"
+from: markdown+emoji
 ---
 
 ## Learning Objectives
@@ -215,7 +216,7 @@ The `TAG` associated with an image is typically used to indicate the version of 
 ::: {.column-margin}
 
 ::: {.callout-caution}
-Be careful with images that you download from the internet -- they might contain anything, including malware. Because you are running the code locally, you never know mischief might be managed, and you probably don't want to find out. So it is best to only run images from trusted sources. Generally, the 'official' images for projects are marked in image registries, and there are procedures to ensure they are from those trusted sources. But, it's also easy to spoof something that looks official, so put on your tinfoil hat when running unfamiliar images.
+Be careful with images that you download from the internet -- they might contain anything, including malware. Because you are running the code locally, you never know what mischief might be managed, and you probably don't want to find out. So it is best to only run images from trusted sources. Generally, the 'official' images for projects are marked in image registries, and there are procedures to ensure they are from those trusted sources. But, it's also easy to spoof something that looks official, so put on your tinfoil hat when running unfamiliar images.
 :::
 
 :::
@@ -233,12 +234,138 @@ Of course, python is just the start. You can find images for just about any soft
 
 :::
 
-## Build your own images
+## Custom images with Dockerfiles
+
+While pre-built images are highly useful, even more importantly, you can build your own custom images with the precise collection of software needed to run an analysis, a model, or visualize your data. This use of images to build custom containers creates portable and highly repeatible analyses because it allows us to declare the exact set of software needed in your computing environment. Basically, it allows you to take your pre-defined computing environment anywhere needed for execution, form your local laptop to the largest supercomputers in the world.
+
+:::{layout-ncol="2"}
+
+![](../images/docker-build.png)
+
+Images can be built by declaring their contents in a `Dockerfile`, which is a simple text file containing instructions on how to build the image and what it contains. In general, you can customize an existing image by adding folders and files contianing software and data that you need. To create an image, you can start by creating a `Dockerfile` that contains a `FROM` directive listing an existin image you want to build from. In our case, let's start by building an image based on the stock Ubuntu operating system.
+
+::: 
+
+```Dockerfile
+# Dockerfile for ADC Scalable Computing Course
+FROM ubuntu:22.04
+```
+
+In that file, the `FROM` command is the first directive, and it indicates that we want to build an image that extends the existing `ubuntu:22.04` image. So our image will start with everything that is present in Ubuntu. Technically, that is all we need to get started. Let's build and run the image to see what's there.
+
+:::{.column-page-right}
+```bash
+$ docker build -t adccourse:0.1 .
+[+] Building 0.0s (5/5) FINISHED                                                                                                                                    docker:default
+ => [internal] load .dockerignore                                                                                                                                             0.0s
+ => => transferring context: 2B                                                                                                                                               0.0s
+ => [internal] load build definition from Dockerfile                                                                                                                          0.0s
+ => => transferring dockerfile: 191B                                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:22.04                                                                                                               0.0s
+ => CACHED [1/1] FROM docker.io/library/ubuntu:22.04                                                                                                                          0.0s
+ => exporting to image                                                                                                                                                        0.0s
+ => => exporting layers                                                                                                                                                       0.0s
+ => => writing image sha256:7dbc68b81268657c977e24cfe712e6907f1cb76c08aaf6397f94a3149db11069                                                                                  0.0s
+ => => naming to docker.io/library/adccourse:0.1                                                                                                                              0.0s
+
+$ docker run -it adccourse:0.1
+root@76529c3b3358:/# pwd
+/
+root@76529c3b3358:/# ls
+bin  boot  dev  etc  home  lib  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@76529c3b3358:/# exit
+```
+:::
+
+:tada: **We have a working image, declared from our Dockerfile!** :tada:
+
+Now let's extend it to add some software we might need. For example, let's add python and some utilities. First, we'll use the `SHELL` directive to indicate that we want all future commmands from the Dockerfile to be run using the Bash shell, and the `WORKDIR` directive to set up our working directory to a better location than `/`. In this case, we will be building an application for the scalable computing (scomp) course, so we'll put our working files in a typical linux HOME directory location, `/home/scomp`.
+
+The `RUN` directive can be used to run any shell command that is needed to modify the image. In this example, we will use it to run the `apt update` and `apt install` commands to install the python package and some standard utilities on the system. Note how we use the `&&` operator to combine two bash commands into a single `RUN` invocation. When using `apt` in an image, you typically need to run `apt update` first to get the full list of software package sources that can be installed.
+
+```Dockerfile
+# Dockerfile for ADC Scalable Computing Course
+FROM ubuntu:22.04
+SHELL ["/bin/bash", "-c"]
+WORKDIR /home/scomp
+RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2
+```
+
+Build it again with `docker build -t adccourse:0.2 .`, and then let's inspect it by running `docker run -it adccourse:0.2`.  Note now that our working directory is `/home/scomp`, and you can now run the python3 command, which shows we have python 3.10 installed:
+
+```bash
+$ docker run -it adccourse:0.2
+root@e9566a19e24b:/home/scomp# pwd
+/home/scomp
+root@e9566a19e24b:/home/scomp# python3 -V
+Python 3.10.12
+root@e9566a19e24b:/home/scomp# exit
+```
+
+When we''ve been running these containers, we have not been using the `--rm` flag from before. So, you'll note that they are building up in our container list. We can clean them up with `docker rm` as we don't really intend to reuse these containers as we work through building up our image. And let's use `--rm` for future runs to prevent this from happening.
+
+:::{.column-page-right}
+```bash
+$ docker ps -a
+CONTAINER ID   IMAGE           COMMAND       CREATED          STATUS                            PORTS     NAMES
+e9566a19e24b   adccourse:0.2   "/bin/bash"   3 minutes ago    Exited (127) About a minute ago             affectionate_swanson
+d493605cfb60   adccourse:0.2   "/bin/bash"   5 minutes ago    Exited (0) 4 minutes ago                    sharp_elbakyan
+a9ab223669ac   adccourse:0.2   "/bin/bash"   5 minutes ago    Exited (127) 5 minutes ago                  wonderful_chaum
+76529c3b3358   adccourse:0.1   "/bin/bash"   22 minutes ago   Exited (0) 8 minutes ago                    heuristic_nash
+1bf3a36a924c   hello-world     "/hello"      8 days ago       Exited (0) 8 days ago                       jolly_goldwasser
+
+$ docker rm e9566a19e24b d493605cfb60 a9ab223669ac 76529c3b3358
+e9566a19e24b
+d493605cfb60
+a9ab223669ac
+76529c3b3358
+```
+:::
+
+```Dockerfile
+# Dockerfile for ADC Scalable Computing Course
+# Build with:
+#     docker build -t adccourse:0.1 .
+FROM ubuntu:22.04
+SHELL ["/bin/bash", "-c"]
+WORKDIR /home/scomp
+RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2
+RUN groupadd -r scomp && useradd -r -g scomp scomp
+RUN mkdir -p /home/scomp && chown scomp.scomp /home/scomp
+USER scomp:scomp
+RUN echo "source /usr/share/virtualenvwrapper/virtualenvwrapper.sh" >> /home/scomp/.bashrc
+COPY ./requirements.txt .
+RUN source /usr/share/virtualenvwrapper/virtualenvwrapper.sh && \
+        mkvirtualenv scomp && \
+        pip install --no-cache-dir --upgrade -r requirements.txt && \
+        echo "workon scomp" >> /home/scomp/.bashrc
+CMD ["/bin/bash"]
+```
 
 - what they are and why they are important
 - basic structure
 - write the simplest one possible ""
+- `docker build -t adccourse:0.1 .`
 - typical structure
+
+## Volume mounts
+
+- containers are ephemeral -- any data they create is lost when the image finishes executing
+- you can get data into and out of images by mounting volumes
+- think of a volume liek a thumbdrive -- when I plug it into one machine, it gets mounted there at a path, but if I plug it into a different machine, it might get mounted in a different location -- but it still contains the same content
+- there are many types of volumes that can be mounted, but the simplest is a folder on the local machine
+- docker makes it easy to mount a volume by specifying both which volume to mount and the path that you want it mounted at. For example, from our linux server I might take a folder from my local home directory (e.g., `/home/jones/project-data`) and mount it in another location in a docker container at (e.g., `/var/data`).
+- You control the permissions on the files and folders that you mount, which determines whether the processes you run in a script can read from or write to the volume. Permission issues can easily arise when you first start using mounted volumes, but just a small amount of tweaking of your Dockerfile can set the permissions straight.
+- Mount example (read-write)
+    - create a directory `mkdir ~/docker-project`
+    - create subdirectories for `input` and `output` and `scripts`
+    - save some data into the input directory
+    - create a script to open and plot the data and save it in the `scripts` directory
+        - the script should save the plot to the `output` directory
+    - Using the python image we built before, run the script and exit
+    - From the server, inspect the `~/docker-project` directory and note the output is now present
+
+
 
 ## Sharing images to registries
 Container registries...
