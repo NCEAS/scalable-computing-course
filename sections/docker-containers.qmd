@@ -25,7 +25,7 @@ From the following figure, one can see that a container is much more lightweight
 
 **Images** *An image is a snapshot of a computing environment.* It contains all of the files and data needed to execute a particular application or service, along with the instructions on which service should be run. But it is not executed per se. As a snapshot, an image represents a template that can be used to create one or more containers (each of which is an instantiation of the contents of the image). Images are also built using a layered file system, which allows multiple images to be layered together to create a composite that provides rich services without as much duplication. 
 
-**Containers** A container represents in instance of an image that can be run. Containers are executed in a Container Runtime such as [`containerd`](https://containerd.io/) or [Docker Engine](https://docs.docker.com/engine/). Like virtual machines, containers provide mechanisms to create images that can be executed by a container runtime, and which provide stronger isolation among deployments. But they are also more lightweight, as the container only contains the libraries and executables needed to execute a target application, and not an entire guest operating system. This means that applications run with fewer resources, start up and shut down more quickly, and can be migrated easily to other hosts in a network.
+**Containers** *A container represents in instance of an image that can be run.* Containers are executed in a Container Runtime such as [`containerd`](https://containerd.io/) or [Docker Engine](https://docs.docker.com/engine/). Like virtual machines, containers provide mechanisms to create images that can be executed by a container runtime, and which provide stronger isolation among deployments. But they are also more lightweight, as the container only contains the libraries and executables needed to execute a target application, and not an entire guest operating system. This means that applications run with fewer resources, start up and shut down more quickly, and can be migrated easily to other hosts in a network.
 
 ::: {.callout-note}
 
@@ -198,7 +198,7 @@ CONTAINER ID   IMAGE         COMMAND    CREATED      STATUS                  POR
 ```
 :::
 
-## Exploring available images and versions
+## Exploring image registries
 
 Now that version of python is available on your machine. When you list the image, you'll see that the python version is provided as the `tag`.
 
@@ -279,6 +279,8 @@ root@76529c3b3358:/# exit
 
 :tada: **We have a working image, declared from our Dockerfile!** :tada:
 
+### Adding software 
+
 Now let's extend it to add some software we might need. For example, let's add python and some utilities. First, we'll use the `SHELL` directive to indicate that we want all future commmands from the Dockerfile to be run using the Bash shell, and the `WORKDIR` directive to set up our working directory to a better location than `/`. In this case, we will be building an application for the scalable computing (scomp) course, so we'll put our working files in a typical linux HOME directory location, `/home/scomp`.
 
 The `RUN` directive can be used to run any shell command that is needed to modify the image. In this example, we will use it to run the `apt update` and `apt install` commands to install the python package and some standard utilities on the system. Note how we use the `&&` operator to combine two bash commands into a single `RUN` invocation. When using `apt` in an image, you typically need to run `apt update` first to get the full list of software package sources that can be installed.
@@ -322,10 +324,48 @@ a9ab223669ac
 ```
 :::
 
+### Add a user account
+
+When we ran our images previously, we noted that the image was running as the `root` user, and the default working directory was `/`. By setting `WORKDIR`, we are now working within the `/home/scomp` directory, but still as the user `root`. Best practice would be to create a dedicated user account that doesn't have the administrative priveledges of root. So, we'll create an account `scomp` and group `scomp` that will own all of the files we create and will run our processes. 
+
+```Dockerfile
+# Dockerfile for ADC Scalable Computing Course
+FROM ubuntu:22.04
+SHELL ["/bin/bash", "-c"]
+WORKDIR /home/scomp
+RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2
+RUN groupadd -r scomp && useradd -r -g scomp scomp
+RUN mkdir -p /home/scomp && chown scomp.scomp /home/scomp
+USER scomp:scomp
+```
+
+Rebuild the image (`docker build -t adccourse:0.3 .`) and run it, and you'll see that we are now running as the `scomp` user in the `/home/scomp` directory. This time, when we run it, we'll also use the `-h` hostname option to create a bit more readable hostname, rather than the container identifier.
+
+```bash
+$ docker run -it --rm -h adccourse adccourse:0.3
+scomp@adccourse:~$ pwd
+/home/scomp
+scomp@adccourse:~$ whoami
+scomp
+scomp@adccourse:~$ exit
+```
+
+### Add a python venv
+
+Now that we have a working image with python installed, lets configure the image to create a standardized python virtual environment with the python packages that we'll need in our application. Start by creating a `requirements.txt` file in the same directory as your `Dockerfile`, with the list of packages needed. We'll start with just one, `xarray`. 
+
+```bash
+$ echo "xarray==2024.2.0" >> requirements.txt
+$ cat requirements.txt
+xarray==2024.2.0
+```
+
+To create the virtualenv, we will need to first configure virtualenvwrapper, and then `COPY` the requirements.txt file into the image, and then finally make the virtual environment using `mkvirtualenv`, `pip`, and `workon`. We'll go through these in more detail after we build the image. Let's build it, this time tagging it as version `1.0`.
+
 ```Dockerfile
 # Dockerfile for ADC Scalable Computing Course
 # Build with:
-#     docker build -t adccourse:0.1 .
+#     docker build -t adccourse:1.0 .
 FROM ubuntu:22.04
 SHELL ["/bin/bash", "-c"]
 WORKDIR /home/scomp
@@ -339,18 +379,54 @@ RUN source /usr/share/virtualenvwrapper/virtualenvwrapper.sh && \
         mkvirtualenv scomp && \
         pip install --no-cache-dir --upgrade -r requirements.txt && \
         echo "workon scomp" >> /home/scomp/.bashrc
-CMD ["/bin/bash"]
 ```
 
-- what they are and why they are important
-- basic structure
-- write the simplest one possible ""
-- `docker build -t adccourse:0.1 .`
-- typical structure
+:::{.callout-note}
+**Layers**. Each of the directives in the `Dockerfile` builds a single image layer, and they are run in order. Each layer is registered using the sha256 identifier for the layer, which enables layers to be cached. Thus, if you already have a layer with a given hash built or pulled into your local registry, then subsequent `docker build` commands can reuse that layer, rather than building them from scratch. As a result, its best practice to put the layers that change infrequently at the top of the Dockerfile, and layers that might change more frequently (such as application-specfiic commands) near the bottom. This will speed things up by maximizing the use of CACHED layers, which can be seen in the output of `docker build`.
+
+```bash
+❯ docker build -t adccourse:1.0 .
+[+] Building 87.1s (13/13) FINISHED                                                                                                                docker:default
+ => [internal] load build definition from Dockerfile                                                                                                         0.0s
+ => => transferring dockerfile: 782B                                                                                                                         0.0s
+ => [internal] load .dockerignore                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                              0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:22.04                                                                                              0.0s
+ => [1/8] FROM docker.io/library/ubuntu:22.04                                                                                                                0.0s
+ => [internal] load build context                                                                                                                            0.0s
+ => => transferring context: 74B                                                                                                                             0.0s
+ => CACHED [2/8] WORKDIR /home/scomp                                                                                                                         0.0s
+ => CACHED [3/8] RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2                                                            0.0s
+ => CACHED [4/8] RUN groupadd -r scomp && useradd -r -g scomp scomp                                                                                          0.0s
+ => CACHED [5/8] RUN mkdir -p /home/scomp && chown scomp.scomp /home/scomp                                                                                   0.0s
+ => CACHED [6/8] RUN echo "source /usr/share/virtualenvwrapper/virtualenvwrapper.sh" >> /home/scomp/.bashrc                                                  0.0s
+ => CACHED [7/8] COPY ./requirements.txt .                                                                                                                   0.0s
+ => [8/8] RUN source /usr/share/virtualenvwrapper/virtualenvwrapper.sh &&         mkvirtualenv scomp &&         pip install --no-cache-dir --upgrade -r re  86.4s
+ => exporting to image                                                                                                                                       0.7s
+ => => exporting layers                                                                                                                                      0.7s
+ => => writing image sha256:5ac62fbbb619dba0441c87b842e5ee3b254b7e08901eda7595a0860249901a19                                                                 0.0s
+ => => naming to docker.io/library/adccourse:1.0                                                                                                             0.0s
+ ```
+:::
+
+When we run this image, we'll now see that the `scomp` virtualenvironment was activated, and that `xarray` can be imported in the `python3` environment. By being extremely explicit about the software being installed in the Dockerfile image, we can ensure that the environment we've built is highly **portable** and **reproducible**.
+
+```bash
+$ docker run -it --rm -h adccourse adccourse:1.0
+(scomp) scomp@adccourse:~$ python3
+Python 3.10.12 (main, Nov 20 2023, 15:14:05) [GCC 11.4.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import xarray
+>>>
+(scomp) scomp@adccourse:~$ exit
+```
+
+In summary, a `Dockerfile` is a portable mechanism to declare a complete computing environment in a single text file. Using a `Dockerfile` makes it straightforward to reliably rebuild the specified environment, installing the precise software and data needed in an image. 
+
 
 ## Volume mounts
 
-- containers are ephemeral -- any data they create is lost when the image finishes executing
+- containers are ephemeral -- any data they create is lost when the image finishes executing, unless you go to extra steps to preserve it
 - you can get data into and out of images by mounting volumes
 - think of a volume liek a thumbdrive -- when I plug it into one machine, it gets mounted there at a path, but if I plug it into a different machine, it might get mounted in a different location -- but it still contains the same content
 - there are many types of volumes that can be mounted, but the simplest is a folder on the local machine
@@ -368,12 +444,28 @@ CMD ["/bin/bash"]
 
 
 ## Sharing images to registries
+
+::: {.columns}
+
+::: {.column width="30%"}
+
+![](../images/docker-pull-push.png)
+
+:::
+
+::: {.column width="5%"}
+ 
+:::
+
+::: {.column width="65%"}
 Container registries...
 
 - GHCR
 - Dockerhub
 - ArtifactHub
 - ...
+:::
+:::
 
 ### Anatomy of an image
 
