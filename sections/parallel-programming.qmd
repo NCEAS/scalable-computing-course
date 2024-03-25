@@ -250,6 +250,8 @@ This execution took about :tada: *4 seconds* :tada:, which is about 6.25x faster
 But you may have also seen the thread pool wasn't much faster at all. In that case, you may be encountering the python Global Interpreter Lock (GIL), and would be better off with using parallel processes. Let's do that with `ProcessPoolExecutor`.
 
 ```{python}
+#| eval: false
+
 from concurrent.futures import ProcessPoolExecutor
 
 @timethis
@@ -524,7 +526,7 @@ for x in range(0,10):
     all_futures.append(future)
     print(future)
 
-time.sleep(2)
+time.sleep(3)
 
 for future in all_futures:
     print("Checking: ", future)
