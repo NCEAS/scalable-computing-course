@@ -12,27 +12,33 @@ title: "Data Ethics for Scalable Computing"
 
 ![](../images/calvin_hobbes5.png)
 
-**To recap, the Arctic Data Center is an openly-accessible data repository and the data published through the repository is open for anyone to reuse**, subject to conditions of the license (at the Arctic Data Center, data is released under one of two licenses: CC-0 Public Domain and CC-By Attribution 4.0). In facilitating use of data resources, the data stewardship community has converged on principles surrounding best practices for open data management. 
+**The Arctic Data Center is an openly-accessible data repository.** The data published through it is open for anyone to reuse, subject to one of two license: [CC-0 Public Domain](https://creativecommons.org/public-domain/cc0/) and [CC-By Attribution 4.0](https://creativecommons.org/licenses/by/4.0/deed.en). As an open access repository, we prioritize long-term preservation and embrace  principles from the data stewardship community, which established a set of best practices for open data management. n adherence, two principles adopted by the Arctic Data Center are **FAIR Principles** (Findable, Accessible, Interoperable, and Reproducible) and **CARE Principles for Indigenous Governance** (Collective Benefit, Authority to Control, Responsibility, Ethics). Both of which serve as frameworks in how to consider data ethics. 
+ 
+**The FAIR Principles** 
 
-Two principles that the Arctic Data Center explicitly adopts are FAIR Principles (Findable, Accessible, Interoperable, and Reproducible) and CARE Principles for Indigenous Governance (Collective Benefit, Authority to Control, Responsibility, Ethics). 
-
-FAIR and CARE principles are relevant in the context of data ethics for multiple reasons. FAIR speaks to how metadata is managed, stored, and shared. 
+FAIR speaks to how metadata is managed, stored, and shared. 
 
 ![](../images/fair.png)
 
+What is the difference between FAIR principles and open science?
 
 FAIR principles and open science are overlapping concepts, but are distinctive from one another. Open science supports a culture of sharing research outputs and data, and FAIR focuses on how to prepare the data. **The FAIR principles place emphasis on machine readability, “distinct from peer initiatives that focus on the human scholar” (Wilkinson et al 2016) and as such, do not fully engage with sensitive data considerations and with Indigenous rights and interests (Research Data Alliance International Indigenous Data Sovereignty Interest Group, 2019).**  Metadata can be FAIR but not open. For example, sensitive data (data that contains personal information) may not be appropriate to share, however sharing the anonymized metadata that is easily understandable will reduce research redundancy. 
 
 ![](../images/fair_care.png)
 
-Research has historically perpetuated colonialism and represented extractive practices, meaning that the research results were not mutually beneficial. These issues also related to how data was owned, shared, and used. **To address issues like these, the Global Indigenous Data Alliance (GIDA) introduced CARE Principles for Indigenous Data Governance to support Indigenous data sovereignty.** CARE Principles speak directly to how the data is stored and shared in the context of Indigenous data sovereignty. CARE Principles stand for: 
+Research has historically perpetuated colonialism and represented extractive practices, meaning that the research results were not mutually beneficial. These issues also related to how data was owned, shared, and used. **To address issues like these, the Global Indigenous Data Alliance (GIDA) introduced CARE Principles for Indigenous Data Governance to support Indigenous data sovereignty.** CARE Principles speak directly to how the data is stored and shared in the context of Indigenous data sovereignty. CARE Principles (Carroll et al. 2020) stand for: 
 
 * *Collective Benefit* - Data ecosystems shall be designed and function in ways that enable Indigenous Peoples to derive benefit from the data
 
 * *Authority to Control* - Indigenous Peoples’ rights and interests in Indigenous data must be recognized and their authority to control such data be empowered. Indigenous data governance enables Indigenous Peoples and governing bodies to determine how Indigenous Peoples, as well as Indigenous lands, territories, resources, knowledges and geographical indicators, are represented and identified within data.
 * *Responsibility* - Those working with Indigenous data have a responsibility to share how those data are used to support Indigenous Peoples’ self-determination and collective benefit. Accountability requires meaningful and openly available evidence of these efforts and the benefits accruing to Indigenous Peoples.
 * *Ethics* - Indigenous Peoples’ rights and wellbeing should be the primary concern at all stages of the data life cycle and across the data ecosystem.
-To many, the FAIR and CARE principles are viewed by many as complementary: CARE aligns with FAIR by outlining guidelines for publishing data that contributes to open-science and at the same time, accounts for Indigenous’ Peoples rights and interests.
+
+To many, the FAIR and CARE principles are viewed by many as complementary: CARE aligns with FAIR by outlining guidelines for publishing data that contributes to open-science and at the same time, accounts for Indigenous’ Peoples rights and interests (Carroll et al. 2020).
+
+
+In Arctic-based research, there is a paradigm shift to include more local Indigenous Peoples, their concerns, and knowledge throughout the research process (Loseto 2020). At the 2019 ArcticNet Annual Scientific Meeting (ASM), a 4-hour workshop was held between Indigenous and non-Indigenous participants to address the challenge of peer-reviewed publications arising when there is a lack of co-production and co-management in the research process between both groups. In the context of peer review, involving Indigenous People and Indigenous Knowledge (IK) not only can increase the validity of research findings, but also ensure the research is meaningful to those most impacted by it. Moreover,  it gives power back to the appropriate people to decide who can be knowledge holders of Indigenous knowledge (Loseto et al. 2020). This example underscores the advocacy CARE framework for Indigenous sovereignty, emphasizing the essential integration of people and purpose in the peer review publication stage. Failure to do so perpetuates power imbalances between science institutions and Indigenous communities. Hence, an equitable framework would adhere to the idea ‘Not about us without us’.  As an Arctic research community, it is important to reflect on ways we can continue to engage and incorporate Indigenous communities and if there are gaps to address. However, it is important there is no ‘one size fits all’ approach. 
+
 
 ## Ethics at the Arctic Data Center
 
@@ -40,7 +46,7 @@ To many, the FAIR and CARE principles are viewed by many as complementary: CARE 
 
 Sharing ethical practices openly, similar in the way that data is shared, enables deeper discussion about data management practices, data reuse, sensitivity, sovereignty and other considerations. Further, such transparency promotes awareness and adoption of ethical practices. 
 
-Inspired by CARE Principles for Indigenous Data Governance (Collective Benefit, Authority to Control, Responsibility, Ethics) and FAIR Principles (Findable, Accessible, Interoperable, Reproducible), we include a space in the data submission process for researchers to describe their ethical research practices. These statements are published with each dataset, and the purpose of these statements is to promote greater transparency in data collection and to guide other researchers. For more information about the ethical research practices statement, check out this blog.
+Inspired by CARE Principles for Indigenous Data Governance (Collective Benefit, Authority to Control, Responsibility, Ethics) and FAIR Principles (Findable, Accessible, Interoperable, Reproducible), we include a space in the data submission process for researchers to describe their ethical research practices. These statements are published with each dataset, and the purpose of these statements is to promote greater transparency in data collection and to guide other researchers. For more information about the ethical research practices statement, [check out this blog](https://arcticdata.io/all/blog/2022/04/applying-care-documenting-ethical-data-procedures-and-sensitive-data-at-the-arctic-data-center/).
 
 To help guide researchers as they write their ethical research statements, we have listed the following ethical considerations that are available on our website. The concerns are organized first by concerns that should be addressed by all researchers, and then by discipline. 
 
@@ -95,6 +101,7 @@ Other professional ethics can be found here
 2. Was any knowledge provided by community members?
 
 **Data Collection**
+
 3. Did participants receive compensation for their participation?
 4. Were decolonization methods used?
 
@@ -118,6 +125,7 @@ Other professional ethics can be found here
 5. How were animal care procedures evaluated, and do they follow community norms for organismal care?
 
 **Data Sharing and Publication**
+
 6. Did the species or study area represent any cultural importance to local communities, or include culturally sensitive information? Please explain how you came to this conclusion and how any cultural sensitivity was accounted for.
 
 ### Physical Sciences (e.g. Geology, Glaciology, and Ice Research)
@@ -125,6 +133,7 @@ Other professional ethics can be found here
 ![](../images/ice.png)
 
 **Research Planning**
+
 1. Was any knowledge provided by community members, including information regarding the study site?
 
 **Data Collection**
@@ -198,7 +207,7 @@ Menti question:
 2. Were any of the considerations new or surprising?
 3. Are there any for your relevant discipline that are missing?
 
-## Ethics in Machine Learning 
+## Ethics in Artificial Intelligence 
 
 Menti poll
 
@@ -233,6 +242,8 @@ Chen, W., & Quan-Haase, A. (2020) Big Data Ethics and Politics: Towards New Unde
 Crawford, K., & Paglen, T. (2019) Excavating AI: The Politics of Training Sets for Machine Learning. https://excavating.ai/
 
 Gray, J., & Witt, A. (2021) A feminist data ethics of care framework for machine learning: The what, why, who and how. First Monday, 26(12), Article number: 11833
+
+L.L.Loseto, K.Breton-Honeyman, D.N.Etiendem, N.Johnson, T.Pearce, J.Allen, A.Amos, J.Arqviq, J.E.Baak, É.Bélanger, M.P.T.Bourdages, J.R.Brammer, D.Fawcett, J.Gérin-Lajoie, G.Gilbert, K.Hansen-Craik, E.Loring, A.Perrin, and M.Slavitch. 2020. Indigenous participation in peer review publications and the editorial process: reflections from a workshop. Arctic Science. 6(3): 352-360. https://doi.org/10.1139/as-2020-0023
 
 Puebla, I., & Lowenberg, D. (2021) Recommendations for the Handling for Ethical Concerns Relating to the Publication of Research Data. FORCE 11. https://force11.org/post/recommendations-for-the-handling-of-ethical-concerns-relating-to-the-publication-of-research-data/ 
 
