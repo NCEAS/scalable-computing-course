@@ -236,13 +236,13 @@ Of course, python is just the start. You can find images for just about any soft
 
 ## Custom images with Dockerfiles
 
-While pre-built images are highly useful, even more importantly, you can build your own custom images with the precise collection of software needed to run an analysis, a model, or visualize your data. This use of images to build custom containers creates portable and highly repeatible analyses because it allows us to declare the exact set of software needed in your computing environment. Basically, it allows you to take your pre-defined computing environment anywhere needed for execution, form your local laptop to the largest supercomputers in the world.
+While pre-built images are highly useful, even more importantly, you can build your own custom images with the precise collection of software needed to run an analysis, a model, or visualize your data. This use of images to build custom containers creates portable and highly repeatible analyses because it allows us to declare the exact set of software needed in your computing environment. Basically, it allows you to take your pre-defined computing environment anywhere needed for execution, from your local laptop to the largest supercomputers in the world.
 
 :::{layout-ncol="2"}
 
 ![](../images/docker-build.png)
 
-Images can be built by declaring their contents in a `Dockerfile`, which is a simple text file containing instructions on how to build the image and what it contains. In general, you can customize an existing image by adding folders and files contianing software and data that you need. To create an image, you can start by creating a `Dockerfile` that contains a `FROM` directive listing an existin image you want to build from. In our case, let's start by building an image based on the stock Ubuntu operating system.
+Images can be built by declaring their contents in a `Dockerfile`, which is a simple text file containing instructions on how to build the image and what it contains. In general, you can customize an existing image by adding folders and files contianing software and data that you need. To create an image, you can start by creating a `Dockerfile` that contains a `FROM` directive listing an existing image you want to build from. In our case, let's start by building an image based on the stock Ubuntu operating system.
 
 ::: 
 
@@ -251,7 +251,7 @@ Images can be built by declaring their contents in a `Dockerfile`, which is a si
 FROM ubuntu:22.04
 ```
 
-In that file, the `FROM` command is the first directive, and it indicates that we want to build an image that extends the existing `ubuntu:22.04` image. So our image will start with everything that is present in Ubuntu. Technically, that is all we need to get started. Let's build and run the image to see what's there.
+In that file, the `FROM` command is the first directive, and it indicates that we want to build an image that extends the existing `ubuntu:22.04` image. So our image will start with everything that is present in Ubuntu. Technically, that is all we need to get started. Let's build and run the image to see what's there. We pass `docker build` the `-t` tag we'd like to use in the form of `name:version`, and the `.` to indicate that it should look for a `Dockerfile` in the current directory.
 
 :::{.column-page-right}
 ```bash
@@ -290,7 +290,7 @@ The `RUN` directive can be used to run any shell command that is needed to modif
 FROM ubuntu:22.04
 SHELL ["/bin/bash", "-c"]
 WORKDIR /home/scomp
-RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2
+RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2 tree
 ```
 
 Build it again with `docker build -t adccourse:0.2 .`, and then let's inspect it by running `docker run -it adccourse:0.2`.  Note now that our working directory is `/home/scomp`, and you can now run the python3 command, which shows we have python 3.10 installed:
@@ -326,16 +326,22 @@ a9ab223669ac
 
 ### Add a user account
 
-When we ran our images previously, we noted that the image was running as the `root` user, and the default working directory was `/`. By setting `WORKDIR`, we are now working within the `/home/scomp` directory, but still as the user `root`. Best practice would be to create a dedicated user account that doesn't have the administrative priveledges of root. So, we'll create an account `scomp` and group `scomp` that will own all of the files we create and will run our processes. 
+When we ran our images previously, we noted that the image was running as the `root` user, and the default working directory was `/`. By setting `WORKDIR`, we are now working within the `/home/scomp` directory, but still as the user `root`. Best practice would be to create a dedicated user account that doesn't have the administrative priveledges of root. So, we'll create an account `scomp` and group `scomp` that will own all of the files we create and will run our processes. We need to be sure the user has the same `uid` as you on your local machine, so run the `id` command on theserver to determine your `uid`, and substitute it in the Dockerfile:
+
+```bash
+jones@included-crab:~$ id
+uid=1003(jones) gid=1003(jones) groups=1003(jones), 126(docker)
+```
 
 ```Dockerfile
 # Dockerfile for ADC Scalable Computing Course
 FROM ubuntu:22.04
 SHELL ["/bin/bash", "-c"]
 WORKDIR /home/scomp
-RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2
-RUN groupadd -r scomp && useradd -r -g scomp scomp
+RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2 tree
+RUN groupadd --gid 1003 -r scomp && useradd --uid 1003 -r -g scomp scomp
 RUN mkdir -p /home/scomp && chown scomp.scomp /home/scomp
+RUN mkdir -p /var/data && chown scomp.scomp /var/data
 USER scomp:scomp
 ```
 
@@ -352,15 +358,15 @@ scomp@adccourse:~$ exit
 
 ### Add a python venv
 
-Now that we have a working image with python installed, lets configure the image to create a standardized python virtual environment with the python packages that we'll need in our application. Start by creating a `requirements.txt` file in the same directory as your `Dockerfile`, with the list of packages needed. We'll start with just one, `xarray`. 
+Now that we have a working image with python installed, lets configure the image to create a standardized python virtual environment with the python packages that we'll need in our application. Start by creating a `requirements.txt` file in the same directory as your `Dockerfile`, with the list of packages needed. We'll start with just two, `xarray` and `matplotlib`. 
 
 ```bash
-$ echo "xarray==2024.2.0" >> requirements.txt
-$ cat requirements.txt
+❯ cat requirements.txt
 xarray==2024.2.0
+matplotlib==3.8.3
 ```
 
-To create the virtualenv, we will need to first configure virtualenvwrapper, and then `COPY` the requirements.txt file into the image, and then finally make the virtual environment using `mkvirtualenv`, `pip`, and `workon`. We'll go through these in more detail after we build the image. Let's build it, this time tagging it as version `1.0`.
+To create the virtualenv, we will need to first configure virtualenvwrapper, and then `COPY` the requirements.txt file into the image, and then finally make the virtual environment inside the image using `mkvirtualenv`, `pip`, and `workon`. We'll go through these in more detail after we build the image. Let's build it, this time tagging it as version `1.0`.
 
 ```Dockerfile
 # Dockerfile for ADC Scalable Computing Course
@@ -369,8 +375,8 @@ To create the virtualenv, we will need to first configure virtualenvwrapper, and
 FROM ubuntu:22.04
 SHELL ["/bin/bash", "-c"]
 WORKDIR /home/scomp
-RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2
-RUN groupadd -r scomp && useradd -r -g scomp scomp
+RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2 tree
+RUN groupadd --gid 1003 -r scomp && useradd --uid 1003 -r -g scomp scomp
 RUN mkdir -p /home/scomp && chown scomp.scomp /home/scomp
 USER scomp:scomp
 RUN echo "source /usr/share/virtualenvwrapper/virtualenvwrapper.sh" >> /home/scomp/.bashrc
@@ -381,32 +387,41 @@ RUN source /usr/share/virtualenvwrapper/virtualenvwrapper.sh && \
         echo "workon scomp" >> /home/scomp/.bashrc
 ```
 
+The `COPY` directive is used to copy a file from the local machine into our image. In this case, we are copying the `requirements.txt` file that we created into the current directory (`.`), which in this case refers to the `WORKDIR` in the image (i.e., `/home/scomp`). We'll use this in the next step.
+
+The final `RUN` directive sets up oour virtual environment by doing the following:
+
+ - runs `source` to load the virtualenvwrapper commands for use during this build
+ - runs `mkvirtualenv` to create a new virtual environment titled `scomp`
+ - runs `pip` to install all of the packages from the requirements file
+ - appends `workon scomp` to our bash startup scripts so that the venv loads whenever the container is launched
+
 :::{.callout-note}
 **Layers**. Each of the directives in the `Dockerfile` builds a single image layer, and they are run in order. Each layer is registered using the sha256 identifier for the layer, which enables layers to be cached. Thus, if you already have a layer with a given hash built or pulled into your local registry, then subsequent `docker build` commands can reuse that layer, rather than building them from scratch. As a result, its best practice to put the layers that change infrequently at the top of the Dockerfile, and layers that might change more frequently (such as application-specfiic commands) near the bottom. This will speed things up by maximizing the use of CACHED layers, which can be seen in the output of `docker build`.
 
 ```bash
 ❯ docker build -t adccourse:1.0 .
-[+] Building 87.1s (13/13) FINISHED                                                                                                                docker:default
+[+] Building 24.7s (13/13) FINISHED                                                                                                                docker:default
  => [internal] load build definition from Dockerfile                                                                                                         0.0s
- => => transferring dockerfile: 782B                                                                                                                         0.0s
+ => => transferring dockerfile: 787B                                                                                                                         0.0s
  => [internal] load .dockerignore                                                                                                                            0.0s
  => => transferring context: 2B                                                                                                                              0.0s
  => [internal] load metadata for docker.io/library/ubuntu:22.04                                                                                              0.0s
  => [1/8] FROM docker.io/library/ubuntu:22.04                                                                                                                0.0s
  => [internal] load build context                                                                                                                            0.0s
- => => transferring context: 74B                                                                                                                             0.0s
+ => => transferring context: 115B                                                                                                                            0.0s
  => CACHED [2/8] WORKDIR /home/scomp                                                                                                                         0.0s
- => CACHED [3/8] RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2                                                            0.0s
+ => CACHED [3/8] RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2 tree                                                       0.0s
  => CACHED [4/8] RUN groupadd -r scomp && useradd -r -g scomp scomp                                                                                          0.0s
  => CACHED [5/8] RUN mkdir -p /home/scomp && chown scomp.scomp /home/scomp                                                                                   0.0s
  => CACHED [6/8] RUN echo "source /usr/share/virtualenvwrapper/virtualenvwrapper.sh" >> /home/scomp/.bashrc                                                  0.0s
- => CACHED [7/8] COPY ./requirements.txt .                                                                                                                   0.0s
- => [8/8] RUN source /usr/share/virtualenvwrapper/virtualenvwrapper.sh &&         mkvirtualenv scomp &&         pip install --no-cache-dir --upgrade -r re  86.4s
- => exporting to image                                                                                                                                       0.7s
- => => exporting layers                                                                                                                                      0.7s
- => => writing image sha256:5ac62fbbb619dba0441c87b842e5ee3b254b7e08901eda7595a0860249901a19                                                                 0.0s
- => => naming to docker.io/library/adccourse:1.0                                                                                                             0.0s
- ```
+ => [7/8] COPY ./requirements.txt .                                                                                                                          0.0s
+ => [8/8] RUN source /usr/share/virtualenvwrapper/virtualenvwrapper.sh &&         mkvirtualenv scomp &&         pip install --no-cache-dir --upgrade -r re  23.7s
+ => exporting to image                                                                                                                                       0.9s
+ => => exporting layers                                                                                                                                      0.9s
+ => => writing image sha256:a45927dfe598cb5397195ada7168743f80417faf04f14745f6d66ac352614501                                                                 0.0s
+ => => naming to docker.io/library/adccourse:1.0                                                                                                             0.0s                                                                                           0.0s
+```
 :::
 
 When we run this image, we'll now see that the `scomp` virtualenvironment was activated, and that `xarray` can be imported in the `python3` environment. By being extremely explicit about the software being installed in the Dockerfile image, we can ensure that the environment we've built is highly **portable** and **reproducible**.
@@ -421,8 +436,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 (scomp) scomp@adccourse:~$ exit
 ```
 
-In summary, a `Dockerfile` is a portable mechanism to declare a complete computing environment in a single text file. Using a `Dockerfile` makes it straightforward to reliably rebuild the specified environment, installing the precise software and data needed in an image. 
-
+In summary, a `Dockerfile` is a mechanism to declare a complete computing environment in a single text file. Using a `Dockerfile` makes it straightforward to reliably rebuild the specified environment, installing the precise software and data needed in a lightweight image. You can base images on a huge variety of existing software in the open source ecosystem.  Docker images are immutable, and can be run in parallel in multiple containers. In the next section, we start to explore how to get data in and out of these immutable containers.
 
 ## Volume mounts
 
@@ -433,7 +447,58 @@ In summary, a `Dockerfile` is a portable mechanism to declare a complete computi
 - docker makes it easy to mount a volume by specifying both which volume to mount and the path that you want it mounted at. For example, from our linux server I might take a folder from my local home directory (e.g., `/home/jones/project-data`) and mount it in another location in a docker container at (e.g., `/var/data`).
 - You control the permissions on the files and folders that you mount, which determines whether the processes you run in a script can read from or write to the volume. Permission issues can easily arise when you first start using mounted volumes, but just a small amount of tweaking of your Dockerfile can set the permissions straight.
 - Mount example (read-write)
-    - create a directory `mkdir ~/docker-project`
+    - create a directory `mkdir ~/adc-course`
+
+```bash
+$ mkdir ~/adc-course
+$ mkdir ~/adc-course/input
+$ mkdir ~/adc-course/output
+$ mkdir ~/adc-course/scripts
+# $ curl -o ~/adc-course/input/discharge-data.csv https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A8a43b1f4-5b67-4e9a-973e-b864a1d254ff
+$ cp discharge-data.csv ~/adc-course/input/
+$ cp max-discharge.py ~/adc-course/scripts/
+$ tree ~/adc-course
+/home/jones/adc-course
+|-- input
+|   └-- discharge-data.csv
+|-- output
+└-- scripts
+    └-- max-discharge.py
+
+$ docker run -it --rm -h adccourse -v ~/adc-course:/var/data adccourse:1.0 python /var/data/scripts/max-discharge.py
+
+(scomp) scomp@adccourse:~$ tree /var/data
+/var/data
+|-- input
+|   └-- discharge-data.csv
+|-- output
+└-- scripts
+    └-- max-discharge.py
+
+3 directories, 2 files
+
+$ docker run -it --rm -h adccourse -v ~/adc-course:/var/data adccourse:1.0
+(scomp) scomp@adccourse:~$ python3 /var/data/scripts/max-discharge.py
+/var/data/scripts/max-discharge.py:6: DtypeWarning: Columns (2) have mixed types. Specify dtype option on import or set low_memory=False.
+  discharge = pd.read_csv("/var/data/input/discharge-data.csv")
+(scomp) scomp@adccourse:~$ tree /var/data
+/var/data
+|-- input
+|   `-- discharge-data.csv
+|-- output
+|   `-- max-discharge.png
+`-- scripts
+    `-- max-discharge.py
+
+3 directories, 3 files
+(scomp) scomp@adccourse:~$ exit
+
+```
+
+![](../images/max-discharge.png)
+
+
+
     - create subdirectories for `input` and `output` and `scripts`
     - save some data into the input directory
     - create a script to open and plot the data and save it in the `scripts` directory
