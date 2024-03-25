@@ -99,7 +99,7 @@ workon
 Now let's install the dependencies for this course into that environment. To install our libraries we'll use `pip`. As of Python 3.4, `pip` is automatically included with your python installation. `pip` is a package manager for python, and you might have used it already to install common python libraries like `pandas` or `numpy`. `pip` goes out to [PyPI](https://pypi.org/), the Python Package Index, to download the code and put it in your `site-packages` directory. Note that on this shared server, your user directory will ahve a `site-packages` directory, in addition to one that our systems administrator manages as the root of the system.
 
 ```{.bash}
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 #### Installing locally (optional)
