@@ -2,7 +2,7 @@
 title: "AI in Arctic Science"
 ---
 
-## AI in Arctic Science: Tracking and Mapping Arctic Permafrost Thaw
+## Cyberinfrastructure and AI in Arctic Science: Tracking and Mapping Arctic Permafrost Thaw
 
 ::: {layout-ncol="2"}
 
@@ -12,8 +12,8 @@ title: "AI in Arctic Science"
 
 :::
 
-## Slides
+## Resources
 
-Dr. Wenwen Li, 2024, **AI in Arctic Science: Tracking and Mapping Arctic Permafrost Thaw**
+Dr. Wenwen Li, 2024, **Cyberinfrastructure and AI in Arctic Science: Tracking and Mapping Arctic Permafrost Thaw**
 
 - Download [AI in Arctic Science slides](../images/ai-in-arctic.pdf)
