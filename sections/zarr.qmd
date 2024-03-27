@@ -144,10 +144,47 @@ ts.plot(label = "daily")
 ts_ann.plot(label = "rolling annual mean")
 ```
 
-In this simple demonstration we used less than 15 lines of code to establish access to a multi-petabyte climate dataset, extract a relevant variable, calculate a rolling average, and make two plots. The advent of cloud computing and cloud-native formats like Zarr are completely changing how we can do science. In their abstract for a talk on the process of storing these data on Google Cloud, Henderson and Abernathy (2020) give the motivation:
+As an additional example, let's look at some ocean nitrate and phosphorous data. These tasks take a little longer since the data have an additional dimension - ocean depth.
+
+First, let's get the nitrate data by looking at the `no3` variable.
+
+```{python}
+#| eval: false
+no3 = df.query("activity_id=='CMIP' & table_id == 'Omon' & experiment_id == 'historical' & institution_id == 'NOAA-GFDL' & variable_id == 'no3'")
+ds_no3 = xr.open_zarr(gcs.get_mapper(no3.zstore.values[-1]), consolidated=True)
+```
+
+We'll also get the `po4` variable.
+
+```{python}
+#| eval: false
+po4 = df.query("activity_id=='CMIP' & table_id == 'Omon' & experiment_id == 'historical' & institution_id == 'NOAA-GFDL' & variable_id == 'po4'")
+ds_po4 = xr.open_zarr(gcs.get_mapper(po4.zstore.values[-1]), consolidated=True)
+```
+
+Now, use `xarray` methods to select data from the 2.5 level, and calculate the mean over time. 
+
+:::{.callout-tip collapse="true"}
+### Answer
+
+```{python}
+#| eval: false
+no3_mean = ds_no3.no3.sel(lev = 2.5).mean('time').squeeze().load()po4_mean = ds_po4.po4.sel(lev = 2.5).mean('time').squeeze().load()
+```
+
+:::
+
+```{python}
+#| eval: false
+import matplotlib.pyplot as plt
+plt.scatter(z_mean, t_mean)
+```
+
+
+In this simple demonstration we used less than 20 lines of code to establish access to a multi-petabyte climate dataset, extract a relevant variable, calculate a rolling average, and make two plots. The advent of cloud computing and cloud-native formats like Zarr are completely changing how we can do science. In their abstract for a talk on the process of storing these data on Google Cloud, Henderson and Abernathy (2020) give the motivation:
 
  
-> Aha! You have an awe-inspiring insight and can't wait to share your > results. Then an advisor/colleague/reviewer asks "But what do the CMIPx models say?". In 2008, with the 35Tb of CMIP3 data, you could, perhaps, come up with an answer in a few days, collecting needed data for all available models, making the time and space uniform, checking units and running your analysis. [@abernathy_agu]
+> Aha! You have an awe-inspiring insight and can't wait to share your results. Then an advisor/colleague/reviewer asks "But what do the CMIPx models say?". In 2008, with the 35Tb of CMIP3 data, you could, perhaps, come up with an answer in a few days, collecting needed data for all available models, making the time and space uniform, checking units and running your analysis. [@abernathy_agu]
 ```
 
 A few days seems optimistic, even, for sifting through 35TB of data. Imagine the process of finding, manually downloading, harmonizing, etc. many petabytes of CMIP6 data. The availability of these commonly used datasets via seamless tooling with the Pangeo universe of packages, has, to paraphrase the above abstract, has the potential to seriously accelerate earth and environmental science research.
@@ -186,7 +223,7 @@ arr = zarr.open('data/example.zarr')
 arr
 ```
 
-To create groups in your store, use the `create_group` method after creating a root group.
+To create groups in your store, use the `create_group` method after creating a root group. Here, we'll create two groups, `temp` and `precip`.
 
 ```{python}
 root = zarr.group()
