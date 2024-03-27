@@ -16,4 +16,7 @@ title: "AI in Arctic Science"
 
 Dr. Wenwen Li, 2024, **Cyberinfrastructure and AI in Arctic Science: Tracking and Mapping Arctic Permafrost Thaw**
 
-- Download [AI in Arctic Science slides](../images/ai-in-arctic.pdf)
+- Download [GeoAI: Where machine leanrning and big data converge in GIScience](..images/GeoAI.pdf) 
+- Download [Capturing the dance of the earth: PolarGlobe; Real-time scientific visualization of vector field data to support climate science](../images/polarglobe.pdf) 
+- Download [Segment Anything Model Can Not Segment Anything: Assessing AI Foundation Model’s Generalizability in Permafrost Mapping](../images/remotesensing-16-00797-v3.pdf)  
+Download [Lowering the Barriers for Accesing Distributed Geospatial Big Data to Advance Spatial Data Science: The PolarHub Solution](../images/Li_PolarHub_2018.pdf)
