@@ -12,9 +12,11 @@ from: markdown+emoji
 
 ## Just what is a container?
 
+*A container represents an instance of an image that can be run.*
+
 And why might I want one? In short, as a very lightweight way to create a reproducible computing environment. Containers have some desirable properties:
 
-- **Declarative**: The are defined by a clear procedure making it possible to reliably rebuild an identical container in a variety of environments, promototing reproducibility
+- **Declarative**: Containers are defined by a clear procedure making it possible to reliably rebuild an identical container in a variety of environments, promototing reproducibility
 - **Portable**: Containers are designed to run on a container runtime which works identically across systems, so you can launch a container from a Mac, Linux, or Windows and get the same output every time
 - **Lightweight**: Containers contain only the exact files and data needed for a specific application, without all of the extra operating system baggage found in virtual machines
 - **Scalable**: Containers can be launched multiple times from their source image, and thus can be horizontally scaled across a compute cluster to parallelize operations
@@ -25,7 +27,7 @@ From the following figure, one can see that a container is much more lightweight
 
 **Images** *An image is a snapshot of a computing environment.* It contains all of the files and data needed to execute a particular application or service, along with the instructions on which service should be run. But it is not executed per se. As a snapshot, an image represents a template that can be used to create one or more containers (each of which is an instantiation of the contents of the image). Images are also built using a layered file system, which allows multiple images to be layered together to create a composite that provides rich services without as much duplication. 
 
-**Containers** *A container represents in instance of an image that can be run.* Containers are executed in a Container Runtime such as [`containerd`](https://containerd.io/) or [Docker Engine](https://docs.docker.com/engine/). Like virtual machines, containers provide mechanisms to create images that can be executed by a container runtime, and which provide stronger isolation among deployments. But they are also more lightweight, as the container only contains the libraries and executables needed to execute a target application, and not an entire guest operating system. This means that applications run with fewer resources, start up and shut down more quickly, and can be migrated easily to other hosts in a network.
+**Containers** *A container represents an instance of an image that can be run.* Containers are executed in a Container Runtime such as [`containerd`](https://containerd.io/) or [Docker Engine](https://docs.docker.com/engine/). Like virtual machines, containers provide mechanisms to create images that can be executed by a container runtime, and which provide stronger isolation among deployments. But they are also more lightweight, as the container only contains the libraries and executables needed to execute a target application, and not an entire guest operating system. This means that applications run with fewer resources, start up and shut down more quickly, and can be migrated easily to other hosts in a network.
 
 ::: {.callout-note}
 
@@ -38,6 +40,32 @@ The [Docker](https://docker.com) system was one of the first widespread implemen
 :::
 
 :::
+
+## Installing Rancher Desktop 
+
+::: {layout="[[80,20]]"}
+
+Working with docker or containers requires a container runtime.  Whether you're on a Mac, Windows, or Linux machine, you can run containers through a variety of different runtime systems. One of the nicest lately is [Rancher Desktop](https://rancherdesktop.io/). Install the binary for your platform, and then after it starts, open the Preferences dialog to configure it. 
+
+![](../images/rancher-desktop-logo.png)
+
+:::
+
+First, under the `Virtual Machine` tab, configure it to use a reasonable amount of your local machine's resources, say about 50 of the CPUs and memory. Second, deselect "Kubernetes" to disable the kubernetes distribution, which takes up a lot of resources if you're not using it.
+
+:::{layout-ncol="2"}
+
+![](../images/rancher-vm-config.png)
+
+![](../images/rancher-k8s-config.png)
+
+:::
+
+There are many different tools you can use with docker, including the `docker` client tool, and the `containerd` ecosystem using `nerdctl` as a client tool. Both the `docker` client command and the `nerdctl` command share the same command syntax.
+
+## Container and Image portability
+
+Images are portable across container runtimes that share the same architecture (e.g., all ARM processors, or x86 processors). This makes it easy to launch and run a container by downloading an image for your architecture, and executing it in a container runtime like `containerd` or `dockerd`. While we will be working on your local Rancher Desktop instance, images you build could also be run on other hosts, such as a linux server, or on a cluster of servers, if they were built for that architecture and have `containerd` installed. Because the container runtime is typically run as the `root` or administrative user, many high-performance computing centers will only expose container runtimes such as [Apptainer](https://apptainer.org/), which supports a more sophisticated security model, or [Kubernetes](https://kubernetes.io), which creates a fully-featured orchestration system.
 
 ## Hands-on with Containers and Docker
 
@@ -557,19 +585,4 @@ Putting it all together, you can use the docker client tool to build an image fr
 Shell on running containers
 - `docker exec -it container1 -- bash`
 
-## Exercise
-
-- Optional?
-
-## Bonus info: Running containers locally
-
-Working with docker or containers requires a container runtime.  If you're on a Mac or Windows machine, you can run containers through a variety of different runtime systems. One of the nicest lately is [Rancher Desktop](https://rancherdesktop.io/). Install the binary for you platform, and then after it starts, enter the configuration Preferences, and then deselect "Kubernetes" to disable the kubernetes distribution, which takes up a lot of resources if you're not using it.
-
-![](../images/rancher-k8s-config.png)
-
-There are many different tools you can use with docker, including the `docker` client tool, and the `containerd` ecosystem using `nerdctl` as a client tool. Both the `docker` command and the `nerdctl` command share the same commands.  A few quick example commands one might use in the docker ecosystem:
-
-- `docker pull python:3.9`: to grab an existing python image from the DockerHub repository
-- `docker run -it python:3.9 -- python`: to start a standard python interpreter
-- `docker build`: to build a new image from a Dockerfile configuration file
 
