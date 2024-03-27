@@ -146,8 +146,8 @@ ts_ann.plot(label = "rolling annual mean")
 
 In this simple demonstration we used less than 15 lines of code to establish access to a multi-petabyte climate dataset, extract a relevant variable, calculate a rolling average, and make two plots. The advent of cloud computing and cloud-native formats like Zarr are completely changing how we can do science. In their abstract for a talk on the process of storing these data on Google Cloud, Henderson and Abernathy (2020) give the motivation:
 
-```> 
-Aha! You have an awe-inspiring insight and can't wait to share your results. Then an advisor/colleague/reviewer asks "But what do the CMIPx models say?". In 2008, with the 35Tb of CMIP3 data, you could, perhaps, come up with an answer in a few days, collecting needed data for all available models, making the time and space uniform, checking units and running your analysis. [@abernathy_agu]
+ 
+> Aha! You have an awe-inspiring insight and can't wait to share your > results. Then an advisor/colleague/reviewer asks "But what do the CMIPx models say?". In 2008, with the 35Tb of CMIP3 data, you could, perhaps, come up with an answer in a few days, collecting needed data for all available models, making the time and space uniform, checking units and running your analysis. [@abernathy_agu]
 ```
 
 A few days seems optimistic, even, for sifting through 35TB of data. Imagine the process of finding, manually downloading, harmonizing, etc. many petabytes of CMIP6 data. The availability of these commonly used datasets via seamless tooling with the Pangeo universe of packages, has, to paraphrase the above abstract, has the potential to seriously accelerate earth and environmental science research.
