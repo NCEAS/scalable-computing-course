@@ -4,11 +4,34 @@ title: "Reproducibility and Containers"
 
 ## Learning Objectives
 
-- Think about dependency management, reproducibility, and software
-- Become familiar with containers as a tool to improve computational reproducibility
+- Think about dependency management, reproducibility and software management
 - Discuss how the techniques from this class can improve reproducibility
 
+
 - Slides: [Accelerating synthesis science through reproducible science](../images/2022-09-repro-sci.pdf)
+
+## Summary
+
+In this course we reviewed many tools and techniques for how to make research more reproducible and scalable. These tools focus around three main areas: the environment, the data, and the code.
+
+### Reproducible Environments
+
+- Virtual environments with `venv` and `virtualenvwrapper`
+- Python dependencies with `requirements.txt`
+- Containers with Docker
+
+### Accessible Data
+
+- Publishing with the Arctic Data Center
+- Formats for large datasets: NetCDF and Zarr
+
+### Scalable Python
+
+- Parallel with `concurrent.futures`, `parsl`, `dask`
+- N-dimensional data access with `xarray`
+- Geospatial analysis with `geopandas` and `rasterio`
+- Software design and python packages
+
 
 ## Software collapse
 
@@ -44,11 +67,12 @@ This approach combines the evolving approach to using a `Dockerfile` to precisel
 
 :::
 
+
+
 ## Discussion
 
 To wrap up this week, let's kick off a discussion with a couple of key questions.
 
 - As we learn new tools for scalable and reproducible computing, what can we as software creators do to improve robustness and ease maintenance of our packages?
 - Given the fragility of software ecosystems, are you worried about investing a lot of time in learning and building code for proprietary cloud systems? Can we compel vendors to keep their systems open?
-- How much can technological solutions such as containers truly address the issues around depencies, maintainability, and sustainability of scientific software? 
 - What relative fraction of the research budget should funders invest in software infrastructure, data infrastructure, and research outcomes?
