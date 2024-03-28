@@ -354,12 +354,7 @@ a9ab223669ac
 
 ### Add a user account
 
-When we ran our images previously, we noted that the image was running as the `root` user, and the default working directory was `/`. By setting `WORKDIR`, we are now working within the `/home/scomp` directory, but still as the user `root`. Best practice would be to create a dedicated user account that doesn't have the administrative priveledges of root. So, we'll create an account `scomp` and group `scomp` that will own all of the files we create and will run our processes. We need to be sure the user has the same `uid` as you on your local machine, so run the `id` command on theserver to determine your `uid`, and substitute it in the Dockerfile:
-
-```bash
-jones@included-crab:~$ id
-uid=1003(jones) gid=1003(jones) groups=1003(jones), 126(docker)
-```
+When we ran our images previously, we noted that the image was running as the `root` user, and the default working directory was `/`. By setting `WORKDIR`, we are now working within the `/home/scomp` directory, but still as the user `root`. Best practice would be to create a dedicated user account that doesn't have the administrative priveledges of root. So, we'll create an account `scomp` and group `scomp` that will own all of the files we create and will run our processes.
 
 ```Dockerfile
 # Dockerfile for ADC Scalable Computing Course
@@ -367,7 +362,7 @@ FROM ubuntu:22.04
 SHELL ["/bin/bash", "-c"]
 WORKDIR /home/scomp
 RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2 tree
-RUN groupadd --gid 1003 -r scomp && useradd --uid 1003 -r -g scomp scomp
+RUN groupadd -r scomp && useradd -r -g scomp scomp
 RUN mkdir -p /home/scomp && chown scomp.scomp /home/scomp
 RUN mkdir -p /var/data && chown scomp.scomp /var/data
 USER scomp:scomp
@@ -404,7 +399,7 @@ FROM ubuntu:22.04
 SHELL ["/bin/bash", "-c"]
 WORKDIR /home/scomp
 RUN apt update && apt -y install python3 pip virtualenvwrapper vim nano iproute2 tree
-RUN groupadd --gid 1003 -r scomp && useradd --uid 1003 -r -g scomp scomp
+RUN groupadd -r scomp && useradd -r -g scomp scomp
 RUN mkdir -p /home/scomp && chown scomp.scomp /home/scomp
 USER scomp:scomp
 RUN echo "source /usr/share/virtualenvwrapper/virtualenvwrapper.sh" >> /home/scomp/.bashrc
@@ -466,25 +461,42 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 In summary, a `Dockerfile` is a mechanism to declare a complete computing environment in a single text file. Using a `Dockerfile` makes it straightforward to reliably rebuild the specified environment, installing the precise software and data needed in a lightweight image. You can base images on a huge variety of existing software in the open source ecosystem.  Docker images are immutable, and can be run in parallel in multiple containers. In the next section, we start to explore how to get data in and out of these immutable containers.
 
+## Anatomy of image layers
+
+Containers are ephemeral. Any data they create is lost when the container is deleted, unless you go to extra steps to preserve it. This is because the container is actually composed of a set of layers, each of which contains a filesystem with a set of files that gets merged with the files from the other layers to produce a union filesystem that contains all of the files. Each of the layers in an image is layered on top of the one before it, and so higher layers in the stack take precedence if they contain files at identical paths. Each of these layers from the image is read-only, but a top-most rad/write layer is set up to allow on container-specific changes, giving the appearance that the whole filesytem is writable.
+
+![Overlay images, from https://docs.docker.com/storage/storagedriver/](../images/docker-layers.webp)
+
+One of the benefits of this layering system is that each layer is immutable and cached, so running many copies of a container each uses the same [set of cached layers](https://dev.to/napicella/how-are-docker-images-built-a-look-into-the-linux-overlay-file-systems-and-the-oci-specification-175n), adding only the thin read/write layers at the top. 
+
+So, how do we get data out of our containers?
+
 ## Volume mounts
 
-- containers are ephemeral -- any data they create is lost when the image finishes executing, unless you go to extra steps to preserve it
-- you can get data into and out of images by mounting volumes
-- think of a volume liek a thumbdrive -- when I plug it into one machine, it gets mounted there at a path, but if I plug it into a different machine, it might get mounted in a different location -- but it still contains the same content
-- there are many types of volumes that can be mounted, but the simplest is a folder on the local machine
-- docker makes it easy to mount a volume by specifying both which volume to mount and the path that you want it mounted at. For example, from our linux server I might take a folder from my local home directory (e.g., `/home/jones/project-data`) and mount it in another location in a docker container at (e.g., `/var/data`).
-- You control the permissions on the files and folders that you mount, which determines whether the processes you run in a script can read from or write to the volume. Permission issues can easily arise when you first start using mounted volumes, but just a small amount of tweaking of your Dockerfile can set the permissions straight.
-- Mount example (read-write)
-    - create a directory `mkdir ~/adc-course`
+One approach to getting data out of a container is to mount one or more storage volumes from either the local host or from an accessible network into the container. You can think of a volume like a USB flash drive -- when I plug it into one machine, it gets mounted there at a particular path, but if I plug it into a different machine, it might get mounted in a different location. But it still contains the same data and files.
+
+While there are many types of volumes that can be mounted, the simplest is a folder on the local machine that is mounted to be accessible within the container. Docker makes it easy to mount a folder by specifying which folder to mount and the path that you want it mounted at in the container. For example, from a server I might take a folder from my local home directory (e.g., `/home/jones/adc-course`) and mount it in another location in a docker container at (e.g., `/var/data`).
+
+You control the permissions on the files and folders that you mount, which determines whether the processes you run in a script can read from or write to the volume. Permission issues can easily arise when you first start using mounted volumes, but just a small amount of tweaking of your Dockerfile can set the permissions straight.
+
+### Setup a local directory to preserve data
+
+THe first step is to create a host directory on the local machine that contains files and daa that we want to mount. To start, create a directory `~/adc-course` in your HOME directory, and create `input`, `output`, and `scripts` as children.
+
+We'll be using an sample river flow discharge data from the Arcctic Data Center:
+
+> The Arctic Great Rivers Observatory. (2024). Arctic Great Rivers Observatory Biogeochemistry and Discharge Data, North America and Siberia, 2003 - 2024. Arctic Data Center. doi:10.18739/A2BC3SZ84.
+
+Copy the discharge-data.csv file into the `input` directory you created, and copy the sample analysis script `max-discharge.py` into the `scripts` directory.
 
 ```bash
 $ mkdir ~/adc-course
 $ mkdir ~/adc-course/input
 $ mkdir ~/adc-course/output
 $ mkdir ~/adc-course/scripts
-# $ curl -o ~/adc-course/input/discharge-data.csv https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A8a43b1f4-5b67-4e9a-973e-b864a1d254ff
-$ cp discharge-data.csv ~/adc-course/input/
+$ cp discharge-data.csv ~/adc-course/input/    # From doi:10.18739/A2BC3SZ84
 $ cp max-discharge.py ~/adc-course/scripts/
+$ chmod -R go+rwX ~/adc-course
 $ tree ~/adc-course
 /home/jones/adc-course
 |-- input
@@ -492,8 +504,14 @@ $ tree ~/adc-course
 |-- output
 └-- scripts
     └-- max-discharge.py
+```
 
-$ docker run -it --rm -h adccourse -v ~/adc-course:/var/data adccourse:1.0 python /var/data/scripts/max-discharge.py
+### Run the container and mount the volume
+
+When running a docker container, use the `-v` option to mount a volume. For a host folder, this takes the form `-v /path/to/local/dir:/path/in/container`. For example, we might want to mount the host directory that we created above from `~/adc-course/` into a directory in the container at `/var/data`, as follows:
+
+```bash
+❯ docker run -it --rm -h adccourse -v ~/adc-course:/var/data adccourse:1.0
 
 (scomp) scomp@adccourse:~$ tree /var/data
 /var/data
@@ -502,39 +520,51 @@ $ docker run -it --rm -h adccourse -v ~/adc-course:/var/data adccourse:1.0 pytho
 |-- output
 └-- scripts
     └-- max-discharge.py
+```
 
-3 directories, 2 files
+Note how the directory has the same structure and contents, but is located in a different path from the root (`/var/data`). Notice also that, because we set up our docker image with our `scomp` python virtual environment, it is active when we log in interactively. So we can easily launch our python script using that venv, which writes its output plot to `/var/data/output`.
 
-$ docker run -it --rm -h adccourse -v ~/adc-course:/var/data adccourse:1.0
-(scomp) scomp@adccourse:~$ python3 /var/data/scripts/max-discharge.py
+```bash
+(scomp) scomp@adccourse:~$ python /var/data/scripts/max-discharge.py
 /var/data/scripts/max-discharge.py:6: DtypeWarning: Columns (2) have mixed types. Specify dtype option on import or set low_memory=False.
   discharge = pd.read_csv("/var/data/input/discharge-data.csv")
 (scomp) scomp@adccourse:~$ tree /var/data
 /var/data
 |-- input
-|   `-- discharge-data.csv
+|   └-- discharge-data.csv
 |-- output
-|   `-- max-discharge.png
-`-- scripts
-    `-- max-discharge.py
+|   └-- max-discharge.png
+└-- scripts
+    └-- max-discharge.py
 
 3 directories, 3 files
 (scomp) scomp@adccourse:~$ exit
-
+exit
 ```
+
+:::{layout-ncol="2"}
 
 ![](../images/max-discharge.png)
 
+Our analytical script created a summary plot of maximum discharge volume for three rivers from the Arctic Rivers dataset. Because we built a completely repeatable image from a Dockerfile, creating this analysis environment is highly **repeatable**. Because the image that is produced contains a deterministic virtual environment that can be run on many hosts, it is both **portable** and **scalable**. And because the images are built from immutable, cacheable layers, the whole system is **lightweight**, even when running many instances of the container. We can wrap up by showing that the analysis is completely reproducible by running the whole thing from a single command:
 
+:::
 
-    - create subdirectories for `input` and `output` and `scripts`
-    - save some data into the input directory
-    - create a script to open and plot the data and save it in the `scripts` directory
-        - the script should save the plot to the `output` directory
-    - Using the python image we built before, run the script and exit
-    - From the server, inspect the `~/docker-project` directory and note the output is now present
+```bash
+$ docker run -it --rm -h adccourse -v ~/adc-course:/var/data adccourse:1.0 bash -i -c "workon scomp && python /var/data/scripts/max-discharge.py"
+/var/data/scripts/max-discharge.py:6: DtypeWarning: Columns (2) have mixed types. Specify dtype option on import or set low_memory=False.
+  discharge = pd.read_csv("/var/data/input/discharge-data.csv")
+$ tree ~/adc-course
+/home/jones/adc-course
+|-- input
+|   └-- discharge-data.csv
+|-- output
+|   └-- max-discharge.png
+└-- scripts
+    └-- max-discharge.py
+```
 
-
+Finally, you can publish your `Dockerfile` along with your input data, output data, and scripts to create a fully reproducible data package. We encourage this type of fully reproducible package at the [Arctic Data Center](https://arcticdata.io), and can help with the details of adding such artifacts to your packages.
 
 ## Sharing images to registries
 
@@ -551,25 +581,15 @@ $ docker run -it --rm -h adccourse -v ~/adc-course:/var/data adccourse:1.0
 :::
 
 ::: {.column width="65%"}
-Container registries...
+In addition to archiving your source code and Dockerfile at an archival repository, you may also find it helpful to publish your built images to an image registry such as Dockerhub, ArtifactHub, or GitHub Packages (formerly GitHub Container Registry (ghcr.io)). You might want to do this to publicly share the image so that others can run your image, or so that you can deploy the image on many nodes of a cluster, or simply so that you can access it without rebuilding it for future analytical runs.
 
-- GHCR
-- Dockerhub
-- ArtifactHub
-- ...
+:::{layout-align="center"}
+![](../images/github-logo.png)
+:::
+
 :::
 :::
 
-### Anatomy of an image
-
-- images and layers
-- why layers are important
-- Dockerfiles and layers
-
-### OCI
-
-- layers and sha checksums
-- saving layers and images
 
 ## Container lifecycle
 
@@ -577,12 +597,7 @@ Putting it all together, you can use the docker client tool to build an image fr
 
 ![](../images/docker-workflow.png)
 
-### Spinning up ubuntu
+## References
 
-- `docker run --name container1 -h myubuntu -it ubuntu:22.04`
-- `docker rm container1`
-
-Shell on running containers
-- `docker exec -it container1 -- bash`
-
-
+- [Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
+- Open Container Initiative [Image Specification](https://specs.opencontainers.org/image-spec/layer/?v=v1.0.1)
