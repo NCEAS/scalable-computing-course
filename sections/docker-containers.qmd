@@ -51,7 +51,7 @@ Working with docker or containers requires a container runtime.  Whether you're 
 
 :::
 
-First, under the `Virtual Machine` tab, configure it to use a reasonable amount of your local machine's resources, say about 50 of the CPUs and memory. Second, deselect "Kubernetes" to disable the kubernetes distribution, which takes up a lot of resources if you're not using it.
+First, under the `Virtual Machine` tab, configure it to use a reasonable amount of your local machine's resources, say about 50% of the CPUs and memory. Second, deselect "Kubernetes" to disable the kubernetes distribution, which takes up a lot of resources if you're not using it.
 
 :::{layout-ncol="2"}
 
@@ -463,7 +463,7 @@ In summary, a `Dockerfile` is a mechanism to declare a complete computing enviro
 
 ## Anatomy of image layers
 
-Containers are ephemeral. Any data they create is lost when the container is deleted, unless you go to extra steps to preserve it. This is because the container is actually composed of a set of layers, each of which contains a filesystem with a set of files that gets merged with the files from the other layers to produce a union filesystem that contains all of the files. Each of the layers in an image is layered on top of the one before it, and so higher layers in the stack take precedence if they contain files at identical paths. Each of these layers from the image is read-only, but a top-most rad/write layer is set up to allow on container-specific changes, giving the appearance that the whole filesytem is writable.
+Containers are ephemeral. Any data they create is lost when the container is deleted, unless you go to extra steps to preserve it. This is because the container is actually composed of a set of layers, each of which contains a filesystem with a set of files that gets merged with the files from the other layers to produce a union filesystem that contains all of the files. Each of the layers in an image is layered on top of the one before it, and so higher layers in the stack take precedence if they contain files at identical paths. Each of these layers from the image is read-only, but a top-most read/write layer is set up to allow container-specific changes, giving the appearance that the whole filesytem is writable.
 
 ![Overlay images, from https://docs.docker.com/storage/storagedriver/](../images/docker-layers.webp)
 
@@ -481,7 +481,7 @@ You control the permissions on the files and folders that you mount, which deter
 
 ### Setup a local directory to preserve data
 
-THe first step is to create a host directory on the local machine that contains files and daa that we want to mount. To start, create a directory `~/adc-course` in your HOME directory, and create `input`, `output`, and `scripts` as children.
+The first step is to create a host directory on the local machine that contains files and data that we want to mount. To start, create a directory `~/adc-course` in your HOME directory, and create `input`, `output`, and `scripts` as children.
 
 We'll be using an sample river flow discharge data from the Arcctic Data Center:
 
