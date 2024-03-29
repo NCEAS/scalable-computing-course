@@ -1,9 +1,99 @@
 ---
-title: "Docker for HPC and Cloud"
+title: "Containers in HPC and Cloud"
 ---
 
 ## Learning Objectives
 
-- Docker in HPC
+- Discuss Docker in high performace computing environments
+- Explore orchestration formats
+- Learn how to use docker compose to build a workflow
+- Explore a real world Kubernetes service
 
-## Just what is a container?
+## Container orchestration systems
+
+Container orchestration is the process of linking multiple containers into an integrated application. These applications can represent a computational workflow, a backend service or data store, a frontend application, or some combination of these and others. Let's explore a few container orchestration systems.
+
+### compose
+
+[Docker Compose](https://docs.docker.com/compose/) is "a tool for defining and running multi-container applications". This is the essence of orchestration. With just the `compose` application, you can link multiple containers into an integrated application to run it on demand. This is particularly useful to quickly bring up a backend and frontend application, say one that uses a database (like `postgresql`) or an caching server (like `redis`) and combine it with a web-based frontend. 
+
+### swarm
+
+### kubernetes
+![](../images/k8s-logo.png)
+
+### Parsl
+
+![](../images/parsl-logo-white.svg)
+
+```python
+# Define the square task.
+import parsl
+@python_app
+def square(x):
+    return x * x
+
+# Launch four parallel square tasks.
+futures = [square(i) for i in range(4)]
+
+# Retrieve results.
+squares = [future.result() for future in futures]
+print(squares)
+# -> [0, 1, 4, 9]
+```
+
+
+### Ray.io
+
+![](../images/ray-logo.png)
+
+![](../images/ray-components.png)
+
+[Ray Core](https://docs.ray.io/en/latest/ray-core/walkthrough.html) is fairly analogous to Parsl, and provides the core functionality for distributed execution. 
+
+```python
+# Define the square task.
+@ray.remote
+def square(x):
+    return x * x
+
+# Launch four parallel square tasks.
+futures = [square.remote(i) for i in range(4)]
+
+# Retrieve results.
+print(ray.get(futures))
+# -> [0, 1, 4, 9]
+```
+
+### Kubeflow
+
+[Kubeflow](https://www.kubeflow.org/)
+![](../images/kubeflow-logo.png)
+
+```python
+# Kubeflow pipeline example
+from kfp import dsl
+
+@dsl.component
+def say_hello(name: str) -> str:
+    hello_text = f'Hello, {name}!'
+    print(hello_text)
+    return hello_text
+
+@dsl.pipeline
+def hello_pipeline(recipient: str) -> str:
+    hello_task = say_hello(name=recipient)
+    return hello_task.output
+```
+
+## How weird is the weather?
+
+Big data are hard to visualize, and sometimes we need to come up with clever ways to pack a lot of data into a small space. This is exactly what the **How weird is the weather?** project did ([hwitw github](https://github.com/howweirdistheweather/weather_app)), by summarizing the [ERA5 climate reanalysis data](https://www.ecmwf.int/en/forecasts/dataset/ecmwf-reanalysis-v5) and providing a means to visualize over 70 years of climate data interactively. This project, developed by Brentwood Higman, John McInnes, and Katmai McKittrick, shows where climate extremes have occurred over the ERA5 dataset. First, pick any location on the globe via the work-in-progress [sandcastle demo](https://sandcastle.cesium.com/#c=tVbbcts2EP0VVNNp6YlK2pn2RbLcxqodeyKPMpEvD2HGgcmViDEEcABQspPo37sASAq6uE0e+qIRsddzdrHYJCETMKQqiSmADEGzak4WDJag4lRkUmhTf5IBEbCsVeJbdxalncx9D6UwlAlQaadLvqaCEA0cMsOkuBQ5y6iRqkemlGvoWikTU3kqn9ZHq4N+E05nIACj1Vm4TxSmIknIKdVAbj6MyFQqciGX5A6YysmlJteY/h1QRLFOvFLcGQxI2imMKXUvSYolM8vfcljEVGF+WU4NjZlMtKH4lTCRw1NcmDn/M+00UYcKHUPI0FxW6BcWIAwpqMg5Iq+D1p+bdE0yBSAmJc3gzBpdeKXIgYszKhZUH+wJh6rMPONfasiScY60qgUQqp2U0wfgXpgzXXL63JybhEvR8uD1WkadUwY6pnkeuWI5hZ4vHJaukMuwWP7klGaPMyUrkfeIUVUjmmLle8jv0e/lE9IipLYgsQ28uJCKfbHNwceKzZjoNYxcbAni0dn5dW20AIW12DG53TiOr8fva/2SPQEfT6caMJWA9SFVBv9R8To6+qNLDg+c/qppN0+2FDYcoSRDbTlTtCxYRjIpsa+MxPMpes9JDhmbUyyAUUzMkNppJVx/21acUzMMrCNnzQRW8cCTqsBUSjR5XWGbxkb+DTPsCh1q4+m5DRe9tgmu6hzfMuyZuufWyrpLZnh1g4LbvqB1hkGCqDWiZiTFxEmirKGlTo5NSfRTcOiT7VuR758NZgYhu81pPFVy3tIdRAi8YIIzZqocfBroaB9zodPWYsMN3tMf81IbeCd1JT5uZdPd8vspoP/cBXiJaDeKrOzi7vL6zg6n3ebw9KMfpxNx9/lGKfpcl8BD+8+kEG1gG+L5jOeDn79u6q9+QYf2dNPt6vOPg3MT4l+Ajaz8fwGGIXpkB1maVoeHp4ddgjZOvAWxlodIb8q8Gat+IOJLUGwArzHjbCal1MzhZIbgr9WacfkAIQWVc+iR6xrX9t3yvLXeBmuF/lrsf+2QRQU7W3dkBp4MynyUANMFy2F/fQqU+NQ2MtkI5UZ84O0dAO4BCgc9kdParb9xAT0YhINxkvc1rPYqfvzUjNWJjWA9tNBrj36KhZSSZcE4ING/apQufIj6FY1xpF+KsjJvHKqohRehJszxJdvos5bc9WOX0TkoGpcsezzjnJVasjzyz0bjAh/EvIHSPHjuXfYVh8bMisJJhNA8co3hXh6y/XbGrg0Omrc2KFPfnwTTd+Xrtofotac+8ZfY8ZlxhOnXkjicmOi/MfVB0s5LyxOhJsUadsir/Vc8wOBqTTauQRAqvAu2x7ov7ULXzyXEV+Obydn91fj2rH2ZP0DOFO6Q9hX2s1W2j6DF+T1dEr5we4j89o3sOY45iJkp2hptV6Te8+wiufUI7cz5bddh++B2iobNjvoqdOi0lriLymUsSxARanWxaPcPnIrHtPMdhNp16n44uhy+s8qdbudYm2cOJx4SIX+xeSmVyyKK48TAHPdHLFfyUGWPYOJM66Yjj5PQ9DhnC8LywZ7VH+tCtUbJtOJ8wr7gGnhynKD+jimXFJeY2RhXL9xarVpxdDLyh3EcHyf4ud/SSMkfqNry/A8):
+
+![](../images/hwitw-globe.png)
+
+Next, configure the application to show the climate variables of interest. Here, I show the extremes of the average daily temperature where I live in Juneau, AK. The cold temperatures from the 1950s and 1960s haven't been seen in decades, and now the hottest temperatures are constant throughout the summer.
+
+![](../images/hwitw-jnu-temp.png)
+
+

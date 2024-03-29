@@ -485,7 +485,7 @@ The first step is to create a host directory on the local machine that contains 
 
 We'll be using an sample river flow discharge data from the Arcctic Data Center:
 
-> The Arctic Great Rivers Observatory. (2024). Arctic Great Rivers Observatory Biogeochemistry and Discharge Data, North America and Siberia, 2003 - 2024. Arctic Data Center. doi:10.18739/A2BC3SZ84.
+> The Arctic Great Rivers Observatory. (2024). Arctic Great Rivers Observatory Biogeochemistry and Discharge Data, North America and Siberia, 2003 - 2024. Arctic Data Center. [doi:10.18739/A2BC3SZ84](https://doi.org/10.18739/A2BC3SZ84).
 
 Copy the discharge-data.csv file into the `input` directory you created, and copy the sample analysis script `max-discharge.py` into the `scripts` directory.
 
