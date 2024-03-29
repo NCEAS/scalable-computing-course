@@ -115,7 +115,7 @@ CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS        
 ```
 :::
 
-Note that only the `nginx` container is running. The `hello-world` container started up, printed its content, and immediately exited. Whereas the `nginx` image is designed to run the web server continuously until told to shut down. You can shut down the containers with `docker-compose down`:
+Note that only the `nginx` container is running. The `hello-world` container started up, printed its content, and immediately exited. Whereas the `nginx` image was designed to run the web server continuously until told to shut down. You can shut down the containers with `docker-compose down`:
 
 :::{.column-page-right}
 ```bash
@@ -136,9 +136,42 @@ Using the `adccourse:1.0` image that we created earlier, write a docker-compose 
 - copies the png file to the `web` directory that you just set up
 - modifies the `index.html` file to display the plot on the web page
 - starts up your web application with `docker-compose up --detach`
+
+Hint: You will likely want to use the [`command`](https://docs.docker.com/compose/compose-file/05-services/#command) keyword in your `compose.yaml` service description to modify the command that is run by the `adccourse:1.0` container.
 :::
 
-### swarm
+:::{.callout-tip collapse="true"}
+## Solution
+
+First, modify our base `index.html` to display the dynamically generated image:
+
+```bash
+echo '<img src="max-discharge.png">' >> ~/adc-course/web/index.html
+```
+
+Second, add `adccourse` to the `compose.yaml`, and change the `command` to also copy the produced png file into the web directory.
+
+```yaml
+services:
+  web:
+    image: nginx
+    ports:
+      - 8000:80
+    volumes:
+      - ~/adc-course/web:/usr/share/nginx/html
+    depends_on:
+      - adccourse
+  adccourse:
+    image: adccourse:1.0
+    volumes:
+      - ~/adc-course:/var/data
+    command: [ "bash", "-i", "-c", "workon scomp && python /var/data/scripts/max-discharge.py && cp /var/data/output/max-discharge.png /var/data/web/max-discharge.png" ]
+```
+Note how we used `depends_on` to ensure the `adccourse` service produces the png file before the `nginx` service is started. Our web page now inlcudes the dynamically generated plot:
+
+![](../images/docker-compose-web-plot.png)
+
+:::
 
 ### kubernetes
 
