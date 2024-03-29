@@ -2,7 +2,7 @@
 title: "Reproducibility and Containers"
 ---
 
-## Learning Objectives
+## Learning Objectives 
 
 - Think about dependency management, reproducibility and software management
 - Discuss how the techniques from this class can improve reproducibility
