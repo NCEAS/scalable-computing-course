@@ -1,11 +1,11 @@
 ---
-title: "Containers in HPC and Cloud"
+title: "Container orchestration"
 ---
 
 ## Learning Objectives
 
-- Discuss containers in high performace computing environments
-- Explore orchestration formats
+- Discuss containers in high performace computing and cloud computing
+- Explore orchestration approaches
 - Learn how to use docker compose to build a workflow
 - Explore a real world Kubernetes service
 
@@ -197,13 +197,13 @@ Like other container systems, Kubernetes is configured through a set of YAML con
 
 ::: {layout="[[70,30]]"}
 
-Parsl is all about the beef...
+Parsl provides a simple mechanism to decorate python functions to be executed concurrently on a variety of platforms and under different execution models, inlcuding the `ThreadPoolExecutor` and the `HighThroughputExecutor`, which we used previously.
 
 ![](../images/parsl-logo.png)
 
 :::
 
-Remember the basic layout of a parsl app:
+Remember the basic layout of a parsl app, in which the `@python_app` decorator is used to wrap task functions that should be executed by parsl.
 
 ```python
 # Define the square task.
@@ -211,30 +211,60 @@ import parsl
 @python_app
 def square(x):
     return x * x
-
-# Launch four parallel square tasks.
-futures = [square(i) for i in range(4)]
-
-# Retrieve results.
-squares = [future.result() for future in futures]
-print(squares)
-# -> [0, 1, 4, 9]
 ```
 
+This works because parsl is configured ahead of time to use a particular type of execution environment on the nodes of a cluster. The `HighThroughPutExector` that we used previously with a `LocalProvider` can instead be easily configured to work using a `KubernetesProvider`. Here's a modification to our previous Config to use Kubernetes:
+
+```python
+activate_env = 'workon scomp'
+htex_kube = Config(
+    executors=[
+        HighThroughputExecutor(
+            label='kube-htex',
+            cores_per_worker=cores_per_worker,
+            max_workers=5,
+            worker_logdir_root='/',
+            # Address for the pod worker to connect back
+            address=address_by_route(),
+            provider=KubernetesProvider(
+
+                # Namespace in K8S to use for the run
+                namespace='adccourse',
+
+                # Docker image url to use for pods
+                image='ghcr.io/mbjones/k8sparsl:0.3',
+
+                # Command to be run upon pod start
+                 worker_init=activate_env,
+
+                # Should follow the Kubernetes naming rules
+                pod_name='parsl-worker',
+
+                nodes_per_block=1,
+                init_blocks=1,
+                min_blocks=1,
+                # Maximum number of pods to scale up
+                max_blocks=1,
+                # persistent_volumes (list[(str, str)]) – List of tuples
+                # describing persistent volumes to be mounted in the pod.
+                # The tuples consist of (PVC Name, Mount Directory).
+                # persistent_volumes=[('mypvc','/var/data')]
+            ),
+        ),
+    ]
+)
+```
+With that change, Parsl will send tasks to Kubernetes worker pods. Otherwise, the remaining parsl code is the smae as previously.
 
 ### Ray.io
 
 ::: {layout="[[60,40]]"}
 
-[Ray](https://ray.io) is structured so similarly to Parsl...
+[Ray](https://ray.io) is structured similarly to Parsl, and also uses decorators to wrap task functions that are to be executed. [Ray Core](https://docs.ray.io/en/latest/ray-core/walkthrough.html) is the part that is fairly analogous to Parsl, and provides the core functionality for distributed execution for any kind of compute jobs.  
 
 ![](../images/ray-logo.png)
 
 :::
-
-![](../images/ray-components.png)
-
-[Ray Core](https://docs.ray.io/en/latest/ray-core/walkthrough.html) is fairly analogous to Parsl, and provides the core functionality for distributed execution. 
 
 ```python
 # Define the square task.
@@ -250,10 +280,24 @@ print(ray.get(futures))
 # -> [0, 1, 4, 9]
 ```
 
+The execution model also returns a `Future`-like object that can be queried to get the function results when it is complete.
+
+Ray Core defines `Tasks`, `Actors`, and `Objects`, all of which can be used on ditributed clusters such as Kubernetes. And like Parsl, Ray can be configured to use a wide variety of execution backends such as Kubernetes. Ray also provides a mature framework for training, tuning, and serving machine learning models and the associated data.
+
+![](../images/ray-components.png)
+
+
 ### Kubeflow
 
-[Kubeflow](https://www.kubeflow.org/)
+::: {layout="[[85,15]]"}
+
+[Kubeflow](https://www.kubeflow.org/) is yet another orchestration package designed to asynchronously execute tasks from containers, but Kubeflow is specific to Kubernetes clusters. 
+
 ![](../images/kubeflow-logo.png)
+
+:::
+
+Here's the syntax for defining a Kubeflow component and pipeline to be executed on worker pods of a Kubernetes cluster. The similarities with the previous packages are striking. But unlike Parsl and Ray, a workflow built in Kubeflow can't be run on the rich variety of high performace computing clusters supported by the other libraries.
 
 ```python
 # Kubeflow pipeline example
