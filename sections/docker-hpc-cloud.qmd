@@ -96,4 +96,55 @@ Next, configure the application to show the climate variables of interest. Here,
 
 ![](../images/hwitw-jnu-temp.png)
 
+### Kubernetes deployment
 
+Let's examine the Kubernetes deployment. There are three major working in concert. Two CronJobs are configured, one to download data from Copernicus, and the other to transform that data into weekly summaries in a compact HDF format.
+
+![](../images/hwitw-arch.png)
+
+Each of these CronJobs spawns a series of Pods that run the containers with the `cdstool` and `tiletool` processes. Once the data has been output by tiletool, it can be accessed on the web. Web client sessions are handled by the Ingress, and dispatched to the HWITW Service, which in turn is implemented by a Pod running the `nginx` web server with the hwitw frontend HTML and Javascript code.
+
+We can inspect these components more carefully in Kubernetes using the `kubectl` commandline utility.
+
+:::{.column-page-right}
+
+```bash
+$ kubectl get services
+NAME            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+service/hwitw   ClusterIP   10.109.0.227   <none>        5000/TCP   407d
+```
+
+That service is deployed in a pod running the `hwitw` container as a web service. In the pod listing below, you can also see that there are pods that have completed running for periodic cronjobs for `cdstool`, which downloads data from the Copernicus Data Service, and `tiletool`, which processes that data into weekly summaries and reorganizes it by time region in a large HDF5 file.
+
+```bash
+$ kubectl get pods
+NAME                                   READY   STATUS      RESTARTS   AGE
+pod/hwitw-67ccd577-rltrp               1/1     Running     0          160d
+pod/hwitw-cdstool-28478538--1-99m2n    0/1     Completed   0          34d
+pod/hwitw-cdstool-28508778--1-l5twt    0/1     Completed   0          13d
+pod/hwitw-cdstool-28518858--1-xzpkn    0/1     Completed   0          6d10h
+pod/hwitw-tiletool-28478543--1-28d2n   0/1     Completed   0          34d
+pod/hwitw-tiletool-28508783--1-ldzdm   0/1     Completed   0          13d
+pod/hwitw-tiletool-28518863--1-js8mj   0/1     Completed   0          6d10h
+```
+
+The CronJobs show the details of the schedule for these episodic processes, and the container implementation that was used for each run.
+
+```bash
+$ kubectl get cronjobs
+NAME                           SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+cronjob.batch/hwitw-cdstool    18 18 * * 5   False     0        6d10h           170d
+cronjob.batch/hwitw-tiletool   23 18 * * 5   False     0        6d10h           170d
+
+$ kubectl get jobs -o wide
+NAME                      COMPLETIONS   DURATION   AGE     CONTAINERS          IMAGES
+hwitw-cdstool-28478538    1/1           13s        34d     hwitw-cdstool-job   ghcr.io/nceas/hwitw:0.9.6
+hwitw-cdstool-28508778    1/1           9s         13d     hwitw-cdstool-job   ghcr.io/nceas/hwitw:0.9.6
+hwitw-cdstool-28518858    1/1           10s        6d11h   hwitw-cdstool-job   ghcr.io/nceas/hwitw:0.9.6
+hwitw-tiletool-28478543   1/1           13s        34d     hwitw-cdstool-job   ghcr.io/nceas/hwitw:0.9.6
+hwitw-tiletool-28508783   1/1           11s        13d     hwitw-cdstool-job   ghcr.io/nceas/hwitw:0.9.6
+hwitw-tiletool-28518863   1/1           6s         6d10h   hwitw-cdstool-job   ghcr.io/nceas/hwitw:0.9.6
+```
+:::
+
+Together, these Kubernetes resources, and a few others including an Ingress Controller to glue the application together, constitue a complete data access, data processing, and web visualization service for scientific data. The entire application can be deployed with a single command.
