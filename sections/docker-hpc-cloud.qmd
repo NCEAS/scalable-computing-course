@@ -127,6 +127,17 @@ $ docker-compose down
  ```
 :::
 
+::: {.callout-note}
+## Challenge exercise
+
+Using the `adccourse:1.0` image that we created earlier, write a docker-compose application that:
+
+- runs the `max-discharge.py` script to generate the `max-discharge.png` image showing discharge data
+- copies the png file to the `web` directory that you just set up
+- modifies the `index.html` file to display the plot on the web page
+- starts up your web application with `docker-compose up --detach`
+:::
+
 ### swarm
 
 ### kubernetes
