@@ -14,18 +14,18 @@ title: "Reproducibility and Traceability"
 
 In this course we reviewed many tools and techniques for how to make research more reproducible and scalable. These tools focus around three main areas: the environment, the data, and the code.
 
-### Reproducible Environments
+#### Reproducible Environments {-}
 
 - Virtual environments with `venv` and `virtualenvwrapper`
 - Python dependencies with `requirements.txt`
 - Containers with Docker
 
-### Accessible Data
+#### Accessible Data {-}
 
 - Publishing with the Arctic Data Center
 - Formats for large datasets: NetCDF and Zarr
 
-### Scalable Python
+#### Scalable Python {-}
 
 - Parallel with `concurrent.futures`, `parsl`, `dask`
 - N-dimensional data access with `xarray`
