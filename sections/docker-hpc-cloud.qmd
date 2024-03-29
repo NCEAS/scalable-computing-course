@@ -4,27 +4,50 @@ title: "Containers in HPC and Cloud"
 
 ## Learning Objectives
 
-- Discuss Docker in high performace computing environments
+- Discuss containers in high performace computing environments
 - Explore orchestration formats
 - Learn how to use docker compose to build a workflow
 - Explore a real world Kubernetes service
 
 ## Container orchestration systems
 
-Container orchestration is the process of linking multiple containers into an integrated application. These applications can represent a computational workflow, a backend service or data store, a frontend application, or some combination of these and others. Let's explore a few container orchestration systems.
+Container orchestration is the process of linking multiple containers into an integrated application. These applications can represent a computational workflow, a backend service or data store, a frontend application, or some combination of these and others.  For example, a simple application might consist of a backend database system in a container, which is accessed by containerized data processing code, and which is served by a containerized web application.
 
-### compose
+![](../images/docker-compose-workflow.png)
 
-[Docker Compose](https://docs.docker.com/compose/) is "a tool for defining and running multi-container applications". This is the essence of orchestration. With just the `compose` application, you can link multiple containers into an integrated application to run it on demand. This is particularly useful to quickly bring up a backend and frontend application, say one that uses a database (like `postgresql`) or an caching server (like `redis`) and combine it with a web-based frontend. 
+All of these types of integrated systems can be built by orchestrating the deployment of multiple containers, whether creating scientific applications for running big data jobs on high performance computers or building and deploying scientific web applications and services.
+
+Let's explore a few container orchestration systems.
+
+### docker compose
+
+[Docker Compose](https://docs.docker.com/compose/) is "a tool for defining and running multi-container applications". This is the essence of orchestration. With just the `compose` application, you can link multiple containers into an integrated application to run it on demand. This is particularly useful to quickly bring up a backend and frontend application, say one that uses a database (like `postgresql`) or a caching server (like `redis`) and combine it with a web-based frontend.
+
+Creating a docker compose application is done by editing a compose.yaml configuration document that describes each of the containers to be run in the system, and how they are linked together.
 
 ### swarm
 
 ### kubernetes
+
+::: {layout="[[70,-10,20]]"}
+
+Kubernetes is ... and there is a nice overview in the [Digital Ocean introduction to kubernetes](https://www.digitalocean.com/community/tutorials/an-introduction-to-kubernetes)
+
 ![](../images/k8s-logo.png)
+
+:::
 
 ### Parsl
 
-![](../images/parsl-logo-white.svg)
+::: {layout="[[70,30]]"}
+
+Parsl is all about the beef...
+
+![](../images/parsl-logo.png)
+
+:::
+
+Remember the basic layout of a parsl app:
 
 ```python
 # Define the square task.
@@ -45,7 +68,13 @@ print(squares)
 
 ### Ray.io
 
+::: {layout="[[60,40]]"}
+
+[Ray](https://ray.io) is structured so similarly to Parsl...
+
 ![](../images/ray-logo.png)
+
+:::
 
 ![](../images/ray-components.png)
 
@@ -148,3 +177,9 @@ hwitw-tiletool-28518863   1/1           6s         6d10h   hwitw-cdstool-job   g
 :::
 
 Together, these Kubernetes resources, and a few others including an Ingress Controller to glue the application together, constitue a complete data access, data processing, and web visualization service for scientific data. The entire application can be deployed with a single command.
+
+## Resources
+
+- [Docker compose tutorial](https://www.baeldung.com/ops/docker-compose)
+- [Kubernetes documentation](https://kubernetes.io/docs/concepts/)
+- [Digital Ocean introduction to kubernetes](https://www.digitalocean.com/community/tutorials/an-introduction-to-kubernetes)
