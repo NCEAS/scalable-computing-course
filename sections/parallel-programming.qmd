@@ -402,7 +402,7 @@ In addition, Parsl supports a lot of different kinds of [providers](https://pars
 Similarly to before, we start by configuring an executor in parsl, and loading it. We'll use multiprocessing by configuring the `HighThroughputExecutor` to use our local resources as a cluster, and we'll activate our virtual environment to be sure we're executing in a consistent environment.
 
 ```{python}
-#| eval: true
+#| eval: false
 
 # Required packages
 import parsl
@@ -430,6 +430,7 @@ parsl.load(htex_local)
 We now have a live parsl executor (`htex_local`) that is waiting to execute processes. We tell it to execute processes by annotating functions with decorators that indicate which tasks should be parallelized. Parsl then handles the scheduling and execution of those tasks based on the dependencies between them. In the simplest case, we'll decorate our previous function for downloading a file with the `@python_app` decorator, which tells parsl that any function calls with this function should be run on the default executor (in this case, `htex_local`).
 
 ```{python}
+#! eval: false
 # Decorators seem to be ignored as the first line of a cell, so print something first
 print("Create decorated function")
 
@@ -448,7 +449,7 @@ def download_file_parsl(row):
 Now we just write regular python code that calls that function, and parsl handles the scheduling. Parsl app executors return an [`AppFuture`](https://parsl.readthedocs.io/en/stable/userguide/futures.html#appfutures), and we can call the `AppFuture.done()` function to determine when the future result is ready without blocking. Or, we can just block on `AppFuture.result()` which waits for each of the executions to complete and then returns the result.
 
 ```{python}
-#! eval: true
+#! eval: false
 print("Define our download_futures function")
 
 @timethis
@@ -472,6 +473,7 @@ wait_for_futures(file_table[0:5])
 When we're done, be sure to clean up and shutdown the `htex_local` executor, or it will continue to persist in your environment and utilize resources. Generally, an executor should be created when setting up your environment, and then it can be used repeatedly for many different tasks.
 
 ```{python}
+#! eval: false
 htex_local.executors[0].shutdown()
 parsl.clear()
 ```
@@ -483,6 +485,7 @@ Parsl and other concurrency libraries generally provide both **blocking** and **
 In practice this means that we can either 1) wait for all async calls to complete, and then process them using the blocking methods, or 2) query with a non-blocking method to see if each async call is complete, and only then retrieve the results for that method. We illustrate this approach below with parsl.
 
 ```{python}
+#! eval: false
 # Required packages
 import parsl
 from parsl import python_app
@@ -509,6 +512,7 @@ parsl.load(htex_local)
 Define the task we want to run.
 
 ```{python}
+#! eval: false
 @python_app
 def do_stuff(x):
     import time
@@ -519,6 +523,7 @@ def do_stuff(x):
 And now execute the tasks with some sleeps to see which are blocking and which are completed.
 
 ```{python}
+#! eval: false
 import time
 all_futures = []
 for x in range(0,10):
