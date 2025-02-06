@@ -193,7 +193,6 @@ def timethis(func):
 We're going to start with a task that is a little expensive to compute, and define it in a function. All this `task(x)` function does is to use numpy to create a fairly large range of numbers, and then sum them. 
 
 ```{python}
-#| eval: true
 def task(x):
     import numpy as np
     result = np.arange(x*10**8).sum()
@@ -203,7 +202,6 @@ def task(x):
 We can start by executing this task function serially ten times with varying inputs. In this case, we create a function `run_serial` that takes a list of inputs to be run, and it calls the `task` function for each of those inputs. The `@timethis` decorator is a simple way to wrap the function with timing code so that we can see how long it takes to execute.
 
 ```{python}
-#| eval: true
 import numpy as np
 
 @timethis
@@ -326,7 +324,6 @@ file_table.head()
 When you have a list of repetitive tasks, you may be able to speed it up by adding more computing power.  If each task is completely independent of the others, then it is pleasingly parallel and a prime candidate for executing those tasks in parallel, each on its own core.  For example, let's build a simple loop that downloads the data files that we need for an analysis. First, we start with the serial implementation.
 
 ```{python}
-#| eval: true
 
 import urllib
 
@@ -357,7 +354,6 @@ The issue with this loop is that we execute each download task sequentially, whi
 In this case, we'll use the same `download_file` function from before, but let's switch up and create a `download_threaded()` function to use `concurrent.futures` with a `ThreadPoolExecutor` just as we did earlier.
 
 ```{python}
-#| eval: true
 from concurrent.futures import ThreadPoolExecutor
 
 @timethis
@@ -378,7 +374,6 @@ Note how the "Downloading..." messages were printed immediately, but then it sti
 You'll remember from earlier that you can execute tasks concurrently by creating multiple threads within one process (multi-threaded), or by creating and executing muliple processes. The latter creates more independence, as each of the executing tasks has their own memory and process space, but it also takes longer to set up. With `concurrent.futures`, we can switch to a multi-process pool by using a `ProcessPoolExecutor`, analogously to how we used `ThreadPoolExecutor` previously. So, some simple changes, and we're running multiple processes.
 
 ```{python}
-#| eval: true
 from concurrent.futures import ProcessPoolExecutor
 
 @timethis
