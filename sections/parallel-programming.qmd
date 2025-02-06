@@ -2,6 +2,7 @@
 title: "Pleasingly Parallel Programming"
 execute:
   freeze: auto
+  eval: false
 editor:
   render-on-save: true
 from: markdown+emoji
