@@ -1,0 +1,18 @@
+---
+title: "Good practices for raster arrays"
+execute:
+  freeze: auto
+---
+
+- TODO: rewrite title and learning objectives
+
+## Learning Objectives
+
+- Raster data xarray, dask, and zarr
+- Using WMTS and STAC to access multidimensional arrays
+
+## Introduction
+
+## Summary
+
+Lorem Ipsum...

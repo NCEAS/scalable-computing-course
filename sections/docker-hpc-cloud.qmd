@@ -1,9 +1,9 @@
 ---
-title: "Container orchestration"
+title: "Bonus: Container orchestration"
 ---
 
 ## Learning Objectives
-
+fooey
 - Discuss containers in high performace computing and cloud computing
 - Explore orchestration approaches
 - Learn how to use docker compose to build a workflow

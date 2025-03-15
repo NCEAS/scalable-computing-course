@@ -31,15 +31,16 @@ book:
     - sections/group-project-1.qmd
     - sections/data-ethics.qmd
     - sections/geopandas.qmd
-    - sections/geoscience-and-ai.qmd
+    - sections/parquet-arrow.qmd
     - sections/group-project-2.qmd
     - sections/software-design-1.qmd
     - sections/adc-data-publishing.qmd
     - sections/zarr.qmd
     - sections/docker-containers.qmd
     - sections/software-design-2.qmd
-    - sections/docker-hpc-cloud.qmd
+    - sections/multidim-arrays.qmd
     - sections/reproducibility-containers.qmd
+    - sections/docker-hpc-cloud.qmd
 
 bibliography: references.bib
 
