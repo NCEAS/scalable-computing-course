@@ -145,6 +145,8 @@ Task dependencies occur when one task in the code depends on the results of anot
 Locks are a mechanism to manage access to a resource so that multiple threads can access the resource. By adding locks to an otherwise parallel process, we introduce a degree of serial execution to the locked portion of the process. Basically, each thread can only access the resource when it has the lock, and only one lock is given out at a time.  Take this example of what happens without locking:
 
 ```{python}
+#| eval: false
+
 from concurrent.futures import ProcessPoolExecutor
 import time
 
@@ -161,6 +163,8 @@ for future in futures:
 You can see that the results come back in a semi-random order, and the call to `sleep` creates a delay between printing the two words, which means that the three messages get jumbled when printed. To fix this, we can introduce a lock from the `multiprocessing` package.
 
 ```{python}
+#| eval: false
+
 from concurrent.futures import ProcessPoolExecutor
 import time
 import multiprocessing

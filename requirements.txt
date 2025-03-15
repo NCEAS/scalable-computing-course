@@ -1,10 +1,13 @@
-bokeh
+#py_cpuinfo==9.0.0
+#bokeh
+#bqplot==0.4.0
 chardet
 dask[complete]
-ee
-eemont
+#ee
+#eemont
 flake8
-geemap
+#folium==0.17.0
+#geemap
 geopandas
 IPython
 ipyleaflet
@@ -14,12 +17,14 @@ matplotlib
 numpy
 netCDF4
 nc-time-axis 
+#numcodecs==0.13.1
 pandas
-parsl
+#parsl
+parsl==2024.3.25
 gcsfs
 glances
 pyarrow
-pydantic>=1.10.9
+pydantic==1.10.9
 rasterio
 requests
 rioxarray
@@ -27,8 +32,9 @@ seaborn
 shapely
 skimpy
 xarray
-pdgraster @ git+https://github.com/PermafrostDiscoveryGateway/viz-raster.git@scalable-computing-course
+pdgraster @ git+https://github.com/PermafrostDiscoveryGateway/viz-raster.git@log-patch
 black
 poetry
 virtualenvwrapper
+#zarr==2.18.3
 zarr
