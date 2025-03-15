@@ -15,6 +15,7 @@ This 5-day in-person workshop will provide researchers with an introduction to a
 ![](images/schedule.png)
 :::
 
+
 ### Code of Conduct {-}
 Please note that by participating in this activity you agree to abide by the [NCEAS Code of Conduct](https://www.nceas.ucsb.edu/sites/default/files/2021-11/NCEAS_Code-of-Conduct_Nov2021_0.pdf). 
 
@@ -128,11 +129,8 @@ These written materials reflect the continuous development of learning materials
 
 This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
-**Citation**:  S. Jeanette Clark, Matthew B. Jones, Angie Garcia, Carmen Galaz García, Justin Kadi, Angel Chen, Maggie Klope. 2024. Scalable and Computationally Reproducible Approaches to Arctic Research. Arctic Data Center. [https://doi.org/10.18739/A2C53F33M](https://doi.org/10.18739/A2C53F33M)
+**Citation**:  Matthew B. Jones, S. Jeanette Clark, Jim Regetz, Rushiraj Nenuji, Nicole Greco, Angie Garcia, and Justin Kadi. 2025. Scalable and Computationally Reproducible Approaches to Arctic Research. Arctic Data Center. [https://doi.org/10.18739/A2C53F33M](https://doi.org/10.18739/A2C53F33M)
 
-**Additional contributors**:  Samantha Csik, Bryce Mecum, Natasha Haycock-Chavez, Daphne Virlar-Knight, Juliet Cohen, Anna Liljedahl, Amber E. Budden, Noor Johnson, Robyn Thiessen-Bock.
-
-
-
+**Additional contributors**:  Samantha Csik, Bryce Mecum, Natasha Haycock-Chavez, Daphne Virlar-Knight, Juliet Cohen, Anna Liljedahl, Amber E. Budden, Noor Johnson, Robyn Thiessen-Bock, Carmen Galaz García, Angel Chen, Maggie Klope. 
 
 This is a Quarto book. To learn more about Quarto books visit <https://quarto.org/docs/books>.
