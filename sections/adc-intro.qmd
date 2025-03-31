@@ -3,17 +3,17 @@ title: "Welcome and Overview"
 from: markdown+emoji
 ---
 
-![](../images/arctic-data-center/adc-trainings-2025.png)
+![](../images/adc-courses-banner.png)
 
 This course is one of three that we are currently offering, covering fundamentals of open data sharing, reproducible research, ethical data use and reuse, and scalable computing for reusing large data sets.
 
 ::: {layout="[1,1,1]"}
 
-![](../images/Fundamentals Training w_ ADC Logo.png)
+![](../images/arctic-data-center/2025-fundamentals.png)
 
-![](../images/Reproducibles Training w_ ADC Logo.png)
+![](../images/arctic-data-center/2025-reproducibles.png)
 
-![](../images/Scalable training w_ ADC logo (1).png)
+![](../images/arctic-data-center/2025-scalable.png)
 
 :::
 
