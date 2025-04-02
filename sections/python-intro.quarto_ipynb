@@ -13,7 +13,6 @@
         "\n",
         "\n",
         "\n",
-        "\n",
         "## Learning Objectives\n",
         "\n",
         "- Basic Python review\n",
@@ -128,7 +127,7 @@
         "\n",
         "We'll very briefly go over some basic python syntax and the base variable types. First, open a python script. From the File menu, select New File, type \"python\", then save it as 'python-intro.py' in the top level of your directory.\n"
       ],
-      "id": "1e1a7834"
+      "id": "ccf3462a"
     },
     {
       "cell_type": "code",
@@ -138,7 +137,7 @@
         "from IPython.core.interactiveshell import InteractiveShell\n",
         "InteractiveShell.ast_node_interactivity = 'all'"
       ],
-      "id": "2eee6546",
+      "id": "378f4d22",
       "execution_count": null,
       "outputs": []
     },
@@ -148,7 +147,7 @@
       "source": [
         "In your file, assign a value to a variable using `=` and print the result.\n"
       ],
-      "id": "8c02b38b"
+      "id": "4540513e"
     },
     {
       "cell_type": "code",
@@ -157,7 +156,7 @@
         "x = 4\n",
         "print(x)"
       ],
-      "id": "5c2b4945",
+      "id": "2f94a95c",
       "execution_count": null,
       "outputs": []
     },
@@ -183,7 +182,7 @@
         "\n",
         "We already saw a number type, here is a string:\n"
       ],
-      "id": "c379d867"
+      "id": "60473053"
     },
     {
       "cell_type": "code",
@@ -192,7 +191,7 @@
         "str = 'Hello World!'\n",
         "print(str)"
       ],
-      "id": "df0d5f01",
+      "id": "6742c39c",
       "execution_count": null,
       "outputs": []
     },
@@ -202,7 +201,7 @@
       "source": [
         "Lists in python are very versatile, and are created using square brackets `[]`. Items in a list can be of different data types.\n"
       ],
-      "id": "3e686087"
+      "id": "7b965f8e"
     },
     {
       "cell_type": "code",
@@ -211,7 +210,7 @@
         "list = [100, 50, -20, 'text']\n",
         "print(list)"
       ],
-      "id": "0e23e955",
+      "id": "e6e9208d",
       "execution_count": null,
       "outputs": []
     },
@@ -221,7 +220,7 @@
       "source": [
         "You can access items in a list by index using the square brackets. Note indexing starts with 0 in python. The slice operator enables you to easily access a portion of the list without needing to specify every index.\n"
       ],
-      "id": "1cc253f4"
+      "id": "70ed8dda"
     },
     {
       "cell_type": "code",
@@ -232,7 +231,7 @@
         "list[:2] # print first until the 3rd\n",
         "list[2:] # print last elements from 3rd"
       ],
-      "id": "a1f9469b",
+      "id": "606b0fb7",
       "execution_count": null,
       "outputs": []
     },
@@ -242,7 +241,7 @@
       "source": [
         "The `+` and `*` operators work on lists by creating a new list using either concatenation (`+`) or repetition (`*`).\n"
       ],
-      "id": "7f2a4298"
+      "id": "bd27026e"
     },
     {
       "cell_type": "code",
@@ -253,7 +252,7 @@
         "list + list2\n",
         "list * 3"
       ],
-      "id": "c575a026",
+      "id": "ceb43d6a",
       "execution_count": null,
       "outputs": []
     },
@@ -263,7 +262,7 @@
       "source": [
         "Tuples are similar to lists, except the values cannot be changed in place. They are constructed with parentheses.\n"
       ],
-      "id": "445d77d1"
+      "id": "a9c5dca1"
     },
     {
       "cell_type": "code",
@@ -274,7 +273,7 @@
         "tuple * 3\n",
         "tuple + tuple"
       ],
-      "id": "b5baa05a",
+      "id": "350f0006",
       "execution_count": null,
       "outputs": []
     },
@@ -284,7 +283,7 @@
       "source": [
         "Observe the difference when we try to change the first value. It works for a list:\n"
       ],
-      "id": "2ac3378e"
+      "id": "c9324be5"
     },
     {
       "cell_type": "code",
@@ -293,7 +292,7 @@
         "list[0] = 'new value'\n",
         "list"
       ],
-      "id": "0f13f09e",
+      "id": "0c6dfac9",
       "execution_count": null,
       "outputs": []
     },
@@ -303,7 +302,7 @@
       "source": [
         "...and errors for a tuple.\n"
       ],
-      "id": "ba5be29f"
+      "id": "944af669"
     },
     {
       "cell_type": "code",
@@ -312,7 +311,7 @@
         "#| eval: false\n",
         "tuple[0] = 'new value'"
       ],
-      "id": "50b43598",
+      "id": "518e8f67",
       "execution_count": null,
       "outputs": []
     },
@@ -326,7 +325,7 @@
         "\n",
         "Dictionaries consist of key-value pairs, and are created using the syntax `{key: value}`. Keys are usually numbers or strings, and values can be any data type.\n"
       ],
-      "id": "bd9439a5"
+      "id": "c5658990"
     },
     {
       "cell_type": "code",
@@ -338,7 +337,7 @@
         "dict['name']\n",
         "dict.keys()"
       ],
-      "id": "281d4f0a",
+      "id": "6e8ae3b2",
       "execution_count": null,
       "outputs": []
     },
@@ -348,7 +347,7 @@
       "source": [
         "To determine the type of an object, you can use the `type()` method.\n"
       ],
-      "id": "c3a2b8cf"
+      "id": "8429b510"
     },
     {
       "cell_type": "code",
@@ -358,7 +357,7 @@
         "type(tuple)\n",
         "type(dict)"
       ],
-      "id": "9524022d",
+      "id": "d72db4bf",
       "execution_count": null,
       "outputs": []
     },
@@ -384,7 +383,7 @@
         "\n",
         "In your first code chunk, lets load in some modules. We'll use `pandas`, `numpy`, `matplotlib.pyplot`, `requests`, `skimpy`, and `exists` from `os.path`.\n"
       ],
-      "id": "7c783bc9"
+      "id": "81721056"
     },
     {
       "cell_type": "code",
@@ -397,7 +396,7 @@
         "import skimpy\n",
         "import os"
       ],
-      "id": "8d13180f",
+      "id": "ef05b0b2",
       "execution_count": null,
       "outputs": []
     },
@@ -430,7 +429,7 @@
         "\n",
         "Create a variable called URL and assign it the link copied to your clipboard. Then use `urllib.request.urlretrieve` to download the file, and `open` to write it to disk, to a directory called `data/`. We'll write this bundled in an `if` statement so that we only download the file if it doesn't yet exist. First, we create the directory if it doesn't exist:\n"
       ],
-      "id": "199b4256"
+      "id": "17401700"
     },
     {
       "cell_type": "code",
@@ -439,7 +438,7 @@
         "if not os.path.exists ('data/'):\n",
         "        os.mkdir('data/')"
       ],
-      "id": "9ac72ecc",
+      "id": "6d693d9e",
       "execution_count": null,
       "outputs": []
     },
@@ -453,7 +452,7 @@
         "\n",
         "        msg = urllib.request.urlretrieve(url, 'data/discharge_timeseries.csv')"
       ],
-      "id": "5ed26166",
+      "id": "9c5da0f8",
       "execution_count": null,
       "outputs": []
     },
@@ -463,7 +462,7 @@
       "source": [
         "Now we can read in the data from the file.\n"
       ],
-      "id": "8cd6757e"
+      "id": "7a0e5a48"
     },
     {
       "cell_type": "code",
@@ -472,7 +471,7 @@
         "df = pd.read_csv('data/discharge_timeseries.csv')\n",
         "df.head()"
       ],
-      "id": "cdf880b6",
+      "id": "dfe270a3",
       "execution_count": null,
       "outputs": []
     },
@@ -484,7 +483,7 @@
         "\n",
         ":::{.column-page}\n"
       ],
-      "id": "08f9a2b2"
+      "id": "668e26eb"
     },
     {
       "cell_type": "code",
@@ -493,7 +492,7 @@
         "clean_df = skimpy.clean_columns(df)\n",
         "skimpy.skim(clean_df)"
       ],
-      "id": "aa4cf48a",
+      "id": "6b07fd16",
       "execution_count": null,
       "outputs": []
     },
@@ -507,7 +506,7 @@
         "\n",
         ":::{.column-page}\n"
       ],
-      "id": "9da0a6f7"
+      "id": "4242a7cf"
     },
     {
       "cell_type": "code",
@@ -516,7 +515,7 @@
         "clean_df['date'] = pd.to_datetime(clean_df['date'])\n",
         "skimpy.skim(clean_df)"
       ],
-      "id": "b3452493",
+      "id": "245ac759",
       "execution_count": null,
       "outputs": []
     },
@@ -534,7 +533,7 @@
         "\n",
         "First we should probably rename our existing date/time column to prevent from getting confused.\n"
       ],
-      "id": "2d1749a7"
+      "id": "5decb6e9"
     },
     {
       "cell_type": "code",
@@ -542,7 +541,7 @@
       "source": [
         "clean_df = clean_df.rename(columns = {'date': 'datetime'})"
       ],
-      "id": "6da9287a",
+      "id": "68d80f7a",
       "execution_count": null,
       "outputs": []
     },
@@ -552,7 +551,7 @@
       "source": [
         "Now create the new date column\n"
       ],
-      "id": "f4c1049e"
+      "id": "2d389dbf"
     },
     {
       "cell_type": "code",
@@ -560,7 +559,7 @@
       "source": [
         "clean_df['date'] = clean_df['datetime'].dt.date"
       ],
-      "id": "cbc43049",
+      "id": "554d399c",
       "execution_count": null,
       "outputs": []
     },
@@ -570,7 +569,7 @@
       "source": [
         "Finally, we use group by to split the data into groups according to the date. We can then apply the `mean` method to calculate the mean value across all of the columns. Note that there are other methods you can use to calculate different statistics across different columns (eg: `clean_df.groupby('date').agg({'discharge_m_3_s': 'max'})`).\n"
       ],
-      "id": "0d5b6585"
+      "id": "2a48a5d1"
     },
     {
       "cell_type": "code",
@@ -578,7 +577,7 @@
       "source": [
         "daily_flow = clean_df.groupby('date', as_index = False).mean(numeric_only = True)"
       ],
-      "id": "e6309338",
+      "id": "b87b7faf",
       "execution_count": null,
       "outputs": []
     },
@@ -588,7 +587,7 @@
       "source": [
         "* create a simple plot\n"
       ],
-      "id": "8da9e009"
+      "id": "193b7078"
     },
     {
       "cell_type": "code",
@@ -602,7 +601,7 @@
         "plt.xticks(rotation = 45)\n",
         "ax.set_ylabel(var_labs.get('discharge_m_3_s'))"
       ],
-      "id": "933ed011",
+      "id": "88f15530",
       "execution_count": null,
       "outputs": []
     },
@@ -616,7 +615,7 @@
         "\n",
         "* create `myplot.py`\n"
       ],
-      "id": "6a4272c5"
+      "id": "c0668c94"
     },
     {
       "cell_type": "code",
@@ -637,7 +636,7 @@
         "        plt.xticks(rotation = 45)\n",
         "        ax.set_ylabel(var_labs.get(var))"
       ],
-      "id": "f60bb5fc",
+      "id": "9b396327",
       "execution_count": null,
       "outputs": []
     },
@@ -649,7 +648,7 @@
         "* add libraries\n",
         "* replace old plot method with new function\n"
       ],
-      "id": "a6870533"
+      "id": "26d9fef6"
     },
     {
       "cell_type": "code",
@@ -657,7 +656,7 @@
       "source": [
         "myplot(daily_flow, 'temperature_degrees_c')"
       ],
-      "id": "42d6c4a5",
+      "id": "b67c6d22",
       "execution_count": null,
       "outputs": []
     },
@@ -671,7 +670,7 @@
         "\n",
         "In this lesson we learned all about virtual environments, how to use them, and why. We got our environments set up for the course, did a brief python syntax review, and then jumped into Jupyter notebooks, pandas, and writing functions."
       ],
-      "id": "d36bf98d"
+      "id": "d41eaa5c"
     }
   ],
   "metadata": {
