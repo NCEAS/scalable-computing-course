@@ -202,18 +202,31 @@ def task(x):
 We can start by executing this task function serially ten times with varying inputs. In this case, we create a function `run_serial` that takes a list of inputs to be run, and it calls the `task` function for each of those inputs. The `@timethis` decorator is a simple way to wrap the function with timing code so that we can see how long it takes to execute.
 
 ```{python}
+#| eval: false
 import numpy as np
 
 @timethis
 def run_serial(task_list):
     return [task(x) for x in task_list]
 
-run_serial(np.arange(10))
+run_serial(np.arange(8))
 ```
 
-In this case, it takes around *25 seconds* to execute 10 tasks, depending on what else is happening on the machine and network.
+```
+run_serial: 12235.955953598022 ms
+[0,
+ 4999999950000000,
+ 19999999900000000,
+ 44999999850000000,
+ 79999999800000000,
+ 124999999750000000,
+ 179999999700000000,
+ 244999999650000000]
+```
 
-So, can we make this faster using a multi-threaded parallel process? Let's try with `concurrent.futures`. The main concept in this package is one of a `future`, which is a structure which represents the value that will be created in a computation in the future when the function completes execution. With `concurrent.futures`, tasks are scheduled and do not block while they await their turn to be executed. Instead, threads are created and executed *asynchronously*, meaning that the function returns it's `future` potentially before the thread has actually been executed. Using this approach, the user schedules a series of tasks to be executed asynchronously, and keeps track of the futures for each task. When the future indicates that the execution has been completed, we can then retrieve the result of the computation.
+In this case, it takes around *12 seconds* to execute 10 tasks, depending on what else is happening on the machine and network.
+
+So, can we make this faster using a multi-threaded parallel process? Let's try with `concurrent.futures`. The main concept in this package is one of a `future`, which is a structure which represents the value that will be created in a computation in the future when the function completes execution. This creates an expression that is evaluated and will have a result available sometime in the future, but we don’t know when… it could be seconds, minutes, or hours later, depending on the task complexity and available resources. With `concurrent.futures`, tasks are scheduled and do not block while they await their turn to be executed. Instead, threads are created and executed *asynchronously*, meaning that the function returns it's `future` potentially before the thread has actually been executed. Using this approach, the user schedules a series of tasks to be executed asynchronously, and keeps track of the futures for each task. When the future indicates that the execution has been completed, we can then retrieve the result of the computation. This lets us do other useful work while our process is waiting for the future expression to finish its work.
 
 In practice this is a simple change from our serial implementation. We will use the `ThreadPoolExecutor` to create a pool of workers that are available to process tasks. Each worker is set up in its own thread, so it can execute in parallel with other workers. After setting up the pool of workers, we use concurrent.futures `map()` to schedule each task from our `task_list` (in this case, an input value from 1 to 10) to run on one of the workers. As for all map() implementations, we are asking for each value in `task_list` to be executed in the `task` function we defined above, but in this case it will be executed using one of the workers from the `executor` that we created.
 
@@ -226,12 +239,12 @@ def run_threaded(task_list):
     with ThreadPoolExecutor(max_workers=20) as executor:
         return executor.map(task, task_list)
 
-results = run_threaded(np.arange(10))
+results = run_threaded(np.arange(8))
 [x for x in results]
 ```
 
 ```
-run_threaded: 4440.109491348267 ms
+run_threaded: 3200.1092433929443 ms
 [0,
  4999999950000000,
  19999999900000000,
@@ -239,18 +252,15 @@ run_threaded: 4440.109491348267 ms
  79999999800000000,
  124999999750000000,
  179999999700000000,
- 244999999650000000,
- 319999999600000000,
- 404999999550000000]
+ 244999999650000000]
  ```
 
-This execution took about :tada: *4 seconds* :tada:, which is about 6.25x faster than serial. Congratulations, you wrote your a multi-threaded python program!
+This execution took about :tada: *4 seconds* :tada:, which is about 3x faster than serial. Congratulations, you wrote your a multi-threaded python program!
 
 But you may have also seen the thread pool wasn't much faster at all. In that case, you may be encountering the python Global Interpreter Lock (GIL), and would be better off with using parallel processes. Let's do that with `ProcessPoolExecutor`.
 
 ```{python}
 #| eval: false
-
 from concurrent.futures import ProcessPoolExecutor
 
 @timethis
@@ -258,11 +268,22 @@ def run_processes(task_list):
     with ProcessPoolExecutor(max_workers=10) as executor:
         return executor.map(task, task_list)
 
-results = run_processes(np.arange(10))
+results = run_processes(np.arange(8))
 [x for x in results]
 ```
+```
+run_processes: 3481.605291366577 ms
+[0,
+ 4999999950000000,
+ 19999999900000000,
+ 44999999850000000,
+ 79999999800000000,
+ 124999999750000000,
+ 179999999700000000,
+ 244999999650000000]
+```
 
-For me, that took about 8 seconds, about half the time of the serial case, but results can vary tremendously depending on what others are doing on the machine.
+For me, that took about 4 seconds as well, about a third of the time of the serial case, but about the same as the thread pool. Your results can vary tremendously depending on what others are doing on the machine and the specifics of the task you are parallelizing.
 
 ## Exercise: Parallel downloads
 
@@ -346,7 +367,17 @@ results = download_serial(file_table[0:5])
 print(results)
 ```
 
-In this code, we have one function (`download_file`) that downloads a single data file and saves it to disk. It is called iteratively from the function `download_serial`. The serial execution takes about *20-25 seconds*, but can vary considerably based on network traffic and other factors.
+```
+Downloading: SWI_2007.tif
+Downloading: SWI_2019.tif
+Downloading: SWI_2021.tif
+Downloading: SWI_2020.tif
+Downloading: SWI_2001.tif
+download_serial: 65762.07399368286 ms
+['SWI_2007.tif', 'SWI_2019.tif', 'SWI_2021.tif', 'SWI_2020.tif', 'SWI_2001.tif']
+```
+
+In this code, we have one function (`download_file`) that downloads a single data file and saves it to disk. It is called iteratively from the function `download_serial`. The serial execution takes about *65 seconds*, but can vary considerably based on network traffic and other factors.
 
 The issue with this loop is that we execute each download task sequentially, which means that only one of our processors on this machine is in use.  In order to exploit parallelism, we need to be able to dispatch our tasks and allow each to run at the same time, with one task going to each core.  To do that, we can use one of the many parallelization libraries in python to help us out.
 
@@ -369,7 +400,21 @@ for result in results:
 	print(result)
 ```
 
-Note how the "Downloading..." messages were printed immediately, but then it still took over 20 seconds to download the 5 files. This could be for several reasons, including that one of the files alone took that long (e.g., due to network congestion), or that there was a bottleneck in writing the files to disk (i.e., we could have been disk I/O limited). Or maybe the multithreaded executor pool didn't do a good job parallelizing the tasks. The trick is figuring out why you did or didn't get a speedup when parallelizing. So, let's try this another way, using a **multi-processing** approach, rather than multi-threading.
+```
+Downloading: SWI_2007.tif
+Downloading: SWI_2019.tif
+Downloading: SWI_2021.tif
+Downloading: SWI_2020.tif
+Downloading: SWI_2001.tif
+download_threaded: 24337.89587020874 ms
+SWI_2007.tif
+SWI_2019.tif
+SWI_2021.tif
+SWI_2020.tif
+SWI_2001.tif
+```
+
+Note how the "Downloading..." messages were printed immediately, but then it took 24 seconds to download the 5 files. You may get very different results, especially if you are running the code at the same time as many others in the class. This could be for several reasons, including that one of the files alone took that long (e.g., due to network congestion), or that there was a bottleneck in writing the files to disk (i.e., we could have been disk I/O limited). Or maybe the multithreaded executor pool didn't do a good job parallelizing the tasks. The trick is figuring out why you did or didn't get a speedup when parallelizing. So, let's try this another way, using a **multi-processing** approach, rather than multi-threading.
 
 ### Multi-process with `concurrent.futures`
 
@@ -381,7 +426,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 @timethis
 def download_process(table):
-    with ProcessPoolExecutor(max_workers=15) as executor:
+    with ProcessPoolExecutor(max_workers=5) as executor:
         results = executor.map(download_file, table.iterrows(), timeout=60)
         return results
 
@@ -390,7 +435,18 @@ for result in results:
 	print(result)
 ```
 
-Again, the output messages print almost immediately, but then later the processes finish and report that it took between *10 to 15 seconds* to run. Your mileage may vary. When I increase the number of files being downloaded to 10 or even to 20, I notice it is actually about the same, around *10-15 seconds*.  So, part of our time now is the overhead of setting up multiple processes. But once we have that infrastructure in place, we can make effective euse of the pool of processes to handle many downloads.
+```
+Downloading: SWI_2007.tifDownloading: SWI_2021.tifDownloading: SWI_2020.tifDownloading: SWI_2001.tifDownloading: SWI_2019.tif
+
+download_process: 3583.538055419922 ms
+SWI_2007.tif
+SWI_2019.tif
+SWI_2021.tif
+SWI_2020.tif
+SWI_2001.tif
+```
+
+Again, the output messages print almost immediately, but then later the processes finish and report that it took between *3 to 10 seconds* to run. Your mileage may vary. When I increase the number of files being downloaded to 10 or even to 20, I notice it is actually about the same, around *10 seconds*.  So, part of our time now is the overhead of setting up multiple processes. But once we have that infrastructure in place, we can make effective euse of the pool of processes to handle many downloads.
 
 ## Parallel processing with `parsl`
 
@@ -415,7 +471,7 @@ activate_env = 'workon scomp'
 htex_local = Config(
     executors=[
         HighThroughputExecutor(
-            max_workers=15,
+            max_workers_per_node=15,
             provider=LocalProvider(
                 worker_init=activate_env
             )
@@ -455,20 +511,32 @@ print("Define our download_futures function")
 
 @timethis
 def download_futures(table):
-    results = []
+    futures = []
     for row in table.iterrows():
-        result = download_file_parsl(row)
-        print(result)
-        results.append(result)
-    return(results)
+        future = download_file_parsl(row)
+        print(future)
+        futures.append(future)
+    return(futures)
 
 @timethis
 def wait_for_futures(table):
-    results = download_futures(table)
-    done = [app_future.result() for app_future in results]
+    futures = download_futures(table)
+    done = [future.result() for future in futures]
     print(done)
 
 wait_for_futures(file_table[0:5])
+```
+
+```
+Define our download_futures function
+<AppFuture at 0x7f5804a35930 state=pending>
+<AppFuture at 0x7f5804a35d20 state=pending>
+<AppFuture at 0x7f5804a34a00 state=pending>
+<AppFuture at 0x7f5804a36230 state=pending>
+<AppFuture at 0x7f5804a36cb0 state=pending>
+download_futures: 40.95053672790527 ms
+['SWI_2007.tif', 'SWI_2019.tif', 'SWI_2021.tif', 'SWI_2020.tif', 'SWI_2001.tif']
+wait_for_futures: 11745.798587799072 ms
 ```
 
 When we're done, be sure to clean up and shutdown the `htex_local` executor, or it will continue to persist in your environment and utilize resources. Generally, an executor should be created when setting up your environment, and then it can be used repeatedly for many different tasks.
@@ -501,7 +569,7 @@ activate_env = 'workon scomp'
 htex_local = Config(
     executors=[
         HighThroughputExecutor(
-            max_workers=5,
+            max_workers_per_node=5,
             provider=LocalProvider(
                 worker_init=activate_env
             )
@@ -534,7 +602,7 @@ for x in range(0,10):
     all_futures.append(future)
     print(future)
 
-time.sleep(3)
+time.sleep(2)
 
 for future in all_futures:
     print("Checking: ", future)
@@ -544,7 +612,50 @@ for future in all_futures:
         print("Sorry, come back later.")
 ```
 
+```
+<AppFuture at 0x7f582717c7c0 state=pending>
+<AppFuture at 0x7f5804a36920 state=pending>
+<AppFuture at 0x7f5804a373d0 state=pending>
+<AppFuture at 0x7f5804a37a60 state=pending>
+<AppFuture at 0x7f5804a37be0 state=pending>
+<AppFuture at 0x7f5804a37430 state=pending>
+<AppFuture at 0x7f58048a8160 state=pending>
+<AppFuture at 0x7f58048a8280 state=pending>
+<AppFuture at 0x7f58048a83a0 state=pending>
+<AppFuture at 0x7f5804a360b0 state=pending>
+Checking:  <AppFuture at 0x7f582717c7c0 state=finished returned int>
+Do more with result:  0
+Checking:  <AppFuture at 0x7f5804a36920 state=finished returned int>
+Do more with result:  1
+Checking:  <AppFuture at 0x7f5804a373d0 state=finished returned int>
+Do more with result:  4
+Checking:  <AppFuture at 0x7f5804a37a60 state=finished returned int>
+Do more with result:  9
+Checking:  <AppFuture at 0x7f5804a37be0 state=finished returned int>
+Do more with result:  16
+Checking:  <AppFuture at 0x7f5804a37430 state=pending>
+Sorry, come back later.
+Checking:  <AppFuture at 0x7f58048a8160 state=pending>
+Sorry, come back later.
+Checking:  <AppFuture at 0x7f58048a8280 state=pending>
+...
+Checking:  <AppFuture at 0x7f58048a83a0 state=pending>
+Sorry, come back later.
+Checking:  <AppFuture at 0x7f5804a360b0 state=pending>
+Sorry, come back later.
+```
+
 Notice in particular that about half of the jobs are not done yet.
+
+Don't forget to shut down the executor:
+
+```{python}
+#| eval: false
+
+htex_local.executors[0].shutdown()
+parsl.clear()
+```
+
 
 ## When to parallelize
 

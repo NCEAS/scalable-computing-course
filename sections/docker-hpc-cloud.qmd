@@ -222,7 +222,7 @@ htex_kube = Config(
         HighThroughputExecutor(
             label='kube-htex',
             cores_per_worker=cores_per_worker,
-            max_workers=5,
+            max_workers_per_node=5,
             worker_logdir_root='/',
             # Address for the pod worker to connect back
             address=address_by_route(),
