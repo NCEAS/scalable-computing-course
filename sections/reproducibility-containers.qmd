@@ -107,9 +107,9 @@ In his blog post on [software collapse](https://blog.khinsen.net/posts/2017/01/1
 ![Adapted from [Hinsen's software stack](https://blog.khinsen.net/posts/2017/01/13/sustainable-software-and-reproducible-research-dealing-with-software-collapse.html)](../images/arctic-data-center/hinsen-stack.png)
 :::
 
-> There are essentially two tasks that need to be organized and financed: preventing collapse due to changes in layers 1 and 2, and implementing new models and methods as the scientific state of the art advances. These two tasks go on in parallel and are often executed by the same people, but in principle they are separate and one could concentrate on just one or the other.
+> "There are essentially two tasks that need to be organized and financed: preventing collapse due to changes in layers 1 and 2, and implementing new models and methods as the scientific state of the art advances. These two tasks go on in parallel and are often executed by the same people, but in principle they are separate and one could concentrate on just one or the other.
 >
-> The common problem of both communities is collapse, and the common enemy is changes in the foundations that scientists and developers build on.
+> The common problem of both communities is collapse, and the common enemy is changes in the foundations that scientists and developers build on."
 
 While most reproducibility work has focused at the project-specific software level, Hinsen argues that there is tremendous risk deep down in the software ecosystem. There are many examples of compatibility decisions in scientific software that create problems for long-term stability, even if they are the right decision at the time. For example, see the compatibility discussions from [numpy](https://numpy.org/neps/nep-0023-backwards-compatibility.html#example-cases) and [pandas](https://pandas.pydata.org/docs/whatsnew/v1.4.0.html#deprecations) to get a sense for the challenges faced when maintaining science software. This issue with abandoned software and lonely maintainers has become a prevalent meme in the open source software world.
 
