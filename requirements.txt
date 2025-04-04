@@ -27,4 +27,4 @@ pdgraster @ git+https://github.com/PermafrostDiscoveryGateway/viz-raster.git@log
 black
 poetry
 virtualenvwrapper
-zarr
+zarr[jupyter]
