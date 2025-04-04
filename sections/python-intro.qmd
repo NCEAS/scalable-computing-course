@@ -13,37 +13,37 @@ execute:
 
 ## Introduction
 
-We've chosen to use VS Code in this training, in part, because it has great support for developing on remote machines. Hopefully, your VS Code setup went easily, and you were able to connect to our server `included-crab`. Once connected, the VS Code interface looks just like you were working locally, and connection to the server is seamless. 
+We've chosen to use VS Code in this training, in part, because it has great support for developing on remote machines. Hopefully, your VS Code setup went easily, and you were able to connect to our server, `included-crab`. Once connected, the VS Code interface looks just as if you were working locally, and connection to the server is seamless. 
 
 Other aspects of VS Code that we like: it supports all languages thanks to the extensive free extension library, it has built in version control integration, and it is highly flexible/configurable.
 
-We will also be working quite a bit in Jupyter notebooks in this course. Notebooks are great ways to interleave rich text (markdown formatted text, equations, images, links) and code in a way that a 'literate analysis' is generated. Although Jupyter notebooks are not subsitutes for python scripts, they can be great communication tools, and can also be convenient for code development.
+We will also be working quite a bit in Jupyter notebooks in this course. Notebooks are great ways to interleave rich text (markdown formatted text, equations, images, links) and code in a way that a 'literate analysis' is generated. Although Jupyter notebooks are not substitutes for python scripts, they can be great communication tools, and can also be convenient for code development.
 
 ## Connect to the server (if you aren't already connected)
 
 To get set up for the course, let's connect to the server again. If you were able to work through the setup for the lesson without difficulty, follow these steps to connect:
 
 - open VS Code
-- open the command pallette (Cmd + Shift + P)
+- open the command palette (Cmd + Shift + P)
 - enter "Remote SSH: Connect to Host"
 - select `included-crab`
 - enter your password in the dialog box that pops up
 
 Alternatively, you may see a popup window that says **"Cannot reconnect. Please reload the window"**. Choose the blue **Reload Window** button and enter your password, if prompted.
 
-To open the `scalable-computing-examples` workspace, select File > Open Workspace from File. Then navigate to and select `~/scalable-computing-examples/scalable-computing-examples.code-workspace`. If you cannot find the `scalable-computing-examples` directory, in a terminal you can use the `ls` command to list out the contents of your home directory and ensure that you have a clone of the respository. If not, follow the instructions in [Exercise 3](http://localhost:6226/sections/02-remote-computing.html#exercise-3-clone-a-github-repository-to-the-server) in the [Remote Computing](http://localhost:6226/sections/02-remote-computing.html) session).
+To open the `scalable-computing-examples` workspace, select File > Open Workspace from File. Then navigate to and select `~/scalable-computing-examples/scalable-computing-examples.code-workspace`. If you cannot find the `scalable-computing-examples` directory, in a terminal you can use the `ls` command to list out the contents of your home directory and ensure that you have a clone of the repository. If not, follow the instructions in [Exercise 3](http://localhost:6226/sections/02-remote-computing.html#exercise-3-clone-a-github-repository-to-the-server) in the [Remote Computing](http://localhost:6226/sections/02-remote-computing.html) session).
 
-Once connected and in the workslace, use the `pwd` command in the terminal to make sure you're in your project directory (`/home/yourusername/scalable-computing-examples`). 
+Once connected and in the workspace, use the `pwd` command in the terminal to make sure you're in your project directory (`/home/yourusername/scalable-computing-examples`). 
 
 ## Virtual Environments
 
 <img src="https://imgs.xkcd.com/comics/python_environment.png">
 
-When you install a python library, let's say `pandas`, via `pip`, unless you specify otherwise, `pip` will go out and grab the most recent version of the library, and install it somewhere on your system path (where, exactly, depends highly on how you install python originally, and other factors). That library is going to sit alongside every other python library you have ever installed (probably a lot of them) in your `site-packages` directory. This might work okay, until you start a new project, have no idea what version of `pandas` you had installed, realize that version conflicts with a new library that you need, and then instead of writing code you are spending days trying to untangle the sphaghetti mess of your python install, libraries and their versions. Sound familiar? Virtual environments help to solve this issue without making the all to common situation in the comic above even more complicated.
+When you install a python library, let's say `pandas`, via `pip`, unless you specify otherwise, `pip` will go out and grab the most recent version of the library, and install it somewhere on your system path (where, exactly, depends highly on how you install python originally, and other factors). That library is going to sit alongside every other python library you have ever installed (probably a lot of them) in your `site-packages` directory. This might work okay, until you start a new project, have no idea what version of `pandas` you had installed, realize that version conflicts with a new library that you need, and then instead of writing code you are spending days trying to untangle the spaghetti mess of your python install, libraries and their versions. Sound familiar? Virtual environments help to solve this issue without making the all to common situation in the comic above even more complicated.
 
 A virtual environment is a folder structure which creates a symlink (pointer) to all of the libraries that you specify into the folder. The three main components will be: the python distribution itself, its configuration, and a site-packages directory (where your libraries like `pandas` live). So the folder is a self contained directory of all the version-specific python software you need for your project.
 
-Virtual environments are very helpful to create reproducible workflows, and we'll talk more about this concept of reproducible environements later in the course. Perhaps most importantly though, virtual environments also help you maintain your sanity when python programming. Because they are just folders, you can create and delete new ones at will, without worrying about bungling your underlying python setup. 
+Virtual environments are very helpful to create reproducible workflows, and we'll talk more about this concept of reproducible environments later in the course. Perhaps most importantly though, virtual environments also help you maintain your sanity when python programming. Because they are just folders, you can create and delete new ones at will, without worrying about bungling your underlying python setup. 
 
 In this course, we are going to use `virtualenv` as our tool to create and manage virtual environments. Other virtual environment tools used commonly are `conda` and `pipenv`. One reason we like using `virtualenv` is there is an extension to it called `virtualenvwrapper`, which provides easy to remember wrappers around common `virtualenv` operations that make creating, activating, and deactivating a virtual environment very easy.
 
@@ -96,9 +96,10 @@ You can get a list of all available environments by just running:
 workon
 ```
 
-Now let's install the dependencies for this course into that environment. To install our libraries we'll use `pip`. As of Python 3.4, `pip` is automatically included with your python installation. `pip` is a package manager for python, and you might have used it already to install common python libraries like `pandas` or `numpy`. `pip` goes out to [PyPI](https://pypi.org/), the Python Package Index, to download the code and put it in your `site-packages` directory. Note that on this shared server, your user directory will ahve a `site-packages` directory, in addition to one that our systems administrator manages as the root of the system.
+Now let's install the dependencies for this course into that environment. To install our libraries we'll use `pip`. As of Python 3.4, `pip` is automatically included with your python installation. `pip` is a package manager for python, and you might have used it already to install common python libraries like `pandas` or `numpy`. `pip` goes out to [PyPI](https://pypi.org/), the Python Package Index, to download the code and put it in your `site-packages` directory. Note that on this shared server, your user directory will have a `site-packages` directory, in addition to one that our systems administrator manages as the root of the system. And before we install the `requirements.txt` file, let's upgrade our `pip` installation to make sure we have the most recent version.
 
 ```{.bash}
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
