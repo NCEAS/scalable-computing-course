@@ -228,12 +228,28 @@ In this case, it takes around *12 seconds* to execute 10 tasks, depending on wha
 
 So, can we make this faster using a multi-threaded parallel process? Let's try with `concurrent.futures`. The main concept in this package is one of a `future`, which is a structure which represents the value that will be created in a computation in the future when the function completes execution. This creates an expression that is evaluated and will have a result available sometime in the future, but we don’t know when… it could be seconds, minutes, or hours later, depending on the task complexity and available resources. With `concurrent.futures`, tasks are scheduled and do not block while they await their turn to be executed. Instead, threads are created and executed *asynchronously*, meaning that the function returns it's `future` potentially before the thread has actually been executed. Using this approach, the user schedules a series of tasks to be executed asynchronously, and keeps track of the futures for each task. When the future indicates that the execution has been completed, we can then retrieve the result of the computation. This lets us do other useful work while our process is waiting for the future expression to finish its work.
 
+```{mermaid}
+sequenceDiagram
+    main->>+doubleIt: 17
+    doubleIt-->>-main: future1
+    main->>+doubleIt: 20
+    doubleIt-->>-main: future2
+    main->>+doubleIt: 16
+    doubleIt-->>-main: future2
+    loop for future in (future1 future2 future3)
+    main->>+future: result()
+    future-->>-main: value
+    end
+```
+
+![](../images/future-sequence.png)
+
 In practice this is a simple change from our serial implementation. We will use the `ThreadPoolExecutor` to create a pool of workers that are available to process tasks. Each worker is set up in its own thread, so it can execute in parallel with other workers. After setting up the pool of workers, we use concurrent.futures `map()` to schedule each task from our `task_list` (in this case, an input value from 1 to 10) to run on one of the workers. As for all map() implementations, we are asking for each value in `task_list` to be executed in the `task` function we defined above, but in this case it will be executed using one of the workers from the `executor` that we created.
 
 ```{python}
 #| eval: false
 from concurrent.futures import ThreadPoolExecutor
-
+np.arange(8)
 @timethis
 def run_threaded(task_list):
     with ThreadPoolExecutor(max_workers=20) as executor:
@@ -450,7 +466,13 @@ Again, the output messages print almost immediately, but then later the processe
 
 ## Parallel processing with `parsl`
 
+:::{layout-ncol="2"}
+
 `concurrent.futures` is great and powerful, but it has its limits. Particularly as you try to scale up into the thousands of concurrent tasks, other libraries like [Parsl](https://parsl-project.org/) ([docs](https://parsl.readthedocs.io/)), [Dask](https://www.dask.org/), [Ray](https://www.ray.io/), and others come into play. They all have their strengths, but Parsl makes it particularly easy to build parallel workflows out of existing python code through it's use of decorators on existing python functions.
+
+![](../images/parsl-logo.png)
+
+:::
 
 In addition, Parsl supports a lot of different kinds of [providers](https://parsl.readthedocs.io/en/stable/userguide/execution.html#execution-providers), allowing the same python code to be easily run multi-threaded using a `ThreadPoolExecutor` and via multi-processing on many different cluster computing platforms using the `HighThroughputExecutor`. For example, Parsl includes providers supporting local execution, and on Slurm, Condor, Kubernetes, AWS, and other platforms. And Parsl handles data staging as well across these varied environments, making sure the data is in the right place when it's needed for computations.
 
