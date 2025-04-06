@@ -7,38 +7,38 @@ execute:
 
 ## Learning Objectives
 
-- Learn about the NetCDF data format: 
+- Learn about the netCDF data format:
     - Characteristics: self-describing, scalable, portable, appendable, shareable, and archivable
-    - Understand the NetCDF data model: what are dimensions, variables, and attributes
-    - Advantages and differences between NetCDF and tabular data formats
-- Learn how to use the `xarray` Python package to work with NetCDF files:
+    - Understand the netCDF data model: what are dimensions, variables, and attributes
+    - Advantages and differences between netCDF and tabular data formats
+- Learn how to use the `xarray` Python package to work with netCDF files:
     - Describe the core `xarray` data structures, the `xarray.DataArray` and the `xarray.Dataset`, and their components, including data variables, dimensions, coordinates, and attributes
     - Create `xarray.DataArrays` and `xarra.DataSets` out of raw `numpy` arrays and save them as netCDF files
-    - Load `xarray.DataSets` from netCDF files and understand the attributes view 
+    - Load `xarray.DataSets` from netCDF files and understand the attributes view
     - Perform basic indexing, processing, and reduction of `xarray.DataArrays`
     - Convert `pandas.DataFrames` into `xarray.DataSets`
 
 ## Introduction
 
-Efficient and reproducible data analysis begins with choosing a proper format to store our data, particularly when working with large, complex, multi-dimensional datasets. 
-Consider, for example, the following Earth System Data Cube from [Mahecha et al. 2020](https://esd.copernicus.org/articles/11/201/2020/esd-11-201-2020.pdf), which measures nine environmental variables at high resolution across space and time. 
-We can consider this dataset large (high-resolution means we have a big file), complex (multiple variables), and multi-dimensional (each variable is measured along three dimensions: latitude, longitude, and time). 
+Efficient and reproducible data analysis begins with choosing a proper format to store our data, particularly when working with large, complex, multi-dimensional datasets.
+Consider, for example, the following Earth System Data Cube from [Mahecha et al. 2020](https://esd.copernicus.org/articles/11/201/2020/esd-11-201-2020.pdf), which measures nine environmental variables at high resolution across space and time.
+We can consider this dataset large (high-resolution means we have a big file), complex (multiple variables), and multi-dimensional (each variable is measured along three dimensions: latitude, longitude, and time).
 Additionally, necessary metadata must accompany the dataset to make it functional, such as units of measurement for variables, information about the authors, and processing software used.
 
-![Mahecha et al. 2020 . *Visualization of the implemented Earth system data cube. The figure shows from the top left to bottom right the variables sensible heat (H), latent heat (LE), gross primary production (GPP), surface moisture (SM), land surface temperature (LST), air temperature (Tair), cloudiness (C), precipitation (P), and water vapour (V). The resolution in space is 0.25° and 8 d in time, and we are inspecting the time from May 2008 to May 2010; the spatial range is from 15° S to 60° N, and 10° E to 65° W.*](../images/mahecha_data_cube.png)
+![Mahecha et al. 2020 . *Visualization of the implemented Earth system data cube. The figure shows from the top left to bottom right the variables sensible heat (H), latent heat (LE), gross primary production (GPP), surface moisture (SM), land surface temperature (LST), air temperature (Tair), cloudiness (C), precipitation (P), and water vapour (V). The resolution in space is 0.25° and 8 d in time, and we are inspecting the time from May 2008 to May 2010; the spatial range is from 15° S to 60° N, and 10° E to 65° W.*](../images/mahecha_data_cube.png){.lightbox fig-align="center" width="70%"}
 
-Keeping complex datasets in a format that facilitates access, processing, sharing, and archiving can be at least as important as how we parallelize the code we use to analyze them. In practice, it is common to convert our data from less efficient formats into more efficient ones before we parallelize any processing. 
-In this lesson, we will 
+Keeping complex datasets in a format that facilitates access, processing, sharing, and archiving can be at least as important as how we parallelize the code we use to analyze them. In practice, it is common to convert our data from less efficient formats into more efficient ones before we parallelize any processing.
+In this lesson, we will
 
-1. familiarize ourselves with the NetCDF data format, which enables us to store large, complex, multi-dimensional data efficiently, and 
+1. familiarize ourselves with the netCDF data format, which enables us to store large, complex, multi-dimensional data efficiently, and
 
-2. learn to use the `xarray` Python package to read, process, and create NetCDF files.
+2. learn to use the `xarray` Python package to read, process, and create netCDF files.
 
 ## NetCDF Data Format
 
-[NetCDF](https://docs.unidata.ucar.edu/netcdf-c/current/index.html) (Network Common Data Form) is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. NetCDF was initially developed at the Unidata Program Center, is supported on almost all platforms, and parsers exist for most scientific programming languages. 
+[NetCDF](https://docs.unidata.ucar.edu/netcdf-c/current/index.html) (Network Common Data Form) is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. NetCDF was initially developed at the Unidata Program Center, is supported on almost all platforms, and parsers exist for most scientific programming languages.
 
-The [NetCDF documentation](https://docs.unidata.ucar.edu/netcdf-c/current/faq.html#ncFAQGeneral) outlines that this data format is desgined to be: 
+The [netCDF documentation](https://docs.unidata.ucar.edu/netcdf-c/current/faq.html#ncFAQGeneral) outlines that this data format is desgined to be:
 
 >1. **Self-describing:**
 Information describing the data contents of the file is embedded within the data file itself. This means that there is a header describing the layout of the rest of the file and arbitrary file metadata.
@@ -47,90 +47,94 @@ Information describing the data contents of the file is embedded within the data
 Small subsets of large datasets may be accessed efficiently through netCDF interfaces, even from remote servers.
 >
 >3. **Portable:**
-A NetCDF file is machine-independent i.e. it can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.
+A netCDF file is machine-independent i.e. it can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.
 >
 >4. **Appendable:**
-Data may be appended to a properly structured NetCDF file without copying the dataset or redefining its structure.
+Data may be appended to a properly structured netCDF file without copying the dataset or redefining its structure.
 >
 >5. **Sharable:**
-One writer and multiple readers may simultaneously access the same NetCDF file.
+One writer and multiple readers may simultaneously access the same netCDF file.
 >
 >6. **Archivable:**
-Access to all earlier forms of NetCDF data will be supported by current and future versions of the software.
+Access to all earlier forms of netCDF data will be supported by current and future versions of the software.
 
 ### Data Model
-The NetCDF data model is the way that NetCDF organizes data. 
-This lesson will follow the [Classic NetCDF Data Model](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html#classic_model), which is at the core of all netCDF files. 
+The netCDF data model is the way that netCDF organizes data.
+This lesson will follow the [Classic netCDF Data Model](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html#classic_model), which is at the core of all netCDF files.
 <!--
-A new Enhanced Data Model exists, but for maximum interoperability with existing code, new data should be created with the Classic Model. 
+A new Enhanced Data Model exists, but for maximum interoperability with existing code, new data should be created with the Classic Model.
 -->
 
 
 The model consists of three key components: **variables**, **dimensions**, and **attributes**.
 
 + **Variables**
-are N-dimensional arrays of data. 
+are N-dimensional arrays of data.
 We can think of these as varying/measured/dependent quantities.
 
 + **Dimensions**
-describe the axes of the data arrays. 
-A dimension has a name and a length. 
+describe the axes of the data arrays.
+A dimension has a name and a length.
 We can think of these as the constant/fixed/independent quantities at which we measure the variables.
 
 + **Attributes**
-are small notes or supplementary metadata to annotate a variable or the file as a whole. 
+are small notes or supplementary metadata to annotate a variable or the file as a whole.
 
 
-![ Classic NetCDF Data Model ([NetCDF documentation](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html#classic_model))](../images/netcdf_data_model.png)
+![ Classic netCDF Data Model ([NetCDF documentation](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html#classic_model))](../images/netcdf_data_model.png)
 
 ### Metadata Standards
 
-The most commonly used metadata standard for geospatial data is the **Climate and Forecast metadata standard**, also called the [**CF conventions**](https://cfconventions.org). 
+The most commonly used metadata standard for geospatial data is the **Climate and Forecast metadata standard**, also called the [**CF conventions**](https://cfconventions.org).
 
->The CF conventions are specifically designed to promote the processing and sharing of files created with the NetCDF API.
+>The CF conventions are specifically designed to promote the processing and sharing of files created with the netCDF API.
 >Principles of CF include self-describing data (no external tables needed for understanding), metadata equally readable by humans and software, minimum redundancy, and maximum simplicity. [(CF conventions FAQ)](http://cfconventions.org/faq.html)
 
-The CF conventions provide a unique standardized name and precise description of over 1,000 physical variables. 
-To maximize the reusability of our data, it is best to include a variable's standardized name as an attribute called `standard_name`. 
-Variables should also include a `units` attribute. 
+The CF conventions provide a unique standardized name and precise description of over 1,000 physical variables.
+To maximize the reusability of our data, it is best to include a variable's standardized name as an attribute called `standard_name`.
+Variables should also include a `units` attribute.
 This attribute should be a string that can be recognized by UNIDATA’s [UDUNITS package](https://www.unidata.ucar.edu/software/udunits/).
 In these links you can find:
 
 * [a table with all of the CF convention's standard names](http://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html), and
 
-* [a list of the units found in the UDUNITS database](https://ncics.org/portfolio/other-resources/udunits2/#degree_N) maintained by the North Carolina Institute for Climate Studies. 
+* [a list of the units found in the UDUNITS database](https://ncics.org/portfolio/other-resources/udunits2/#degree_N) maintained by the North Carolina Institute for Climate Studies.
+
+### Coordinate Variables
+
+You may have noticed that a netCDF dimension only specifies the _name_ and _length_ of a given variable axis. How do we know the _values_ of the individual coordinates along each dimension? The solution is to create an additional one-dimensional variable for each dimension, containing the values corresponding to positional along the dimension. This variable should have the same name as the dimension itself, contain values in increasing or decreasing order, and contain no missing values. In addition, standard practice is to minimally provide `unit` and `long_name` attributes for coordinate variables to make them interpretable. Although not strictly part of the netCDF specification, the creation of coordinate variables is considered a [best practice](https://docs.unidata.ucar.edu/nug/current/best_practices.html#bp_Coordinate-Systems) is an important convention in the netCDF community, and netCDF software libraries are built to detect and leverage this information.
 
 ### Exercise
 
-Let's do a short practice now that we have reviewed the classic NetCDF model and know a bit about metadata best practices.
+Let's do a short practice now that we have reviewed the classic netCDF model and know a bit about metadata best practices.
 <p align="center">
 **Part 1**
 </p>
 
-Imagine the following scenario: we have a network of 25 weather stations. 
-They are located in a square grid: starting at 30°0′N 60°0′E, there is a station every 10° North and every 10° East. 
-Each station measures the air temperature at a set time for three days, starting on September 1st, 2022. 
+Imagine the following scenario: we have a network of 25 weather stations.
+They are located in a square grid: starting at 30°0′N 60°0′E, there is a station every 10° North and every 10° East.
+Each station measures the air temperature at a set time for three days, starting on September 1st, 2022.
 On the first day, all stations record a temperature of 0°C. On the second day, all temperatures are 1°C, and on the third day, all temperatures are 2°C.
-What are the *variables*, *dimensions* and *attributes* for this data? 
+What are the *variables*, *dimensions* and *attributes* for this data, including the coordinate variables for each dimension?
 
 
 :::{.callout-tip collapse="true"}
 ### Answer
-**Variables**: There is a single variable being measured: temperature. 
-The variable values can be represented as a 5x5x3 array, with constant values for each day. 
+**Variables**: There is a single variable being measured: temperature.
+The variable values can be represented as a 5x5x3 array, with constant values for each day.
 
-**Dimensions**: 
-This dataset has three dimensions: time, latitude, and longitude. 
-Time indicates when the measurement happened, we can encode it as the dates 2022-09-01, 2022-09-02, and 2022-09-03. 
-The pairs of latitude and longitude values indicate the positions of the weather stations. 
-Latitude has values 30, 40, 50, 60, and 70, measured in degrees North. Longitude has values 60, 70, 80, 90, and 100, measured in degrees East. 
+**Dimensions**:
+This dataset has three dimensions: time, latitude, and longitude.
+Time indicates when the measurement happened, we can encode it as the dates 2022-09-01, 2022-09-02, and 2022-09-03.
+The pairs of latitude and longitude values indicate the positions of the weather stations.
+Latitude has values 30, 40, 50, 60, and 70, measured in degrees North. Longitude has values 60, 70, 80, 90, and 100, measured in degrees East.
 
 ![](../images/netcdf_exercise_1.png)
 
 **Attributes**: Let’s divide these into attributes for the variable, the dimensions, and the whole dataset:
 
 * Variable attributes:
-    * Temperature attributes: 
+    * Temperature attributes:
         + standard_name: air_temperature
         + units: degree_C
 
@@ -148,7 +152,7 @@ Latitude has values 30, 40, 50, 60, and 70, measured in degrees North. Longitude
 
 * Dataset attributes:
     + title: Temperature Measurements at Weather Stations
-    + summary: an example of NetCDF data format
+    + summary: an example of netCDF data format
 
 :::
 
@@ -162,15 +166,15 @@ How will adding the average temperature data change the dataset's variables, att
 :::{.callout-tip collapse="true"}
 ### Answer
 
-**Variables**: Now we are measuring two variables: temperature and average temperature. 
-The temperature data stays the same. 
+**Variables**: Now we are measuring two variables: temperature and average temperature.
+The temperature data stays the same.
 We can represent the average temperature as a single 5x5 array with value 1 at each cell.
 
-**Dimensions**: 
-This dataset still has three dimensions: time, latitude, and longitude. 
-The temperature variable uses all three dimensions, and the average temperature variable only uses two (latitude and longitude). 
-This is ok! 
-The dataset’s dimensions are the union of the dimensions of all the variables in the dataset. 
+**Dimensions**:
+This dataset still has three dimensions: time, latitude, and longitude.
+The temperature variable uses all three dimensions, and the average temperature variable only uses two (latitude and longitude).
+This is ok!
+The dataset’s dimensions are the union of the dimensions of all the variables in the dataset.
 Variables in the same dataset may have all, some, or no dimensions in common.
 
 ![](../images/netcdf_exercise_2.png)
@@ -180,7 +184,7 @@ To begin with, we need to keep all the previous attributes.
 Notice that the dataset's title is general enough that we don't need to update it.
 The only update we need to do is add the attributes for our new average temperature variable:
 
-* Average temperature attributes: 
+* Average temperature attributes:
     + standard_name: average_air_temperature
     + description: average temperature over three days
 
@@ -191,27 +195,27 @@ Our next step is to see how we can translate all this information into something
 :::{.callout-note collapse="false"}
 ### Going further with `zarr`
 
-[Zarr](https://zarr.readthedocs.io/en/stable/) is a file storage format for chunked, compressed N-dimensional arrays based on an open source specification. It is very similar to NetCDF. The key is in the "chunked." Zarr stores chunks of data in separate files, so that parallel operations (like reading and writing data) can be done much, much faster than working with NetCDF. This format is gaining lots of popularity for working with big data.
+[Zarr](https://zarr.readthedocs.io/en/stable/) is a file storage format for chunked, compressed N-dimensional arrays based on an open source specification. It is very similar to netCDF. The key is in the "chunked." Zarr stores chunks of data in separate files, so that parallel operations (like reading and writing data) can be done much, much faster than working with netCDF. This format is gaining lots of popularity for working with big data.
 :::
 
 ## `xarray`
 
-`xarray` is an open source project and Python package that augments NumPy arrays by adding labeled dimensions, coordinates and attributes. 
+`xarray` is an open source project and Python package that augments NumPy arrays by adding labeled dimensions, coordinates and attributes.
 `xarray` is based on the netCDF data model, making it the appropriate tool to open, process, and create datasets in netCDF format.
 
 <!--
 ## `xarray`
 
-Multi-dimensional arrays or ND arrays are frequently encountered in geosciences. 
-Consider, for example, how many variables can be measured with respect to space-time dimensions, making those datasets three or even four-dimensional (for instance, if we use latitude, longitude, height/depth, and time). 
+Multi-dimensional arrays or ND arrays are frequently encountered in geosciences.
+Consider, for example, how many variables can be measured with respect to space-time dimensions, making those datasets three or even four-dimensional (for instance, if we use latitude, longitude, height/depth, and time).
 
 
-In Python, the [`NumPy`](https://numpy.org) package provides the fundamental data structure and API for working with raw multi-dimensional arrays. 
-However, real-world datasets are usually more than just raw numbers; they have labels that encode information about how the array values correspond to locations in space, time, etc. 
+In Python, the [`NumPy`](https://numpy.org) package provides the fundamental data structure and API for working with raw multi-dimensional arrays.
+However, real-world datasets are usually more than just raw numbers; they have labels that encode information about how the array values correspond to locations in space, time, etc.
 https://docs.xarray.dev/en/stable/getting-started-guide/why-xarray.html
 
-[`xarray`](https://docs.xarray.dev/en/stable/index.html) is an answer to this necessity: an `xarray.DataArray` has labeled dimensions (e.g. “time,” “latitude”) that can be directly referenced for processing. 
-It is easier to keep track of a dimension labeled “time” than to remember that time is the n-th dimension of the array. 
+[`xarray`](https://docs.xarray.dev/en/stable/index.html) is an answer to this necessity: an `xarray.DataArray` has labeled dimensions (e.g. “time,” “latitude”) that can be directly referenced for processing.
+It is easier to keep track of a dimension labeled “time” than to remember that time is the n-th dimension of the array.
 Moreover, `xarray` is based on the netCDF data model, making it the appropriate tool to open, process, and create datasets in netCDF format.
 
 -->
@@ -220,26 +224,26 @@ Moreover, `xarray` is based on the netCDF data model, making it the appropriate 
 
 ### `xarray.DataArray`
 
-The `xarray.DataArray` is the primary data structure of the `xarray` package. 
-It is an n-dimensional array with **labeled dimensions**. 
-We can think of it as representing a single variable in the NetCDF data format: it holds the variable's values, dimensions, and attributes. 
+The `xarray.DataArray` is the primary data structure of the `xarray` package.
+It is an n-dimensional array with **labeled dimensions**.
+We can think of it as representing a single variable in the netCDF data format: it holds the variable's values, dimensions, and attributes.
 
-Apart from variables, dimensions, and attributes, `xarray` introduces one more piece of information to keep track of a dataset's content: 
+Apart from variables, dimensions, and attributes, `xarray` introduces one more piece of information to keep track of a dataset's content:
 in `xarray` each dimension has at least one set of **coordinates**.
-A dimension's coordinates indicate the dimension's values. 
-We can think of the coordinate's values as the tick labels along a dimension. 
-For example, in our previous exercise about temperature measured in weather stations, latitude is a dimension, and the latitude's coordinates are 30, 40, 50, 60, and 70 because those are the latitude values at which we are collecting temperature data. 
+A dimension's coordinates indicate the dimension's values.
+We can think of the coordinate's values as the tick labels along a dimension.
+For example, in our previous exercise about temperature measured in weather stations, latitude is a dimension, and the latitude's coordinates are 30, 40, 50, 60, and 70 because those are the latitude values at which we are collecting temperature data.
 In that same exercise, time is a dimension, and its coordinates are 2022-09-1, 2022-09-02, and 2022-09-03.
 
 Here you can read more about the [`xarray` terminology](https://docs.xarray.dev/en/stable/user-guide/terminology.html).
 
 #### Create an `xarray.DataArray`
-Let's suppose we want to make an `xarray.DataArray` that includes the information from our previous exercise about measuring temperature across three days. 
+Let's suppose we want to make an `xarray.DataArray` that includes the information from our previous exercise about measuring temperature across three days.
 First, we import all the necessary libraries.
 
 ```{python}
-import os              
-import urllib 
+import os
+import urllib
 import pandas as pd
 import numpy as np
 
@@ -251,35 +255,35 @@ import xarray as xr   # This is the package we'll explore
 The underlying data in the `xarray.DataArray` is a `numpy.ndarray` that holds the variable values. So we can start by making a `numpy.ndarray` with our mock temperature data:
 
 ```{python}
-# values of a single variable at each point of the coords 
-temp_data = np.array([np.zeros((5,5)), 
-                      np.ones((5,5)), 
+# values of a single variable at each point of the coords
+temp_data = np.array([np.zeros((5,5)),
+                      np.ones((5,5)),
                       np.ones((5,5))*2]).astype(int)
 temp_data
 ```
 
 We could think this is "all" we need to represent our data.
-But if we stopped at this point, we would need to 
+But if we stopped at this point, we would need to
 
-1. remember that the numbers in this array represent the temperature in degrees Celsius (doesn't seem too bad), 
+1. remember that the numbers in this array represent the temperature in degrees Celsius (doesn't seem too bad),
 
-2. remember that the first dimension of the array represents time, the second latitude and the third longitude (maybe ok), and 
+2. remember that the first dimension of the array represents time, the second latitude and the third longitude (maybe ok), and
 
 3. keep track of the range of values that time, latitude, and longitude take (not so good).
 
-Keeping track of all this information separately could quickly get messy and could make it challenging to share our data and analyses with others. 
-This is what the netCDF data model and `xarray` aim to simplify. 
+Keeping track of all this information separately could quickly get messy and could make it challenging to share our data and analyses with others.
+This is what the netCDF data model and `xarray` aim to simplify.
 We can get data and its descriptors together in an `xarray.DataArray` by adding the dimensions over which the variable is being measured and including attributes that appropriately describe dimensions and variables.
 
 **Dimensions and Coordinates**
 
-To specify the dimensions of our upcoming `xarray.DataArray`, we must examine how we've constructed the `numpy.ndarray` holding the temperature data. 
-The diagram below shows how the dimensions of `temp_data` are ordered: the first dimension is time, the second is latitude, and the third is longitude. 
+To specify the dimensions of our upcoming `xarray.DataArray`, we must examine how we've constructed the `numpy.ndarray` holding the temperature data.
+The diagram below shows how the dimensions of `temp_data` are ordered: the first dimension is time, the second is latitude, and the third is longitude.
 
 ![](../images/netcdf_xarray_indexing.png)
 
-Remember that indexing in 2-dimensional `numpy.ndarrays` starts at the top-left corner of the array, and it is done by rows first and columns second (like matrices). 
-This is why latitude is the second dimension and longitude the third. 
+Remember that indexing in 2-dimensional `numpy.ndarrays` starts at the top-left corner of the array, and it is done by rows first and columns second (like matrices).
+This is why latitude is the second dimension and longitude the third.
 From the diagram, we can also see that the coordinates (values of each dimension) are as follow:
 
 - date coordinates are 2022-09-01, 2022-09-02, 2022-09-03
@@ -291,10 +295,10 @@ We add the dimensions as a tuple of strings and coordinates as a dictionary:
 # names of the dimensions in the required order
 dims = ('time', 'lat', 'lon')
 
-# create coordinates to use for indexing along each dimension 
+# create coordinates to use for indexing along each dimension
 coords = {'time' : pd.date_range("2022-09-01", "2022-09-03"),
           'lat' : np.arange(70, 20, -10),
-          'lon' : np.arange(60, 110, 10)}  
+          'lon' : np.arange(60, 110, 10)}
 ```
 
 
@@ -303,7 +307,7 @@ coords = {'time' : pd.date_range("2022-09-01", "2022-09-03"),
 Next, we add the attributes (metadata) for our temperature data as a dictionary:
 
 ```{python}
-# attributes (metadata) of the data array 
+# attributes (metadata) of the data array
 attrs = { 'title' : 'temperature across weather stations',
           'standard_name' : 'air_temperature',
           'units' : 'degree_c'}
@@ -316,21 +320,21 @@ Finally, we put all these pieces together (data, dimensions, coordinates, and at
 
 ```{python}
 # initialize xarray.DataArray
-temp = xr.DataArray(data = temp_data, 
+temp = xr.DataArray(data = temp_data,
                     dims = dims,
                     coords = coords,
                     attrs = attrs)
 temp
 ```
 
-We can also update the variable’s attributes after creating the object. 
+We can also update the variable’s attributes after creating the object.
 Notice that each of the coordinates is also an `xarray.DataArray`, so we can add attributes to them.
 
 ```{python}
 # update attributes
 temp.attrs['description'] = 'simple example of an xarray.DataArray'
 
-# add attributes to coordinates 
+# add attributes to coordinates
 temp.time.attrs = {'description':'date of measurement'}
 
 temp.lat.attrs['standard_name']= 'grid_latitude'
@@ -341,14 +345,14 @@ temp.lon.attrs['units'] = 'degree_E'
 temp
 ```
 
-At this point, since we have a single variable, the dataset attributes and the variable attributes are the same. 
+At this point, since we have a single variable, the dataset attributes and the variable attributes are the same.
 
 #### Indexing
-An `xarray.DataArray` allows both positional indexing (like `numpy`) and label-based indexing (like `pandas`). 
-Positional indexing is the most basic, and it's done using Python's `[]` syntax, as in `array[i,j]` with i and j both integers. 
+An `xarray.DataArray` allows both positional indexing (like `numpy`) and label-based indexing (like `pandas`).
+Positional indexing is the most basic, and it's done using Python's `[]` syntax, as in `array[i,j]` with i and j both integers.
 **Label-based indexing** takes advantage of dimensions in the array having names and coordinate values that we can use to access data instead of remembering the positional order of each dimension.
 
-As an example, suppose we want to know what was the temperature recorded by the weather station located at 40°0′N 80°0′E on September 1st, 2022. 
+As an example, suppose we want to know what was the temperature recorded by the weather station located at 40°0′N 80°0′E on September 1st, 2022.
 By recalling all the information about how the array is setup with respect to the dimensions and coordinates, we can access this data positionally:
 
 ```{python}
@@ -361,21 +365,21 @@ Or, we can use the dimensions names and their coordinates to access the same val
 temp.sel(time='2022-09-01', lat=40, lon=80)
 ```
 
-Notice that the result of this indexing is a 1x1 `xarray.DataArray`. 
-This is because operations on an `xarray.DataArray` (resp. `xarray.DataSet`) always return another `xarray.DataArray` (resp. `xarray.DataSet`). 
-In particular, operations returning scalar values will also produce `xarray` objects, so we need to cast them as numbers manually. 
+Notice that the result of this indexing is a 1x1 `xarray.DataArray`.
+This is because operations on an `xarray.DataArray` (resp. `xarray.DataSet`) always return another `xarray.DataArray` (resp. `xarray.DataSet`).
+In particular, operations returning scalar values will also produce `xarray` objects, so we need to cast them as numbers manually.
 See [xarray.DataArray.item](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.item.html).
 
 More about [`xarray` indexing](https://docs.xarray.dev/en/stable/user-guide/indexing.html).
 
 #### Reduction
-`xarray` has implemented several methods to reduce an `xarray.DataArray` along any number of dimensions. 
+`xarray` has implemented several methods to reduce an `xarray.DataArray` along any number of dimensions.
 One of the advantages of `xarray.DataArray` is that, if we choose to, it can carry over attributes when doing calculations.
-For example, we can calculate the average temperature at each weather station over time and obtain a new `xarray.DataArray`. 
+For example, we can calculate the average temperature at each weather station over time and obtain a new `xarray.DataArray`.
 
 
 ```{python}
-avg_temp = temp.mean(dim = 'time') 
+avg_temp = temp.mean(dim = 'time')
 # to keep attributes add keep_attrs = True
 
 avg_temp.attrs = {'title':'average temperature over three days'}
@@ -385,15 +389,15 @@ avg_temp
 More about [`xarray` computations](https://docs.xarray.dev/en/stable/user-guide/computation.html).
 
 ### `xarray.DataSet`
-An `xarray.DataSet` resembles an in-memory representation of a NetCDF file and consists of *multiple* variables (each being an `xarray.DataArray`), with dimensions, coordinates, and attributes, forming a self-describing dataset. 
-Attributes can be specific to each variable, each dimension, or they can describe the whole dataset. 
-The variables in an `xarray.DataSet` can have the same dimensions, share some dimensions, or have no dimensions in common. 
+An `xarray.DataSet` resembles an in-memory representation of a netCDF file and consists of *multiple* variables (each being an `xarray.DataArray`), with dimensions, coordinates, and attributes, forming a self-describing dataset.
+Attributes can be specific to each variable, each dimension, or they can describe the whole dataset.
+The variables in an `xarray.DataSet` can have the same dimensions, share some dimensions, or have no dimensions in common.
 Let's see an example of this.
 
 
 #### Create an `xarray.DataSet`
-Following our previous example, we can create an `xarray.DataSet` by combining the temperature data with the average temperature data. 
-We also add some attributes that now describe the whole dataset, not only each variable. 
+Following our previous example, we can create an `xarray.DataSet` by combining the temperature data with the average temperature data.
+We also add some attributes that now describe the whole dataset, not only each variable.
 
 ```{python}
 # make dictionaries with variables and attributes
@@ -408,10 +412,10 @@ temp_dataset = xr.Dataset( data_vars = data_vars,
                         attrs = attrs)
 ```
 
-Take some time to click through the data viewer and read through the variables and metadata in the dataset. 
-Notice the following: 
+Take some time to click through the data viewer and read through the variables and metadata in the dataset.
+Notice the following:
 
-+ `temp_dataset` is a dataset with three dimensions (time, latitude, and longitude), 
++ `temp_dataset` is a dataset with three dimensions (time, latitude, and longitude),
 
 + `temp` is a variable that uses all three dimensions in the dataset, and
 
@@ -422,14 +426,14 @@ temp_dataset
 ```
 
 #### Save and Reopen
-Finally, we want to save our dataset as a NetCDF file. 
-To do this, specify the file path and use the *.nc* extension for the file name. 
+Finally, we want to save our dataset as a netCDF file.
+To do this, specify the file path and use the *.nc* extension for the file name.
 Then save the dataset using the `to_netcdf` method with your file path.
-Opening NetCDF is similarly straightforward using `xarray.open_dataset()`.
+Opening netCDF is similarly straightforward using `xarray.open_dataset()`.
 
 ```{python}
 # specify file path: don't forget the .nc extension!
-fp = os.path.join(os.getcwd(),'temp_dataset.nc') 
+fp = os.path.join(os.getcwd(),'temp_dataset.nc')
 # save file
 temp_dataset.to_netcdf(fp)
 
@@ -440,7 +444,7 @@ check
 
 ### Exercise
 
-For this exercise, we will use a dataset including time series of annual Arctic freshwater fluxes and storage terms. The data was produced for the publication [Jahn and Laiho, 2020](https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2020GL088854) about changes in the Arctic freshwater budget and 
+For this exercise, we will use a dataset including time series of annual Arctic freshwater fluxes and storage terms. The data was produced for the publication [Jahn and Laiho, 2020](https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2020GL088854) about changes in the Arctic freshwater budget and
 is archived at the Arctic Data Center [doi:10.18739/A2280504J](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2280504J)
 
 
@@ -458,12 +462,12 @@ fw_data
 
 ```
 
-1. How many dimensions does the `runoff_annual` variable have? 
+1. How many dimensions does the `runoff_annual` variable have?
 What are the coordinates for the second dimension of this variable?
 
 :::{.callout-tip collapse="true"}
 ### Answer
-We can see in the object viewer that the `runoff_annual` variable has two dimensions: `time` and `member`, in that order. 
+We can see in the object viewer that the `runoff_annual` variable has two dimensions: `time` and `member`, in that order.
 We can also access the dimensions by calling:
 
 ```{python}
@@ -471,8 +475,8 @@ We can also access the dimensions by calling:
 fw_data.runoff_annual.dims
 ```
 
-The second dimensions is `member`. 
-Near the top of the object viewer, under coordinates, we can see that that member's coordinates is an array from 1 to 11. 
+The second dimensions is `member`.
+Near the top of the object viewer, under coordinates, we can see that that member's coordinates is an array from 1 to 11.
 We can directly see this array by calling:
 ```{python}
 #| eval: false
@@ -505,12 +509,12 @@ Notice we had to use `item` to transform the array into a number.
 :::
 
 
-## Tabular Data and NetCDF
+## Tabular Data and netCDF
 
-Undoubtedly, tabular data is one of the most popular data formats. 
-In this last section, we will discuss the relation between tabular data and the NetCDF data format and how to transform a `pandas.DataFrame` into an `xarray.DataSet`.
+Undoubtedly, tabular data is one of the most popular data formats.
+In this last section, we will discuss the relation between tabular data and the netCDF data format and how to transform a `pandas.DataFrame` into an `xarray.DataSet`.
 
-### Tabular to NetCDF
+### Tabular to netCDF
 
 We assume our starting point is tabular data that meets the criteria for **tidy data**, which means:
 
@@ -522,21 +526,21 @@ We assume our starting point is tabular data that meets the criteria for **tidy 
 Take, for example, this tidy data subset from our exercise about weather stations measuring temperature:
 ![](../images/netcdf_tabular_data.png)
 
-To understand how this will transform into NetCDF format, we first need to identify which columns will act as dimensions and which as variables. 
-We can also think of the values of the dimension columns as the coordinates in the `xarray.DataSet`. 
-The diagram below shows how these columns transform into variables, dimensions, and coordinates. 
+To understand how this will transform into netCDF format, we first need to identify which columns will act as dimensions and which as variables.
+We can also think of the values of the dimension columns as the coordinates in the `xarray.DataSet`.
+The diagram below shows how these columns transform into variables, dimensions, and coordinates.
 
 ![](../images/netcdf_pandas_to_xarray.png)
 
-Tabular formats like csv do not offer an intrinsic way to encode attributes for the dimensions or variables, this is why we don't see any attributes in the resulting NetCDF data. One of the most significant advantages of NetCDF is its self-describing properties.
+Tabular formats like csv do not offer an intrinsic way to encode attributes for the dimensions or variables, this is why we don't see any attributes in the resulting netCDF data. One of the most significant advantages of netCDF is its self-describing properties.
 
 ### `pandas` to `xarray`
 
 What does the previous example look like when working with `pandas` and `xarray`?
 
-Let's work with a csv file containing the previous temperature measurements. 
-Essentially, we need to read this file as a `pandas.DataFrame` and then use the `pandas.DataFrame.to_xarray()` method, taking into account that the dimensions of the resulting `xarray.DataSet` will be formed using the index column(s) of the `pandas.DataFrame`. 
-In this case, we know the first three columns will be our dimension columns, so we need to group them as a [multindex](https://pandas.pydata.org/docs/user_guide/advanced.html#advanced-hierarchical) for the `pandas.DataFrame`. 
+Let's work with a csv file containing the previous temperature measurements.
+Essentially, we need to read this file as a `pandas.DataFrame` and then use the `pandas.DataFrame.to_xarray()` method, taking into account that the dimensions of the resulting `xarray.DataSet` will be formed using the index column(s) of the `pandas.DataFrame`.
+In this case, we know the first three columns will be our dimension columns, so we need to group them as a [multindex](https://pandas.pydata.org/docs/user_guide/advanced.html#advanced-hierarchical) for the `pandas.DataFrame`.
 We can do this by using the `index_col` argument directly when we read in the csv file.
 
 ```{python}
@@ -548,7 +552,7 @@ fp = "../data/netcdf_temp_data.csv"
 
 ```{python}
 #| eval: false
-fp = os.path.join(os.getcwd(),'netcdf_temp_data.csv') 
+fp = os.path.join(os.getcwd(),'netcdf_temp_data.csv')
 ```
 
 ```{python}
