@@ -1,0 +1,18 @@
+---
+title: "Navigating the Cloud-scale Data Landscape"
+execute:
+  freeze: auto
+---
+
+## Learning Objectives
+
+- Review the big picture of processing bottlenecks in large-scale data analysis
+- Recap various workshop technologies and how they all fit together
+- Learn about cloud-optimized data formats and access patterns
+- Consider the present and future of cloud-native geospatial
+
+## Introduction
+
+## Summary
+
+Lorem Ipsum...

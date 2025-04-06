@@ -38,7 +38,7 @@ book:
     - sections/zarr.qmd
     - sections/docker-containers.qmd
     - sections/software-design-2.qmd
-    - sections/multidim-arrays.qmd
+    - sections/cloud-scale-data.qmd
     - sections/reproducibility-containers.qmd
     - sections/docker-hpc-cloud.qmd
 
