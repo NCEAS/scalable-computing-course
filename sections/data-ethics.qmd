@@ -42,7 +42,7 @@ In Arctic-based research, there is a paradigm shift to include more local Indige
 
 ## Ethics at the Arctic Data Center
 
-**Transparency in data ethics is a vital part of open science.** Regardless of discipline, various ethical concerns are always present, including professional ethics such as plagiarism, false authorship, or falsification of data, to ethics regarding the handling of animals, to concerns relevant to human subjects research. As the primary repository for the Arctic program of the National Science Foundation, the Arctic Data Center accepts Arctic data from all disciplines. Recently, a new submission feature was released which asks researchers to describe the ethical considerations that are apparent in their research. This question is asked to all researchers, regardless of disciplines.
+**Transparency in data ethics is a vital part of open science.** Regardless of discipline, various ethical concerns are always present, including professional ethics such as plagiarism, false authorship, or falsification of data, to ethics regarding the handling of animals, to concerns relevant to human subjects research. As the primary repository for the Arctic program of the National Science Foundation, the Arctic Data Center accepts Arctic data from all disciplines. A data submission feature asks researchers to describe the ethical considerations that are apparent in their research. This question is asked to all researchers, regardless of disciplines.
 
 ![](../images/erp-methods.png){.lightbox width=100%}
 ![](../images/sensitivity.png){.lightbox width=100%}
