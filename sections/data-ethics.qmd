@@ -10,7 +10,7 @@ title: "Data Ethics for Scalable Computing"
 
 ## Intro to Data Ethics
 
-![](../images/calvin_hobbes5.png)
+![](../images/calvin_hobbes5.png){.lightbox width=100%}
 
 **The Arctic Data Center is an openly-accessible data repository.** The data published through it is open for anyone to reuse, subject to one of two license: [CC-0 Public Domain](https://creativecommons.org/public-domain/cc0/) and [CC-By Attribution 4.0](https://creativecommons.org/licenses/by/4.0/deed.en). As an open access repository, we prioritize long-term preservation and embrace  principles from the data stewardship community, which established a set of best practices for open data management. n adherence, two principles adopted by the Arctic Data Center are **FAIR Principles** (Findable, Accessible, Interoperable, and Reproducible) and **CARE Principles for Indigenous Governance** (Collective Benefit, Authority to Control, Responsibility, Ethics). Both of which serve as frameworks in how to consider data ethics. 
  
@@ -18,13 +18,13 @@ title: "Data Ethics for Scalable Computing"
 
 FAIR speaks to how metadata is managed, stored, and shared. 
 
-![](../images/fair.png)
+![](../images/fair.png){.lightbox width=100%}
 
 What is the difference between FAIR principles and open science?
 
 FAIR principles and open science are overlapping concepts, but are distinctive from one another. Open science supports a culture of sharing research outputs and data, and FAIR focuses on how to prepare the data. **The FAIR principles place emphasis on machine readability, “distinct from peer initiatives that focus on the human scholar” (Wilkinson et al 2016) and as such, do not fully engage with sensitive data considerations and with Indigenous rights and interests (Research Data Alliance International Indigenous Data Sovereignty Interest Group, 2019).**  Metadata can be FAIR but not open. For example, sensitive data (data that contains personal information) may not be appropriate to share, however sharing the anonymized metadata that is easily understandable will reduce research redundancy. 
 
-![](../images/fair_care.png)
+![](../images/fair_care.png){.lightbox width=100%}
 
 Research has historically perpetuated colonialism and represented extractive practices, meaning that the research results were not mutually beneficial. These issues also related to how data was owned, shared, and used. **To address issues like these, the Global Indigenous Data Alliance (GIDA) introduced CARE Principles for Indigenous Data Governance to support Indigenous data sovereignty.** CARE Principles speak directly to how the data is stored and shared in the context of Indigenous data sovereignty. CARE Principles (Carroll et al. 2020) stand for: 
 
@@ -221,9 +221,9 @@ Artificial Intelligence (AI) can be thought of as the development of computer sy
 
 ### The FAST Principles 
 
-**FAST** stands for Fairness, Accountability, Sustainability, and Transparency. The FAST principles aim to guide the ethical development of AI projects from their inception to deployment. The continuous involvement and commitment of software developers, domain experts, technical leads, project managers, rightsholders, and collaborators involved in the AI project is crucial to implement these principles successfully. The following is a brief overview of each of the FAST principles, we greatly encourage you to read through the Alan Turing Institute guide to learn more!
+**FAST stands for Fairness, Accountability, Sustainability, and Transparency.** The FAST principles aim to guide the ethical development of AI projects from their inception to deployment. The continuous involvement and commitment of software developers, domain experts, technical leads, project managers, rightsholders, and collaborators involved in the AI project is crucial to implement these principles successfully. The following is a brief overview of each of the FAST principles, we greatly encourage you to read through the Alan Turing Institute guide to learn more!
 
-![](../images/FAST-track-dataethics.png)
+![](../images/FAST-track-dataethics.png){.lightbox width=100%}
 
 ### Fairness 
 
@@ -238,11 +238,14 @@ They are developing and deploying:
 3. Do not have discriminatory or inequitable impacts on the lives of the people they affect **(Outcome Fairness)**
 4. Are deployed by users sufficiently trained to implement them responsibly and without bias **(Implementation Fairness)**
 
-_Real-life Example : Insufficient Radar Network_
+::: {.callout-caution collapse="false"}
+## Real-life Example : Insufficient Radar Network
 
 The following figure (McGovern et al., 2022) shows coverage of the national Doppler weather network (green and yellow circles) over a demographic map of the Black population in the southeast US. This would be an example of an issue in data fairness, since radar coverage does not represent the population uniformly, leaving out  areas with higher Black population. Problems with outcome fairness could ensue if this non-representative biases an AI model to under-predict weather impacts in such populations.
 
-![](../images/AI-dataethics-racial-example.png)
+![](../images/AI-dataethics-racial-example.png){.lightbox width=100%}
+
+:::
 
 ### Accountability
 
@@ -250,33 +253,39 @@ Accountability in AI projects stems from the shared view that isolated AI models
 
 **Accountability by Design:** All AI systems must be designed to facilitate end-to-end answerability and auditability. This requires both responsible _humans-in-the-loop_ across the entire design and implementation chain as well as _activity monitoring protocols_ that enable end-to-end oversight and review.
 
-_Real-life Example: AI for natural disasters response_
+::: {.callout-caution collapse="false"}
+## Real-life Example: AI for natural disasters response
 
 Accountability and the ability to audit AI methods can be crucial when model outputs support critical decision-making, such as in natural disasters. In 2021, a New York Times investigation (Fink, 2021) covered a private company's premature release of outputs about neighborhoods most affected by potential earthquakes in Seattle. While the initial release erroneously did not show threats for non-residential areas, ensuing updated versions showed non-compatible predictions again. Although the company acknowledged that its AI models would not replace the first responder's judgment, the lack of audibility and opacity in the model development hindered accountability for any party, ultimately eroding the public confidence in the tools and leading to a loss of public resources. 
 
-![](../images/AI-ethics-FF-example.jpg)
+![](../images/AI-ethics-FF-example.jpg){.lightbox width=100%}
+:::
 
 ### Sustainability
 
 Sustainability in the FAST principles includes continuous assessment of the social impacts of an AI system and technical sustainability of the AI model. In the first consideration, the FAST principles advocate for performing a Stakeholder Impact Assessment (SIA) at different stages to help build confidence in the project and uncover unexpected risks or biases, among other benefits. The Alan Turing Institute guide shares a prototype of an SIA (Leslie, 2019). The core of technical sustainability is creating safe, accurate, reliable, secure, and robust AI systems. To achieve these technical goals, teams must implement thorough testing, performance metrics, uncertainty quantification, and be aware of changes to the underlying distribution of data, among other essential practices. 
 
-_Real-life Example: SpaceCows_ 
+::: {.callout-tip collapse="false"}
+## Real-life Example: SpaceCows 
 
 The SpaceCows project (Shepherd, 2021; ABC Australia, 2024) in northern Australia is a collaboration between scientists, industry leaders, and local indigenous communities developing AI centered platforms to analyze GPS tracking data collected from feral cows alongside satellite imagery and weather data. Indigenous knowledge and traditional land owners have been at the center of the development, providing guidance and ultimately benefiting from the AI tools to protect their land and cultural sites.
 
-![](../images/AI-dataethics-landscape.jpg)
+![](../images/AI-dataethics-landscape.jpg){.lightbox width=100%}
 
 Important indigenous cultural sites can be damaged by feral cattle. Image from CSIRO, [SpaceCows: Using AI to tackle feral herds in the Top End.](https://www.csiro.au/en/news/all/news/2021/september/spacecows-using-ai-to-tackle-feral-herds-in-the-top-end)
+:::
 
 ### Transparency 
 
 Under the FAST principles, transparency in AI projects refers to transparency about how an AI project was designed and implemented and the content and justification of the outcome produced by the AI model. To ensure process transparency, the project should show how the design and implementation included ethical, safety, and fairness considerations throughout the project. To clarify the content and explain the outcomes of an AI system, the project should offer plain language, non-technical explanations accessible to non-specialists that convey how and why a model performed the way it did. In this direction, it is essential to avoid a ‘mathematical glass box’ where the code and mathematics behind the algorithm are openly available, but there is a lack of rationale about how or why the model goes from input to output. Finally, the explanations about how the outcomes were produced should become the basis to justify the outcomes in terms of ethical permissibility, fairness, and trustworthiness. A careful consideration of the balance between the sustainability and transparency principles is necessary when dealing with protected or private data. 
 
-_Real-life Example: France’s Digital Republic Act_
+::: {.callout-tip collapse="false"}
+## Real-life Example: France’s Digital Republic Act
 
 The concern for transparency in using personal data is an active space for debate. In 2018, the French government passed a law to protect citizens' privacy, establishing the citizen's "right to an explanation" regarding, among other things, how an algorithm contributed to decisions on their persona and which data was processed (Edwards and Veale, 2018; Lo Piano, 2020). Overall, this legislation aims to create a fairer and more transparent digital environment where everyone can enjoy equal opportunities.
 
-![](../images/google-deepmind.jpg)
+![](../images/google-deepmind.jpg){.lightbox width=100%}
+:::
 
 ### Conclusion
 
@@ -292,12 +301,13 @@ Image source: Kate Crawford and Trevor Paglen, “Excavating AI: The Politics of
 
 ImageNet is a great example of how personal bias can enter machine learning through the training data. ImageNet was a training data set of photos that was used to train image classifiers. The data set was initially created as a large collection of pictures, which were mainly used to identify objects, but some included images of people. The creators of the data set created labels to categorize the images, and through crowdsourcing, people from the internet labeled these images. (This example is from Kate Crawford and Trevor Paglen, “Excavating AI: The Politics of Training Sets for Machine Learning", September 19, 2019). 
 
+::: {.callout-tip}
 **Discussion:**
 
 1. Where are the two areas bias could enter this scenario?
 2. Are there any ways that this bias could be avoided?
 3. While this example is specific to images, can you think of any room for bias in your research? 
-
+:::
 
 ## References and Further Reading
 
