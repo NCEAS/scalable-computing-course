@@ -1,5 +1,6 @@
 chardet
 dask[complete]
+duckdb
 flake8
 geopandas
 IPython
@@ -16,12 +17,15 @@ gcsfs
 glances
 pyarrow
 pydantic==1.10.9
+pystac
+pystac-client
 rasterio
 requests
 rioxarray
 seaborn
 shapely
 skimpy
+stackstac
 xarray
 pdgraster @ git+https://github.com/PermafrostDiscoveryGateway/viz-raster.git@log-patch
 black
