@@ -302,7 +302,7 @@ Given the discussion of the CARE priciples and the FAST principles, let's discus
 Let's take, for example, a researcher that wants to run an machine learning model to detect changes in environmental features at a large regional or Arctic scale. We've seen several of these so far, including 1) AI predictions of the distribution of permafrost ice wedges and retrogressive thaw slumps across the Arctic; 2) use of AI to detect changes in surface water extent and lake drainage events across the Arctic; 3) use of AI in a mechanistic process models that helps understand the global source/sink tradeoff of permafrost loss and its impact on climate.
 
 ::: {.callout-tip}
-##Discussion Questions 
+## Discussion Questions 
 
 Divide into groups, find a comfortable place to sit, and pick a large-scale AI application that is of interest to the group. Let’s discuss some of the following questions:
 
