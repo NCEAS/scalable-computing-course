@@ -55,7 +55,7 @@ First we will create a `.bash_profile` file to create variables that point to th
 - Paste this text into the file:
 
 ```{.bash}
-export VIRTUALENVWRAPPER_VIRTUAWORKON_HOME=$HOME/.virtualenvs
+export VIRTUALENVWRAPPER_WORKON_HOME=$HOME/.virtualenvs
 source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 ```
 
