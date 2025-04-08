@@ -39,12 +39,22 @@ Functions are first-class objects in Python (and many other languages). This has
 def double(x):
     return 2*x
 
+print(double)
+```
+
+```{python}
 # also assign the function to the `twotimes` variable
 twotimes = double
 type(twotimes)
 ```
 
-Note that when we print it to screen, we see that `prod` is of type `function`, and when we use the two instances, we get identical results:
+Note that when we print it to screen, we see that `prod` is of type `function`. We can see from the object address that it is the same object as `double`:
+
+```{python}
+print(twotimes)
+```
+
+and when we use the two instances, we get identical results:
 
 ```{python}
 print(double(7))
@@ -81,7 +91,32 @@ Note how we passed the `some_function` as a variable name without the parenthese
 ::: {.callout-note}
 
 ### Decorators
-This approach to function composition is exactly what is used by [Python decorator](https://docs.python.org/3/glossary.html#term-decorator) functions.
+
+This approach to function composition is exactly what is used by [Python decorator](https://docs.python.org/3/glossary.html#term-decorator) functions. A `decorator` in python is a function that returns a function, thereby making it easy to wrap the one function inside another. To modify our above exmaple into a decorator, we can simply return the `wrapper` function:
+
+```{python}
+def my_decorator(func_to_run):
+    def wrapper():
+        print("Ran wrapper")
+        func_to_run()
+        print("Finished wrapper")
+    return wrapper
+
+f = my_decorator(some_function)
+
+f()
+```
+
+Finally, once you have a decorator function defined, you can easily apply it to your functions when you define them using some special syntactic sugar, the `@` annotation.
+
+```{python}
+@my_decorator
+def hello():
+    print("Hello")
+
+hello()
+
+```
 
 :::
 
@@ -200,4 +235,6 @@ Deadlocks occur when two concurrent tasks block on the output of the other. Dead
 
 ## Further reading
 
+- [Python decorators](https://realpython.com/primer-on-python-decorators/)
+- [Python namespaces and scope](https://realpython.com/python-namespaces-scope/)
 - [With Statement Context Managers](https://docs.python.org/3/reference/datamodel.html#context-managers)
