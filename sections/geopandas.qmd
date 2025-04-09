@@ -174,7 +174,7 @@ comm.plot(figsize=(9,9))
 This plot doesn't look so good. Turns out, these data are in WGS 84 (EPSG 4326), as opposed to Alaska Albers (EPSG 3338), which is what our raster data are in. To make pretty plots, and allow our raster data and vector data to be analyzed together, we'll need to reproject the vector data into 3338. To to this, we'll use the `to_crs` method on our `comm` object, and specify as an argument the projection we want to transform to.
 
 ```{python}
-comm_3338 = comm.to_crs(ships_meta["crs])
+comm_3338 = comm.to_crs(ships_meta["crs"])
 
 comm_3338.plot()
 ```
