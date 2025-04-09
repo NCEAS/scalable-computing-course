@@ -86,20 +86,25 @@ The upper left panel of the figure above shows some satellite imagery data. Thes
 This is all great, and the array of values is a lot of information, but there are some key items that are missing. This array isn't imaginary, it represents a physical space on this earth, so where is all of that contextual information? The answer is in the `rasterio` profile object. This object contains all of the metadata needed to interpret the raster array. Here is what our `ships_meta` contains:
 
 ```
-'driver': 'GTiff',
-'dtype': 'float32',
-'nodata': -3.3999999521443642e+38,
-'width': 3087,
-'height': 2308,
-'count': 1,
-'crs': CRS.from_epsg(3338),
-'transform': Affine(999.7994153462766, 0.0, -2550153.29233849, 0.0, -999.9687691991521, 2711703.104608573),
-'tiled': False,
-'compress': 'lzw',
-'interleave': 'band'}
+{'blockxsize': 3087,
+ 'blockysize': 1,
+ 'compress': 'lzw',
+ 'count': 1,
+ 'crs': CRS.from_wkt('PROJCS["unnamed",GEOGCS["NAD83",DATUM["North_American_Datum_1983",SPHEROID["GRS 1980",6378137,298.257222101004,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6269"]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4269"]],PROJECTION["Albers_Conic_Equal_Area"],PARAMETER["latitude_of_center",50],PARAMETER["longitude_of_center",-154],PARAMETER["standard_parallel_1",55],PARAMETER["standard_parallel_2",65],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]'),
+ 'driver': 'GTiff',
+ 'dtype': 'float32',
+ 'height': 2308,
+ 'interleave': 'band',
+ 'nodata': -3.3999999521443642e+38,
+ 'tiled': False,
+ 'transform': Affine(999.7994153462766, 0.0, -2550153.29233849,
+       0.0, -999.9687691991521, 2711703.104608573),
+ 'width': 3087}
 ```
 
 This object gives us critical information, like the CRS of the data, the no data value, and the transform. The transform is what allows us to move from image pixel (row, column) coordinates to and from geographic/projected (x, y) coordinates. The transform and the CRS are critically important, and related. If the CRS are instructions for how the coordinates can be represented in space and on a flat surface (in the case of projected coordinate systems), then the transform describes how to locate the raster array positions in the correct coordinates given by the CRS.
+
+In the Introduction section of this chapter, we mentioned that the CRS of this raster file would be Alaska Albers with an EPSG code of 3338. Along with this CRS being represented by an EPSG code, it can also be represented by a WKT (Well-Known-Text) format, which is what see in the 'crs' section of `ships_meta`. A CRS can be created from the WKT information just like how a CRS can be created from an EPSG code. In this [description of the Alaska Albers CRS](https://epsg.io/3338), we can see the WKT defined at the bottom.
 
 Note that since the array and the profile are in separate objects it is easy to lose track of one of them, accidentally overwrite it, etc. Try to adopt a naming convention that works for you because they usually need to work together in geospatial operations.
 
