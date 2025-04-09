@@ -197,7 +197,7 @@ coord_box_df = gpd.GeoDataFrame(
     geometry = [coord_box]).to_crs(ships_meta["crs"])
 ```
 
-Now, we can read in raster again cropped to bounding box. We use the `mask` function from `rasterio.mask`. Note that we apply this to the connection to the raster file (`with rasterio.open(...)`), then update the metadata associated with the raster, because the `mask` function requires as its first `dataset` argument a dataset object opened in `r` mode.
+Now, we can read in the raster again, but cropped to bounding box. We use the `mask` function from `rasterio.mask`. Note that we apply this to the connection to the raster file (`with rasterio.open(...)`), then update the metadata associated with the raster, because the `mask` function requires as its first `dataset` argument a dataset object opened in `r` mode.
 
 
 ```{python}
@@ -224,7 +224,7 @@ shipc_meta.update({"driver": "GTiff",
                  "compress": "lzw"})
 ```
 
-Now we'll do a similar task with the vector data. Tin this case, we use a spatial join. The join will be an inner join, and select only rows from the left side (our fishing districts) that are **within** the right side (our bounding box). I chose this method as opposed to a clipping type operation because it ensures that we don't end up with any open polygons at the boundaries of our box, which could cause problems for us down the road.
+Now we'll do a similar task with the vector data. In this case, we use a spatial join. The join will be an inner join, and select only rows from the left side (our fishing districts) that are **within** the right side (our bounding box). I chose this method as opposed to a clipping type operation because it ensures that we don't end up with any open polygons at the boundaries of our box, which could cause problems for us down the road.
 
 ```{python}
 comm_clip = gpd.sjoin(comm_3338,
