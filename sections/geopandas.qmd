@@ -174,12 +174,12 @@ comm.plot(figsize=(9,9))
 This plot doesn't look so good. Turns out, these data are in WGS 84 (EPSG 4326), as opposed to Alaska Albers (EPSG 3338), which is what our raster data are in. To make pretty plots, and allow our raster data and vector data to be analyzed together, we'll need to reproject the vector data into 3338. To to this, we'll use the `to_crs` method on our `comm` object, and specify as an argument the projection we want to transform to.
 
 ```{python}
-comm_3338 = comm.to_crs("EPSG:3338")
+comm_3338 = comm.to_crs(ships_meta["crs])
 
 comm_3338.plot()
 ```
 
-Much better!
+Much better! Additionally, we could have reprojected the data using `comm_3338 = comm.to_crs("EPSG:3338")`.
 
 ## Crop data to area of interest
 
@@ -194,7 +194,7 @@ coord_box = box(-159.5, 55, -144.5, 62)
 
 coord_box_df = gpd.GeoDataFrame(
     crs = 'EPSG:4326',
-    geometry = [coord_box]).to_crs("EPSG:3338")
+    geometry = [coord_box]).to_crs(ships_meta["crs"])
 ```
 
 Now, we can read in raster again cropped to bounding box. We use the `mask` function from `rasterio.mask`. Note that we apply this to the connection to the raster file (`with rasterio.open(...)`), then update the metadata associated with the raster, because the `mask` function requires as its first `dataset` argument a dataset object opened in `r` mode.
