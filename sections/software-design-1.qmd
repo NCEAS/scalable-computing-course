@@ -92,7 +92,7 @@ Note how we passed the `some_function` as a variable name without the parenthese
 
 ### Decorators
 
-This approach to function composition is exactly what is used by [Python decorator](https://docs.python.org/3/glossary.html#term-decorator) functions. A `decorator` in python is a function that returns a function, thereby making it easy to wrap the one function inside another. To modify our above exmaple into a decorator, we can simply return the `wrapper` function:
+This approach to function composition is exactly what is used by [Python decorator](https://docs.python.org/3/glossary.html#term-decorator) functions. A `decorator` in python is a function that returns a function, thereby making it easy to wrap the one function inside another. To modify our above example into a decorator, we can simply return the `wrapper` function:
 
 ```{python}
 def my_decorator(func_to_run):
