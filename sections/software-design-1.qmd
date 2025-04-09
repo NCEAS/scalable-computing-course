@@ -48,7 +48,7 @@ twotimes = double
 type(twotimes)
 ```
 
-Note that when we print it to screen, we see that `prod` is of type `function`. We can see from the object address that it is the same object as `double`:
+When we print the type, we see that `twotimes` is of type `function`. We can see from the object address that it is the same object as `double`. It is the same object, with two different symbolic names:
 
 ```{python}
 print(twotimes)
@@ -84,7 +84,7 @@ wrapper(some_function)
 
 ::: {.callout-note}
 
-Note how we passed the `some_function` as a variable name without the parentheses.
+Note how we passed the `some_function` as a variable name without the parentheses. This is a request for the function object, whereas, with paranethesis we are requesting to execute the function object code.
 
 :::
 
@@ -147,7 +147,7 @@ print(x)
 
 So, you can see that writing a function that uses global variables can have effects outside of the scope of the function call. This can have drastic consequences on concurrent code, as the order in which function calls are made when operating concurrently are not deterministic, and so the impact of global variables will also not be deterministic.
 
-A related issue arises when code in a function depends on its enclosing namespace, such as when a function is defined inside of another function. When resolving a variable, python first looks in the Local namespace, and then in the Enclosing namespace, Global namespace, and Built-in namespace. So, even if a variable is not defined locally, it might still be resolved by one of the other namespaces in surprising ways.
+A related issue arises when code in a function depends on its enclosing namespace, such as when a function is defined inside of another function. **When resolving a variable, python first looks in the Local namespace, and then in the Enclosing namespace, Global namespace, and Built-in namespace.** So, even if a variable is not defined locally, it might still be resolved by one of the other namespaces in surprising ways.
 
 ```{python}
 a = 3
@@ -163,11 +163,11 @@ A **pure function** is a function that depends only on its input arguments, and 
 
 In contrast, a non-pure function is a function in which the return value may change if the function is called repeatedly, typically because it depends on some particular state that affects the outcome but is not part of the input arguments. For example, the `time.time()` function returns different values based on the current state of the system clock.
 
-Using a global variable in a function creates a side-effect that makes it an impure function, as would other operations that modify an external state variable.
+Using a global variable in a function creates a side-effect that makes it an impure function, as would other operations that modify an external state variable, or for example write data to disk that affect future calls to the function.
 
 :::{.callout-important}
 
-**Pure functions** make writing concurrent code much easier.
+**Pure functions** make writing concurrent code much easier. Along with **immmutable data** structures such as tuples they significantly reduce the complexity and efficiency of writing concurrent code safely.
 
 :::
 
