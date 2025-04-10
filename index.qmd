@@ -121,7 +121,7 @@ These written materials reflect the continuous development of learning materials
 
 This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
-**Citation**:  Matthew B. Jones, S. Jeanette Clark, Jim Regetz, Rushiraj Nenuji, Nicole Greco, Angie Garcia, and Justin Kadi. 2025. Scalable and Computationally Reproducible Approaches to Arctic Research. Arctic Data Center. [https://doi.org/10.18739/A2C53F33M](https://doi.org/10.18739/A2C53F33M)
+**Citation**:  Matthew B. Jones, S. Jeanette Clark, Jim Regetz, Rushiraj Nenuji, Nicole Greco, Angie Garcia, and Justin Kadi. 2025. Scalable and Computationally Reproducible Approaches to Arctic Research. Arctic Data Center. [https://doi.org/10.18739/A2NK3670P](https://doi.org/10.18739/A2NK3670P)
 
 **Additional contributors**:  Samantha Csik, Bryce Mecum, Natasha Haycock-Chavez, Daphne Virlar-Knight, Juliet Cohen, Anna Liljedahl, Amber E. Budden, Noor Johnson, Robyn Thiessen-Bock, Carmen Galaz García, Angel Chen, Maggie Klope. 
 
