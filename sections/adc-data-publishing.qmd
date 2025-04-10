@@ -11,7 +11,7 @@ title: "Documenting and Publishing Data"
 
 ## Introduction
 
-A data repository is a database infrastructure that collects, manages, and stores data. In addition to the [Arctic Data Center](arcticdata.io), there are many other repositories dedicated to archiving data, code, and creating rich metadata. The Knowledge Network for Biocomplexity (KNB), the Digital Archaeological Record (tDAR), Environmental Data Initiative (EDI), and Zenodo are all examples of dedicated data repositories.
+A data repository is a database infrastructure that collects, manages, and stores data. Data repositories can serve as a centralized place to host datasets, share data publicly, and search for data in a logical manner. In addition to the [Arctic Data Center](arcticdata.io), there are many other repositories dedicated to archiving data, code, and creating rich metadata. The Knowledge Network for Biocomplexity (KNB), the Digital Archaeological Record (tDAR), Environmental Data Initiative (EDI), and Zenodo are all examples of dedicated data repositories.
 
 ![](../images/data-repository-logos.png)
 
@@ -66,7 +66,7 @@ These data repositories all assign a unique identifier to ***every version*** of
 
 ## Archiving Data: The Large Data Perspective
 
-There are two components to any data package archived with the Arctic Data Center: the metadata & the data themselves. Data can be images, plain text documents, tabular data, spatial data, scripts used to analyze the data, a readme file, and more. To the best of your ability, please make sure that the data uploaded are in an open format, rather than proprietary format. We strongly recommend using open, self-documenting binary formats for large data archival. NetCDF, HDF, .mat (v7.3) and Parquet files are all examples of "self-documenting" files. In the case of a NetCDF file, users can input the attribute name, attribute description, missing value codes, units, and more into the file itself. When these data are well-documented within themselves, it can save the time when users submit their data to us, since the documentation for variable level information is already mostly complete. We'll discuss NetCDF and metadata more in Session 8. For geospatial data, we recommend using geotiff for raster files, and geopackage files for vector files.
+There are two components to any data package archived with the Arctic Data Center: the metadata & the data themselves. Data can be images, plain text documents, tabular data, spatial data, scripts used to analyze the data, a readme file, and more. To the best of your ability, please make sure that the data uploaded are in an open format, rather than proprietary format. We strongly recommend using open, self-documenting binary formats for large data archival. NetCDF, HDF, .mat (v7.3) and Parquet files are all examples of "self-documenting" files. In the case of a NetCDF file, users can input the attribute name, attribute description, missing value codes, units, and more into the file itself. When these data are well-documented within themselves, it can save the time when users submit their data to us, since the documentation for variable level information is already mostly complete. For geospatial data, we recommend using geotiff for raster files, and geopackage files for vector files.
 
 This section provides an overview of some highlights within the data submission process, and will specifically address issues related to datasets with large amounts of data, whether that be in number of files or cumulative file size.
 
@@ -78,7 +78,7 @@ First we'll go over the metadata submission; then learn how to upload the data u
 
 In order to archive data with the Arctic Data Center, you must log in with your ORCID account. If you do not have one, you can create at <https://orcid.org/>. ORCID is a non-profit organization made up of research institutions, funders, publishers and other stakeholders in the research space. ORCID stands for Open Researcher and Contributor ID. The purpose of ORCID is to give researchers a unique identifier which then helps highlight and give credit to researchers for their work. If you click on someone's ORCID, their work and research contributions will show up (as long as the researcher used ORCID to publish or post their work).
 
-Once you're logged into the Arctic Data Center with your ORCID, you can access the data submission form by clicking "Submit Data" in the navigation bar. For most dataset submissions, you would submit your data and metadata at the same using the "Add Files" buttons seen in the image below. However, when you know you have a large quantity of files or large cumulative file size, you should focus only on submitting metadata through the web form. We'll discuss how to submit large quantities of data in the next section.
+Once you're logged into the Arctic Data Center with your ORCID, you can access the data submission form by clicking "Submit Data" in the navigation bar. For most dataset submissions, you would submit your data and metadata at the same time using the "Add Files" buttons seen in the image below. However, when you know you have a large quantity of files or large cumulative file size, you should focus only on submitting metadata through the web form. We'll discuss how to submit large quantities of data in the next section.
 
 ![](../images/adc-submissions-form.png)
 
@@ -86,7 +86,7 @@ Once you're logged into the Arctic Data Center with your ORCID, you can access t
 
 In the overview section, you will include a descriptive title of your data set, select the appropriate data sensitivity tag, an abstract of the data set, keywords, funding information, and a license.
 
-In general, if your data has been anonymized or de-identified in any way, your submission is no longer considered to have "Non-sensitive data". If you have not had to de-identify your data or through an Instituional Review Board process, you should select the "Non-sensitive data" tag. You can find a more in-depth review of the data sensitivity tag in Chapter 12 of our [Fundamentals in Data Management](https://learning.nceas.ucsb.edu/2022-04-arctic/data-publishing.html) coursebook.
+In general, if your data has been anonymized or de-identified in any way, your submission is no longer considered to have "Non-sensitive data". If you have not had to de-identify your data or through an Institutional Review Board process, you should select the "Non-sensitive data" tag. You can find a more in-depth review of the data sensitivity tag in Chapter 12 of our [Fundamentals in Data Management](https://learning.nceas.ucsb.edu/2022-04-arctic/data-publishing.html) coursebook.
 
 ![](../images/submissions-form-overview-1.png)
 
@@ -156,9 +156,9 @@ When you are successful, you should see a large green banner with a link to the 
 
 ### Step 2: Adding File & Variable Level Metadata
 
-The final major section of metadata concerns the structure and content of your data files. Assuming there are many files (and not a few very large ones), it would be unreasonable for users to input file and variable level metadata for each file. When this situation occurs, we encourage users to fill out as much information as possible for each ***unique*** type of file. Once that is completed, usually with some assistance from the Data Team, we will then programmatically carry over the information to other relevant files.
+The final major section of metadata concerns the structure and content of your data files. Assuming there are many files (and not a few very large ones), it would be unreasonable for users to input file and variable level metadata for each file. When this situation occurs, we encourage users to fill out as much information as possible for each ***unique*** type of file. Once that is completed, usually with some assistance from the Data Team, we will then programmatically carry over the information to other relevant files. We also just released a new feature that allows submitters to copy over file attributes in the web editor.
 
-When you're data are associated with your metadata submission, they will appear in the data section at the top of the page when you go to edit your dataset. Choose which file you would like to begin editing by selecting the "Describe" button to the right of the file name.
+When your data are associated with your metadata submission, they will appear in the data section at the top of the page when you go to edit your dataset. Choose which file you would like to begin editing by selecting the "Describe" button to the right of the file name.
 
 ![](../images/submissions-form-data-file.png)
 
@@ -196,7 +196,7 @@ After you get the big green success message, you can visit your dataset and revi
 
 ### Step 3: Uploading Large Data
 
-In order to submit your large data files to the Arctic Data Center repository, we encourage users to directly upload their data to the Data Team's servers using a secure file transfer protocol (SFTP). There are a number of GUI driven and command line programs out there that all work well. For a GUI program, our team uses and recommends the free program [Cyberduck](https://cyberduck.io/download/). We will discuss command line programs in [Session 18](https://learning.nceas.ucsb.edu/2022-09-arctic/sections/18-arctic-data-staging.html) in more detail, including `rsync` and Globus.
+In order to submit your large data files to the Arctic Data Center repository, we encourage users to directly upload their data to the Data Team's servers using a secure file transfer protocol (SFTP). There are a number of GUI driven and command line programs out there that all work well. For a GUI program, our team uses and recommends the free program [Cyberduck](https://cyberduck.io/download/). We will discuss command line programs in more detail, including `rsync` and Globus.
 
 Before we begin, let's answer the following question: Why would a user want to upload their data through a separate process, rather than the web form when they submit their metadata?
 
@@ -210,7 +210,7 @@ The second question is, under what circumstances should I consider uploading dat
 
 -   [SFTP]{style="background-color: #FDF2D0;"}: For users that expect to upload more than 250 files and have a medium cumulative file size (10-100 GBs), uploading data to our servers via SFTP is the recommended method. This can be done through the command line, or a program like Cyberduck. If you find yourself considering uploading a zip file through the web editor, you should instead upload your files using this method.
 
--   [GridFTP]{style="background-color: #F8E5D8;"}: For users that expect to upload hundreds or thousands of files, with a cumulative file size of hundreds of GB to TBs, you will likely want to make use of GridFTP through Globus. Jeanette will be talking about data transfers in more depth on Thursday.
+-   [GridFTP]{style="background-color: #F8E5D8;"}: For users that expect to upload hundreds or thousands of files, with a cumulative file size of hundreds of GB to TBs, you will likely want to make use of GridFTP through Globus.
 
 Before you can upload your data to the Data Team's server, make sure to email us at `support@arcticdata.io` to retrieve the login password. Once you have that, you can proceed through the following steps.
 
@@ -220,7 +220,7 @@ If you know that you will need to use this process for more than one dataset, we
 
 Once you have finished uploading your data to our servers, please let the Data Team know via email so that we can continue associate your uploaded data with your metadata submission.
 
-As mentioned in [Step 1: The Narrative Metadata Submission] section above, when the data package is finalized and made public, there will be a sentence in the abstract that directs users to a separate page where your data will live. The following image is an example of where the data from [this](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2CV4BS5K) dataset live.
+As mentioned in [Step 1: The Narrative Metadata Submission] section above, when the data package is finalized and made public, there will be a sentence in the abstract that directs users to a separate page where your data will live. The following image is an example of where the data from [this](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2CV4BS5K) dataset live. Another example of data packages in the ADC with a large data submission is [this dataset](https://doi.org/10.18739/A2416T17S).
 
 ![](../images/large-data-package.png)
 
@@ -245,6 +245,8 @@ When uploading your data files using SFTP, either through the command line or a 
 
 For more complex folder structures, it is wise to include a README file that explicitly walks users through the structure and provides a basic understanding of what is available. Generally speaking, we recommend structuring your data in an easy to understand way such that a README isn't completely necessary.
 :::
+
+Additionally, the structure of your directories in your dataset may be important to consider when organizing your files. For example, map tile data may best be organized in a highly structured WMTS tile matrix set standard. This would allow users to easily subset the dataset and navigate it for map visualizations.
 
 ## Data transfer tools
 
