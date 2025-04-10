@@ -204,19 +204,8 @@ Other professional ethics can be found here
 
 6. Do any of the study sites or specimens represent culturally sensitive areas or species? Please explain how you came to this conclusion, and if yes, how was this accounted for?
 
-Menti question:
-
-1. Have you thought about any of the ethical considerations listed above before?
-2. Were any of the considerations new or surprising?
-3. Are there any for your relevant discipline that are missing?
 
 ## Ethics in Artificial Intelligence 
-
-Menti poll
-
-1. What is your level of familiarity with machine learning
-2. Have you thought about ethics in machine learning prior to this lesson?
-3. Can anyone list potential ethical considerations in machine learning?
 
 ### Introduction 
 
@@ -246,7 +235,7 @@ They are developing and deploying:
 
 The following figure (McGovern et al., 2022) shows coverage of the national Doppler weather network (green and yellow circles) over a demographic map of the Black population in the southeast US. This would be an example of an issue in data fairness, since radar coverage does not represent the population uniformly, leaving out  areas with higher Black population. Problems with outcome fairness could ensue if this non-representative biases an AI model to under-predict weather impacts in such populations.
 
-![](../images/AI-dataethics-racial-example.png){.lightbox width=100%}
+![McGovern et al., 2022 by courtesy of Jack Sillin (CC BY 4.0).](../images/AI-dataethics-racial-example.png){.lightbox width=100%}
 
 :::
 
@@ -287,7 +276,7 @@ Under the FAST principles, transparency in AI projects refers to transparency ab
 
 The concern for transparency in using personal data is an active space for debate. In 2018, the French government passed a law to protect citizens' privacy, establishing the citizen's "right to an explanation" regarding, among other things, how an algorithm contributed to decisions on their persona and which data was processed (Edwards and Veale, 2018; Lo Piano, 2020). Overall, this legislation aims to create a fairer and more transparent digital environment where everyone can enjoy equal opportunities.
 
-![](../images/google-deepmind.jpg){.lightbox width=100%}
+![Photo by Google DeepMind](../images/google-deepmind.jpg){.lightbox width=100%}
 :::
 
 ### Conclusion
