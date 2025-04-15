@@ -12,7 +12,7 @@ numpy
 netCDF4
 nc-time-axis 
 pandas
-parsl
+parsl==2025.4.14
 gcsfs
 glances
 pyarrow
