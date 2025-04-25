@@ -29,7 +29,7 @@ of scaling challenges:
 
 **What can be big?**
 
-The _**number**_ of tasks we need to complete, especially factoring in
+The _**number of tasks**_ we need to complete, especially factoring in
 the amount of time it takes to complete each task, and our overall time
 constraints. Too much work to do!
 
@@ -50,9 +50,9 @@ constraints. Too much work to do!
 
 **What can be big?**
 
-The _**amount of data**_ we have to process, especially factoring the
-amount of data we have to handle all at once, relative to our space
-constraints. Too much stuff to hold at once!
+The _**amount of data**_ we have to process, especially considering the
+peak volume data we need to handle at a given time, relative to our
+space constraints. Too much stuff to hold at once!
 
 **What tends to limit us?**
 
