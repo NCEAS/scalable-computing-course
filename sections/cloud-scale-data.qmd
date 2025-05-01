@@ -90,13 +90,13 @@ In the remainder of this chapter, we will primarily focus on the data
 volume challenge, in particular exploring how different decisions about
 data storage formats and layouts enable (or constrain) us as we attempt
 to work with data at large scale. We'll formalize a couple of concepts
-we've alluded at throughout the course, introduce a few new
+we've alluded to throughout the course, introduce a few new
 technologies, and characterize the current state of best practice --
 with caveat that this is an evolving area!
 
 ## Cloud optimized data
 
-As we've seen, when it comes global and even regional environmental
+As we've seen, when it comes to global and even regional environmental
 phenomena observed using some form of remote-sensing technology, much of
 our data is now _cloud-scale_. In the most basic sense, this means many
 datasets -- and certainly relevant collections of datasets that you
@@ -117,7 +117,7 @@ be beneficial when the compute platform is "near" the data, reducing
 network and perhaps even I/O latency. However, to the extent that
 realizing these benefits may require committing to some particular
 commercial cloud provider (with its associated cost structure), this may
-or may not be desirable change.
+or may not be a desirable change.
 :::
 
 Practically speaking, accessing data in the cloud means using HTTP to
@@ -173,7 +173,7 @@ Geospatial Consortium
 (OGC)](https://www.ogc.org/announcement/cloud-optimized-geotiff-cog-published-as-official-ogc-standard/)
 in 2023. However, COGs _are_ GeoTIFFs, which have been around since the
 1990s, and GeoTIFFs are TIFFs, which date back to the 1980s. Let's work
-our way through this linage.
+our way through this lineage.
 
 First we have the original **TIFF** format, which stands for Tagged Image
 File Format. Although we often think of TIFFs as image files, they're
@@ -227,7 +227,7 @@ the same compressed tile.
 
 A set of overviews (lower resolution tile pyramids) are computed from
 the main full resolution data and stored in the file, again following a
-tiling scheme and and arranged in order. This allows clients to load a
+tiling scheme and arranged in order. This allows clients to load a
 lower resolution version of the data when appropriate, without needing
 to read the full resolution data itself.
 :::
@@ -261,7 +261,7 @@ particular desired subset of the image at a particular resolution
 the desired bounding box into pixel coordinates, then identifying which
 tile(s) in the COG intersect with the area of interest, then determining
 the associated byte ranges of the tile(s) based on the metadata read in
-teh first step. And the best part is that "client" here refers to the
+the first step. And the best part is that "client" here refers to the
 underlying software, which takes care of all of the details. As a user,
 typically all you need to do is specify the file location, area of
 interest, and desired overview level (if relevant)!
@@ -286,7 +286,7 @@ configuration (shape) optimized for expected usage patterns. This
 enables a client interested in a subset of data to retrieve the relevant
 data without receiving too much additional unwanted data. In addition,
 chunk layout should be such that, under expected common usage patterns,
-proximal chunks are morely likely to be requested together. On average,
+proximal chunks are more likely to be requested together. On average,
 this will reduce the number of separate read requests a client must
 issue to retrieve and piece together any particular desired data subset.
 In addition, chunks should almost certainly be compressed with a
@@ -339,7 +339,7 @@ choice of how to break the data into separately compressed and
 addressable subsets is now decoupled from the choice of how to break the
 data into separate files; a massive dataset can be segmented into a very
 large number of small chunks without necessarily creating a
-correspondingingly large number of small individual files, which can
+correspondingly large number of small individual files, which can
 cause problems in certain contexts. In some sense, this allows a Zarr
 store to behave a little more like a COG, with its many small,
 addressable tiles contained in a single file.
@@ -640,8 +640,8 @@ our own custom multidimensional data array from a large collection of
 data resources that themselves be arbitrarily organized with respect to
 our specific use case.
 
-Interested in learning more about STAC? If so, head over the [STAC
-Index](https://stacindex.org/), and online resource listing many
+Interested in learning more about STAC? If so, head over to the [STAC
+Index](https://stacindex.org/), an online resource listing many
 published STAC catalogs, along with various related software and
 tooling.
 
@@ -661,7 +661,7 @@ structured netCDF and GeoTIFF files -- historically successful and
 efficiently used in local storage, but often suboptimal at cloud scale.
 The second represents simple, ad hoc approaches to splitting larger data
 into smaller files, thrown somewhere on a network-accessible server, but
-without efficiently readable overaching metadata and without any optimal
+without efficiently readable overarching metadata and without any optimal
 structure. The next two represent cloud optimized approaches, with data
 split into addressable units described by up-front metadata that clients
 can use to efficiently access the data. The first of these resembles a
@@ -694,7 +694,7 @@ use of external metadata -- whether as Zarr metadata or STAC catalogs --
 that allows clients to issue data requests that "just work"
 regardless of the underlying implementation details.
 
-As a final takeway, insofar as there's a community consensus around the
+As a final takeaway, insofar as there's a community consensus around the
 best approaches for managing data today, it probably looks something
 like this:
 
@@ -703,7 +703,7 @@ like this:
   cloud
 - **Zarr stores** (with intelligent chunking and sharding), potentially
   referenced by STAC catalogs, as the go-to approach for storing and
-  provisioing multidimensional Earth array data in the cloud
+  provisioning multidimensional Earth array data in the cloud
 - **Virtual Zarr stores**, again potentially in conjunction with STAC
   catalogs, as a cost-effective approach for cloud-enabling many legacy
   data holdings in netCDF format
