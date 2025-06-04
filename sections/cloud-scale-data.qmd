@@ -670,16 +670,7 @@ resembles a traditional Zarr store (many addressable pieces as separate
 files). This highlights two different approaches that you've encountered
 in this courses:
 
-```{mermaid}
-flowchart LR
-    A["Keep data in one file, but make
-       it so that clients can efficiently
-       extract subsets of interest"]
-    <-->
-    B["Separate data into many
-       independent files, with metadata
-       binding them together"];
-```
+![](../images/one-vs-many-files.png){fig-align="center" width="90%"}
 
 Which is better? The likely answer is ... both! Indeed, the community
 seems to be converging on a hybrid model whereby we use a combination of
