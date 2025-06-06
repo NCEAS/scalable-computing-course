@@ -289,6 +289,29 @@ chunk layout should be such that, under expected common usage patterns,
 proximal chunks are more likely to be requested together. On average,
 this will reduce the number of separate read requests a client must
 issue to retrieve and piece together any particular desired data subset.
+
+![](../images/chunking-patterns.png){.lightbox fig-align="center" width="90%"}
+
+For example, in the image above depicting a simple 2D spatial raster
+dataset, consider three alternative chunking patterns. The approach on
+the left stores data together that share the same latitude, whereas the
+approach on the right stores data together that share the same
+longitude. In each case, values that are nearby but in the orthogonal
+direction will be split across multiple chunks, which is not ideal.
+Meanwhile, the square tile approach in the middle -- consistent with the
+COG format specification -- strikes a healthy balance, and overall is
+more effective at storing together data that are spatially proximal in
+any given direction. Now imagine a _stack_ of such rasters corresponding
+to data collected over time -- in other words, a 3D array dataset with a
+time dimension. The same principle holds in general: _cubes_ will ensure
+that data that are proximal in both space and time will be stored in the
+same chunk, and are probably the safest bet. However, an alternative
+strategy may be preferable if, for example, the expected dominant use
+case is spatial analysis (consider storing tiles that are spatially
+broad but are shallower in the temporal dimension) or time-series
+analysis (consider storing tiles that are spatially narrow but are
+longer in the time dimension).
+
 In addition, chunks should almost certainly be compressed with a
 suitable compression algorithm.  Compression incurs some additional
 compute time for decompression, but with a net benefit because it
