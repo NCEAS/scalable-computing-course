@@ -19,7 +19,6 @@ book:
   chapters:
     - index.qmd
     - sections/remote-computing.qmd
-    - sections/python-intro.qmd
     - sections/parallel-programming.qmd
 
 bibliography: references.bib
