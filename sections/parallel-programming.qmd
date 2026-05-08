@@ -84,19 +84,18 @@ hw.ncpu: 12
 hw.physicalcpu: 6
 ```
 
-To interpret that output, this machine `powder` has 6 physical CPUs, each of which has
-two processing cores, for a total of 12 cores for computation.  I'd sure like my computations to use all of that processing power.  Because its all on one machine, we can easily use *multicore* processing tools to make use of those cores. Now let's look at the computational server `included-crab` at NCEAS:
+To interpret that output, this machine `powder` has 6 physical CPUs, each of which has two processing cores, for a total of 12 cores for computation.  I'd sure like my computations to use all of that processing power.  Because its all on one machine, we can easily use *multicore* processing tools to make use of those cores. Now let's look at the computational server `aurora` at NCEAS:
 
 ```bash
-jones@included-crab:~$ lscpu | egrep 'CPU\(s\)|per core|per socket' 
-CPU(s):                          88
-On-line CPU(s) list:             0-87
-Thread(s) per core:              1
-Core(s) per socket:              1
-NUMA node0 CPU(s):               0-87
+jones@aurora:~$ lscpu | egrep '^CPU\(s\)|per core|per socket|Socket|list'
+CPU(s):                                  336
+On-line CPU(s) list:                     0-335
+Thread(s) per core:                      2
+Core(s) per socket:                      84
+Socket(s):                               2
 ```
 
-Now that's more compute power!  `included-crab` has 384 GB of RAM, and ample storage. All still under the control of a single operating system.
+Now that's more compute power!  `aurora` has 2.2 TiB of RAM and over 40 TiB of storage (expandable to hundreds). All still under the control of a single operating system.
 
 Finally, maybe one of these [NSF-sponsored high performance computing clusters (HPC)](https://allocations.access-ci.org/resources) is looking attractive about now:
 
@@ -136,20 +135,62 @@ Note that these clusters have multiple nodes (hosts), and each host has multiple
 Shell programming helps massively speed up data management tasks, and even more so with simple use of the [GNU `parallel`](https://www.gnu.org/software/bash/manual/html_node/GNU-Parallel.html) utility to execute bash commands in parallel. In its simplest form, this can be used to speed up common file operations, such as renaming, compression, decompression, and file transfer. Let's look at a common example -- calculating checksums to verify file integrity for data files. Calculating a hash checksum using the `shasum` command can be time consuming, especially when you have a lot of large files to work on. But it is a classic processor-limited task, and one that can be massively faster using `parallel`. 
 
 ```bash
-$ for fn in `ls *.gpkg`; do shasum -a 256 ${fn}; done
-
-real	35.081s
-user	32.745s
-system	2.336s
-
-$ ls *.gpkg | parallel "shasum -a 256 {}"
-
-real    2.97s 
-user    37.16s 
-system  2.70s
+# Create some testing files
+jones@aurora:~$ mkdir testfiles
+jones@aurora:~$ cd testfiles/
+jones@aurora:~/testfiles$ for fn in $(seq 40 49); do truncate -s ${fn}M file-${fn}.bin; done
+jones@aurora:~/testfiles$ du -sh *
+40M     file-40.bin
+41M     file-41.bin
+42M     file-42.bin
+43M     file-43.bin
+44M     file-44.bin
+45M     file-45.bin
+46M     file-46.bin
+47M     file-47.bin
+48M     file-48.bin
+49M     file-49.bin
 ```
 
-The first invocation takes *35 seconds* to execute the tasks one at a time serially, while the second version only takes :tada: *3 seconds* :tada: to do the same tasks. Note that the computational time spent in `user` and `system` processing is about the same, with the major difference being that the user-space tasks were conducted on multiple cores in parallel, resulting in more than 10x faster performance, Using `htop`, you can see processor cores spiking in usage when the command is run:
+And now let's calculate the checksums for these files, first using a simple loop, and then using `parallel`:
+
+```bash
+# First serially, one at a time
+jones@aurora:~/testfiles$ time for fn in $(ls *.bin); do shasum -a 256 ${fn}; done
+80a3721188e40218b08b26776bc53bdae81e4784fff71d71450a197319cba113  file-40.bin
+1905da59e2fb6c4049952c39c2504eded8089593c355d69e690582d82b991065  file-41.bin
+27e6841aa5c27b5c35e00ba393fcc93d3bef21d627dd2bfe3b0d421ed85e3375  file-42.bin
+39f7c6d38af574fe2c90ef400dfaba8ef8edccd11bdac998a3f8143a86837331  file-43.bin
+cab402b1d940636377c25957f28292c95666327a2f62c6b4f080d8b93b789ee3  file-44.bin
+c5167043575395bd810aa4b5246679f794c527b598dc21befba0cbb865137dd2  file-45.bin
+ee2501c2eb48a02586fccc4efb960108585f6848951bbf5647f91c759b1690c7  file-46.bin
+4e20916a1ebd7704cbe7139674b7658afe213f9536f64e6f6c7a8675e7497624  file-47.bin
+152ba99dbaf6c7dde5955a8484835194ed4fc0f20a0ea774667f148a25cb03c4  file-48.bin
+aad1a238b705cba837f47119f42a40f58d4271ebc33fff0be04eed37bc908c62  file-49.bin
+
+real    0m6.035s
+user    0m1.436s
+sys     0m0.372s
+
+# Now in parallel
+jones@aurora:~/testfiles$ time ls *.bin | parallel -j 10 "shasum -a 256 {}"
+80a3721188e40218b08b26776bc53bdae81e4784fff71d71450a197319cba113  file-40.bin
+1905da59e2fb6c4049952c39c2504eded8089593c355d69e690582d82b991065  file-41.bin
+27e6841aa5c27b5c35e00ba393fcc93d3bef21d627dd2bfe3b0d421ed85e3375  file-42.bin
+39f7c6d38af574fe2c90ef400dfaba8ef8edccd11bdac998a3f8143a86837331  file-43.bin
+cab402b1d940636377c25957f28292c95666327a2f62c6b4f080d8b93b789ee3  file-44.bin
+c5167043575395bd810aa4b5246679f794c527b598dc21befba0cbb865137dd2  file-45.bin
+ee2501c2eb48a02586fccc4efb960108585f6848951bbf5647f91c759b1690c7  file-46.bin
+4e20916a1ebd7704cbe7139674b7658afe213f9536f64e6f6c7a8675e7497624  file-47.bin
+152ba99dbaf6c7dde5955a8484835194ed4fc0f20a0ea774667f148a25cb03c4  file-48.bin
+aad1a238b705cba837f47119f42a40f58d4271ebc33fff0be04eed37bc908c62  file-49.bin
+
+real    0m3.594s
+user    0m1.433s
+sys     0m0.288s
+```
+
+The first invocation takes *6 seconds* to execute the tasks one at a time serially, while the second version only takes :tada: *3 seconds* :tada: to do the same tasks. Note that the computational time spent in `user` and `system` processing is about the same, with the major difference being that the user-space tasks were conducted on multiple cores in parallel, resulting in more than 2x faster performance, Using `htop`, you can see processor cores spiking in usage when the command is run:
 
 ![Processor usage for parallel tasks.](../images/processor-htop.png)
 
