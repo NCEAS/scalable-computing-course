@@ -457,9 +457,34 @@ echo "DONE!"
 ```
 :::
 
-## Shell tips and tricks
+## Monitoring performance
 
-When you're working 
+When working on a remote server, it's important to be mindful of the resources that your processes are using. If you run a computationally intensive process, it can slow down the server for other users who are also using the server's resources. To monitor the performance of your processes and the server, you can use commands like `htop` or `glances`, which show you how much CPU and memory is being used by each process on the server. This can help you identify if your processes are using too many resources and adjust accordingly (e.g. by using `nice` to lower the priority of your processes).
+
+The simplest approach is to look at the processes that are currently running on the server and how much CPU and memory they are using. The `ps` command lists the processes that are currently running on the server, along with their process ID (PID), CPU usage, memory usage, and other information. You can use the `ps` command with various options to filter and sort the output to find the processes that are using the most resources. For example, you can use `ps` to simply see which processes are running in your current terminal session:
+
+```{bash}
+jones@aurora:~$ ps
+    PID TTY          TIME CMD
+1683944 pts/23   00:00:00 bash
+1985726 pts/23   00:00:00 ps
+```
+
+That only shows the processes that are running in the current terminal session. To see all processes running on the server, you can use the `-U` option to see all processes for a specific user, or you can use the `-e` option to see all processes running on the server regardless of user. For example, `ps -U jones` will show all processes running on the server that are owned by the user "jones", while `ps -e` will show all processes running on the server regardless of user.
+
+Each process can also spawn child processes, which can also use resources. To see the parent-child relationships between processes, you can use the `--forest` option with the `ps` command. For example, `ps -U jones --forest` will show all processes owned by the user "jones" in a tree-like format that indicates which processes are parents and which are children.
+
+![](../images/process-tree.png)
+
+To get a more dynamic view of the processes running on the server and their resource usage, you can use the `htop` command, which provides an interactive interface for monitoring processes. When you run `htop`, you'll see a list of processes sorted by CPU usage, along with information about their memory usage, CPU usage, and other details. You can use the arrow keys to navigate through the list of processes and see more information about each process. You can also use the `F6` key to sort the processes by different criteria (e.g. memory usage, CPU time, etc.) and the `F4` key to filter the processes by different criteria, such as searching for your script names.
+
+![](../images/htop.png)
+
+An alternative to `htop` is `glances`, which provides a more comprehensive view of the server's performance, including CPU usage, memory usage, disk I/O, network activity, and more. When you run `glances`, you'll see a dashboard that shows you the current state of the server's resources, along with a list of processes sorted by CPU usage. You can use the arrow keys to navigate through the list of processes and see more information about each process.
+
+![](../images/glances.png)
+
+## Shell tips and tricks
 
 ### Being nice {{< fa heart >}} 
 
@@ -467,6 +492,42 @@ When working on a shared server, it's important to be considerate of other users
 
 - Check the server's resource usage before running a computationally intensive task. You can use commands like `htop` or `glances`to see how much CPU and memory is being used by other processes on the server
 - Use `nice` to run your processes with a lower priority, which can help prevent your processes from hogging resources and slowing down the server for other users. For example, you can run a command with `nice` like this: `nice -n 10 my_command`, where `-n 10` sets the priority level to 10 (the default is 0, and higher numbers indicate lower priority)
+
+## Terminating a process {{< fa stop >}}
+
+When you run any command in the terminal, it starts a process. If you run a command that takes a long time to execute, you may want to stop it before it finishes. You can do this by using the `Ctrl` + `C` keyboard shortcut, which sends a "SIGINT" signal to the process, telling it to stop.
+
+```bash
+jones@aurora:~$ truncate -s 50G huge_sparse.bin
+jones@aurora:~$ du -sh huge_sparse.bin
+50G     huge_sparse.bin
+jones@aurora:~$ cat huge_sparse.bin | sha256sum
+^C
+```
+
+However, if your process is running in the background (e.g. you used the `&` operator to run it in the background), or if it was started as a child of another process, it may not respond to the `Ctrl` + `C` signal. In that case, you can use the `kill` command to send a different signal to the process, such as "SIGTERM" or "SIGKILL", which will force it to stop. To do so, you need to know the process ID (PID) of the process, which you can find using the `ps` command. Once you have the PID, you can use the `kill` command followed by the PID to send a signal to the process. For example, `kill 12345` will send a SIGTERM signal to the process with PID 12345, while `kill -9 12345` will send a SIGKILL signal to the same process.
+
+```bash
+jones@aurora:~$ cat huge_sparse.bin | sha256sum &
+[1] 1791975
+jones@aurora:~$ jobs
+[1]+  Running                 cat huge_sparse.bin | sha256sum &
+jones@aurora:~$ ps
+    PID TTY          TIME CMD
+1683944 pts/23   00:00:00 bash
+1791974 pts/23   00:00:04 cat
+1791975 pts/23   00:00:26 sha256sum
+1792411 pts/23   00:00:00 ps
+jones@aurora:~$ kill 1791975
+jones@aurora:~$ ps
+    PID TTY          TIME CMD
+1683944 pts/23   00:00:00 bash
+1793165 pts/23   00:00:00 ps
+[1]+  Terminated              cat huge_sparse.bin | sha256sum
+jones@aurora:~$
+```
+
+Finally, if you launch one or more processes on a remote server and then disconnect from the server, those processes will be terminated. This is because when you disconnect, the server sends a "hangup" signal `SIGHUP` to all processes that were initiated from your session, which causes them to stop running.
 
 ### Don't hangup {{< fa phone >}} 
 
@@ -480,7 +541,24 @@ What that does is to run the program `my_command` in the background (the `&` ope
 Alternatively, you can redirect the output to a specific file like this:
 - `nohup my_command > output.log 2>&1 &`
 
-That redirects the standard output (stdout) to `output.log` and the standard error (stderr) to the same file (`2>&1` means "redirect stderr to the same location as stdout"). This way, you can keep track of both the normal output and any error messages generated by `my_command` in a single log file. You might instead choose to redirect stdout and stderr to separate files for easier debugging, like this:
+That redirects the standard output (stdout) to `output.log` and the standard error (stderr) to the same file (`2>&1` means "redirect stderr to the same location as stdout"). This way, you can keep track of both the normal output and any error messages generated by `my_command` in a single log file. 
+
+Here's a concrete example of how to use `nohup` to run a long-running process in the background:
+
+```bash
+jones@aurora:~$ nohup cat huge_sparse.bin | sha256sum > output.log 2>&1 &
+[1] 1802035
+jones@aurora:~$ ps
+    PID TTY          TIME CMD
+1683944 pts/23   00:00:00 bash
+1802034 pts/23   00:00:00 cat
+1802035 pts/23   00:00:03 sha256sum
+1802140 pts/23   00:00:00 ps
+jones@aurora:~$ kill 1802035
+jones@aurora:~$
+```
+
+You might instead choose to redirect stdout and stderr to separate files for easier debugging, like this:
 - `nohup my_command > output.log 2> error.log &`
 
 ### Persistent sessions with tmux {{< fa laptop >}} 
