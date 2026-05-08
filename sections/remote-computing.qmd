@@ -8,6 +8,7 @@ from: markdown+emoji
 - Understand the basic architecture of computer networks
 - Learn how to connect to a remote computer via a shell
 - Become familiarized with Bash Shell programming to navigate your computer's file system, manipulate files and directories, and automate processes
+- Review session and performance management tools
 - Learn different uses of the term *cloud computing*
 - Understand the services of cloud providers
 - Gain familiarity with containerized computing
