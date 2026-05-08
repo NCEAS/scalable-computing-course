@@ -1,4 +1,4 @@
 {
-    "editor.hover.enabled": true,
+    "editor.hover.enabled": "on",
     "python.terminal.activateEnvInCurrentTerminal": true
 }

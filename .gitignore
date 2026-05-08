@@ -158,3 +158,5 @@ sections/dg_soil_moisture.csv
 
 sections/runinfo
 .Rproj.user
+
+**/*.quarto_ipynb
