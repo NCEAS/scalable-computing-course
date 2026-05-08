@@ -506,9 +506,7 @@ flowchart TB
 
 :::
 
-## Shell tips and tricks
-
-### Being nice {{< fa heart >}} 
+## Being nice {{< fa heart >}} 
 
 When working on a shared server, it's important to be considerate of other users who may also be using the server's resources. Here are some tips for being a good citizen when working on a shared server:
 
