@@ -1,20 +1,10 @@
+![](images/nceas-banner.png)
+
 # Preface {.unnumbered}
 
 ## About {-}
 
-This 5-day in-person workshop will provide researchers with an introduction to advanced topics in computationally reproducible research in python, including software and techniques for working with very large datasets. This includes working in cloud computing environments, docker containers, and parallel processing using tools like parsl and dask. The workshop will also cover concrete methods for documenting and uploading data to the Arctic Data Center, advanced approaches to tracking data provenance, responsible research and data management practices including data sovereignty and the CARE principles, and ethical concerns with data-intensive modeling and analysis.
-
-
-![](images/arctic-data-center.png)
-
-<br>
-
-### Schedule {-}
-
-:::{.column-page}
-![](images/schedule.png)
-:::
-
+This one hour overview will provide researchers with a quick introduction to working in remote server computing environments, and some basics of parallel processing in the shell.
 
 ### Code of Conduct {-}
 

@@ -2,11 +2,10 @@ project:
   type: book
 
 book:
-  title: "Scalable and Computationally Reproducible Approaches to Arctic Research"
-  doi: 10.18739/A2NK3670P
-  author: "Matthew B. Jones, S. Jeanette Clark, Jim Regetz, Rushiraj Nenuji, Nicole Greco, Angie Garcia, and Justin Kadi"
-  date: "April 7, 2025"
-  issued: 2025
+  title: "Quick review: remote computing"
+  author: "Matthew B. Jones"
+  date: "May 7, 2026"
+  issued: 2026
   reader-mode: false
   sidebar:
     title: "Course Materials"
@@ -14,33 +13,14 @@ book:
     search: false
     tools:
       - icon: house-door-fill
-        href: https://arcticdata.io
-      - icon: twitter
-        href: https://twitter.com/arcticdatactr
+        href: https://nceas.ucsb.edu
       - icon: github
         href: https://github.com/NCEAS/scalable-computing-course
-
   chapters:
     - index.qmd
-    - sections/adc-intro.qmd
     - sections/remote-computing.qmd
     - sections/python-intro.qmd
     - sections/parallel-programming.qmd
-    - sections/data-structures-netcdf.qmd
-    - sections/parallel-with-dask.qmd
-    - sections/group-project-1.qmd
-    - sections/data-ethics.qmd
-    - sections/geopandas.qmd
-    - sections/parquet-arrow.qmd
-    - sections/group-project-2.qmd
-    - sections/software-design-1.qmd
-    - sections/adc-data-publishing.qmd
-    - sections/zarr.qmd
-    - sections/docker-containers.qmd
-    - sections/software-design-2.qmd
-    - sections/cloud-scale-data.qmd
-    - sections/reproducibility-containers.qmd
-    - sections/docker-hpc-cloud.qmd
 
 bibliography: references.bib
 
