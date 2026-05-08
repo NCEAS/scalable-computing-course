@@ -484,6 +484,27 @@ An alternative to `htop` is `glances`, which provides a more comprehensive view 
 
 ![](../images/glances.png)
 
+When looking for performance issues, it's important to keep in mind that the processes that are using the most CPU or memory may not necessarily be the ones that are causing the performance issues. For example, a process that is using a lot of CPU may be doing so because it's waiting for input or output, rather than because it's actually doing a lot of work. Similarly, a process that is using a lot of memory may be doing so because it's caching data, rather than because it's actually using a lot of memory. Therefore, it's important to look at the overall performance of the server and consider other factors (e.g. disk I/O, network activity, etc.) when diagnosing performance issues. At any given point in time, your process performance will always be limited by one of the major resources (CPU, memory, disk I/O, network activity), so it's important to look at all of these factors when diagnosing performance issues.
+
+::: {center}
+
+```{mermaid}
+flowchart TB
+    CPU([CPU usage])
+    MEM[/Memory usage/]
+    DISK[(Disk I/O)]
+    NET{{Network activity}}
+
+    CPU --> MEM
+    CPU --> DISK
+    CPU --> NET
+
+    classDef perf fill:#e8f3ff,stroke:#2f6aa3,stroke-width:1.5px,color:#123b5f;
+    class CPU,MEM,DISK,NET perf;
+```
+
+:::
+
 ## Shell tips and tricks
 
 ### Being nice {{< fa heart >}} 
@@ -563,8 +584,63 @@ You might instead choose to redirect stdout and stderr to separate files for eas
 
 ### Persistent sessions with tmux {{< fa laptop >}} 
 
-`tmux` Tutorial: https://hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/
+If you run models and simulations, or even dat awrangling jobs that take a long time to run, you may want to be able to let those processes run without having to keep your terminal open the whole time, and to be able to check in on the progress of your processes from work, home, and on the road. `tmux` is a workhorse tool that allows you to create multiple terminal sessions within a single terminal window, and to detach and reattach to those sessions as needed. This means that you can start a process in a `tmux` session, detach from the session, and then reattach later to check on the progress of the process or to interact with it. The process will continue to run in the background even if you disconnect from the server or close your terminal window.
 
+`tmux` is a deep lake to explore, but here we'll cover some of the basics to get you started. Here's a nice [tutorial](https://www.hamvocke.com/blog/a-guide-to-getting-started-with-tmux/) to fill in a few of the gaps, and there are a lot more of those out there if you want to dive deeper.
+
+
+To start a new `tmux` session, simply run the `tmux` command in your terminal:
+
+![](../images/tmux-1-created.png)
+
+That creates a new `tmux` session and opens a new terminal window within that session. You can then run any commands you want within that terminal window, and they will continue to run even if you detach from the session or disconnect from the server. When you `exit` the shell within the `tmux` session, it will end the session and all processes running within it. 
+
+```bash
+jones@aurora:~$ tmux
+[exited]
+```
+
+Let's start a new session, but this time give it a name. We'll call it "monitor" since we'll be using it to monitor the progress of a long-running process. To do that, use `tmux new -s monitor` with the name of the session when you start `tmux`, and then launch `htop` in the tmux session.
+
+![](../images/tmux-2-htop.png)
+
+Now, if you detach from the session instead of exiting it, the session will continue to run in the background, and you can reattach to it later to check on the progress of your processes or to interact with them. To detach from a `tmux` session, use the keyboard shortcut `Ctrl` + `b` followed by `d` (for "detach"). To see a list of the sessions you have running, use `tmux ls`. To reattach to a `tmux` session, use the `tmux attach` command (optionally with the `-t session_name`).
+
+```bash
+jones@aurora:~$ tmux ls
+monitor: 1 windows (created Fri May  8 07:19:34 2026)
+jones@aurora:~$ tmux attach -t monitor
+```
+
+To explain that `Ctrl` + `b` + `d` keyboard shortcut a bit more: `Ctrl` + `b` is the default "prefix" for `tmux` commands, which means that you need to press that combination before any other key to send a command to `tmux`. So, to detach from the session, you first press `Ctrl` + `b` to tell `tmux` that you're about to send it a command, and then you press `d` to tell it to detach from the session. There are many other commands you can use with `tmux` to manage your sessions, such as creating new windows within a session, splitting windows into panes, resizing panes, and more.
+
+The core concepts that you'll use most often with `tmux` are sessions, windows, and panes. 
+
+- **session**: A session is a collection of windows from which you can attach and detach
+- **window**: a window is a single terminal interface that typically runs a shell on the remote server. A session can contain multiple windows, making it super easy to switch between them.
+- **pane**: a pane is a rectangular area within a window that can display a separate terminal session. Windows can be split into multiple panes, either vertically or horizontally, allowing you to view and interact with multiple terminal sessions within a single window. This is especially useful for monitoring multiple processes at the same time, or for running multiple commands in parallel, such as running a model in one pane while watching its output in another pane.
+
+If you reattach to your session (e.g. `tmux attach -t monitor`), let's take a look at the key features of the window. You'll see that `htop` is running in the window, and you can interact with it as you normally would. In the lower left, you'll see the tmux status bar, which shows you the name of the session (`monitor`) and the names of the windows and process running (`0:htop`). In the lower right, you'll see the hostname "aurora" and the current time. 
+
+![](../images/tmux-3-status.png)
+
+Let's **create** a new window. You can use the keyboard shortcut `Ctrl` + `b` followed by `c` to create a new window within the session. Once you do that a new terminal window will open within the session, and you can run any commands you want in that window. You can switch between windows using the keyboard shortcut `Ctrl` + `b` followed by the number of the window you want to switch to (e.g. `Ctrl` + `b` followed by `0` to switch to the first window, `Ctrl` + `b` followed by `1` to switch to the second window, etc.). The windows are listed in the status bar at the bottom of the screen, so you can see which windows you have open and which one you're currently in. 
+
+![](../images/tmux-4-windows.png)
+
+Since we just created a new window, we should see two windows listed in the status bar: `0:htop` and `1:bash`. The `0:htop` window is the one that we started with, which has `htop` running in it, and the `1:bash` window is the new window that we just created, which has a bash shell running in it. Now let's launch `glances` in the new window, and then create a third window (with `Ctrl-b c`). you should now have three windows open in your session, each with a different process running in it. You can switch between them using the keyboard shortcuts we just covered.
+
+
+Next, use `Ctrl` + `b` followed by `%` to split the window vertically into two panes (or `Ctrl` + `b` followed by `"` to split the window horizontally into two panes). You can then run different commands in each pane, and use the keyboard shortcuts `Ctrl` + `b` followed by the arrow keys to switch between panes.
+You can have multiple sessions running at the same time, each with its own set of windows and panes. This allows you to organize your work in a way that makes sense for you, and to easily switch between different tasks without having to open multiple terminal windows.
+
+![](../images/tmux-5-split-panes.png)
+
+Last but not least, help is always available within `tmux` by using the keyboard shortcut `Ctrl` + `b` followed by `?`, which will bring up a list of all the keyboard shortcuts and commands that you can use with `tmux`. You can also customize the key bindings and other settings in `tmux` by editing the `.tmux.conf` configuration file in your home directory.
+
+Remeber to detach (`Ctrl-b d`)from your session (rather than `exit`) when you plan to come back to it later or if you habe something running, and to kill the session when you no longer need it (e.g., `tmux kill-session -t monitor`), which will stop all processes running within that session and free up resources on the server.
+
+So, `tmux` is a powerful tool that allows you to manage multiple terminal sessions within a single terminal window, and to detach and reattach to those sessions as needed. This can be especially useful when working on a remote server, as it allows you to keep your processes running even if your connection to the server is interrupted, and to easily check on the progress of your processes from different locations. You can go home, disconnect from the server, and then reattach to your `tmux` session later to check on the progress of your processes or to interact with them. All of your windows and panes will still be there, and your processes will still be running, so you can pick up right where you left off :tada:.
 
 ## {{< fa cloud >}} What is cloud computing anyways?
 
